@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 #include <wrl/client.h>
+#include <vector>
 
 class Game
 {
@@ -16,6 +17,7 @@ public:
 	void Initialize();
 	void Update(float deltaTime, float totalTime);
 	void Draw(float deltaTime, float totalTime);
+	void BuildUI(float deltaTime);
 	void OnResize();
 
 private:
@@ -37,5 +39,17 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
+
+	// UI Data
+	bool isImGuiDemoOpen;
+	bool inDebugMode;
+	std::vector<float> frameValues;
+	std::vector<float> deltaValues;
+	int frameValueCount = 100;
+	float maxFrameValue = 0;
+	float getFrameTimer;
+	float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
+	float curFPS = 0;
+	float curDT = 0;
 };
 
