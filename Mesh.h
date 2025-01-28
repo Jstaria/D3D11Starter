@@ -21,12 +21,12 @@ private:
 	unsigned int indexCount;
 
 	// --- Mesh Creation ---
-	void CreateMesh(Vertex* vertices, unsigned int* indices, unsigned int vertSize, unsigned int indexSize);
-	void LoadData(char* filePath);
+	void CreateMesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize);
+	void LoadData(char filePath[]);
 
 public:
 	// --- Constructor ---
-	Mesh(Vertex* vertices, unsigned int* indices, unsigned int vertSize, unsigned int indexSize);
+	Mesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize);
 	Mesh(char* filePath);
 	Mesh();
 	~Mesh();
