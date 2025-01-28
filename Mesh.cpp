@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex* vertices, unsigned int* indices, unsigned int vertSize, unsigned int indexSize)
+Mesh::Mesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize)
 {
 	CreateMesh(vertices, indices, vertSize, indexSize);
 }
