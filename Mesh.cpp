@@ -13,7 +13,7 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::CreateMesh(Vertex* vertices, unsigned int* indices, unsigned int vertSize, unsigned int indexSize)
+void Mesh::CreateMesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize)
 {
 	// --- Create Vertex Buffer ---
 	{
