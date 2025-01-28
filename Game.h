@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <vector>
+#include "Mesh.h"
 
 class Game
 {
@@ -51,5 +52,8 @@ private:
 	float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 	float curFPS = 0;
 	float curDT = 0;
+
+	// Temp Mesh Data
+	Mesh* meshes;
 };
 

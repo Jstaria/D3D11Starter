@@ -17,21 +17,25 @@ private:
 	ComPtr<ID3D11Buffer> IndexBuffer;
 
 	// --- Mesh Counts ---
-	int vertexCount;
-	int indexCount;
+	unsigned int vertexCount;
+	unsigned int indexCount;
 
-	void CreateMesh();
+	// --- Mesh Creation ---
+	void CreateMesh(Vertex* vertices, unsigned int* indices, unsigned int vertSize, unsigned int indexSize);
+	void LoadData(char* filePath);
 
 public:
 	// --- Constructor ---
-	Mesh(/*Data to be read in*/);
+	Mesh(Vertex* vertices, unsigned int* indices, unsigned int vertSize, unsigned int indexSize);
+	Mesh(char* filePath);
+	Mesh();
 	~Mesh();
 
 	// --- Mesh Getters ---
 	ComPtr<ID3D11Buffer> GetVertexBuffer();
 	ComPtr<ID3D11Buffer> GetIndexBuffer();
-	int GetVertexCount();
-	int GetIndexCount();
+	unsigned int GetVertexCount();
+	unsigned int GetIndexCount();
 	void Draw();
 };
 

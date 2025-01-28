@@ -84,6 +84,8 @@ Game::~Game()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	delete meshes;
 }
 
 
@@ -195,7 +197,13 @@ void Game::CreateGeometry()
 	// - But just to see how it's done...
 	unsigned int indices[] = { 0, 1, 2 };
 
+	unsigned int vertexCount = sizeof(vertices) / sizeof(vertices[0]);
+	unsigned int indexCount = sizeof(indices) / sizeof(indices[0]);
 
+	meshes = new Mesh[3];
+	meshes[0] = Mesh(vertices, indices, vertexCount, indexCount);
+
+	/*
 	// Create a VERTEX BUFFER
 	// - This holds the vertex data of triangles for a single object
 	// - This buffer is created on the GPU, which is where the data needs to
@@ -248,6 +256,7 @@ void Game::CreateGeometry()
 		// - Once we do this, we'll NEVER CHANGE THE BUFFER AGAIN
 		Graphics::Device->CreateBuffer(&ibd, &initialIndexData, indexBuffer.GetAddressOf());
 	}
+	*/
 }
 
 
@@ -304,7 +313,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	// DRAW geometry
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
-	{
+	/* {
 		// Set buffers in the input assembler (IA) stage
 		//  - Do this ONCE PER OBJECT, since each object may have different geometry
 		//  - For this demo, this step *could* simply be done once during Init()
@@ -325,7 +334,9 @@ void Game::Draw(float deltaTime, float totalTime)
 			3,     // The number of indices to use (we could draw a subset if we wanted)
 			0,     // Offset to the first index we want to use
 			0);    // Offset to add to each index when looking up vertices
-	}
+	} */
+
+	meshes[0].Draw();
 
 	{
 		ImGui::Render(); // Turns this frame’s UI into renderable triangles
