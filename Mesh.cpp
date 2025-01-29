@@ -1,7 +1,8 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize)
+Mesh::Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize)
 {
+	this->name = name;
 	CreateMesh(vertices, indices, vertSize, indexSize);
 }
 
@@ -13,13 +14,12 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::CreateMesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize)
+void Mesh::CreateMesh(Vertex* vertices, unsigned int* indices, int vertSize, int indexSize)
 {
 	// --- Create Vertex Buffer ---
 	{
 		// Set vertex count by finding the difference in memory from address
 		vertexCount = vertSize;
-		printf("Vertex Count: %d\n", vertexCount);
 
 		D3D11_BUFFER_DESC vbd = {};
 		vbd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -30,16 +30,15 @@ void Mesh::CreateMesh(Vertex vertices[], unsigned int indices[], unsigned int ve
 		vbd.StructureByteStride = 0;
 
 		D3D11_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pSysMem = vertices;
+		vertexData.pSysMem = &vertices[0];
 
-		Graphics::Device->CreateBuffer(&vbd, &vertexData, VertexBuffer.GetAddressOf());
+		Graphics::Device->CreateBuffer(&vbd, &vertexData, vertexBuffer.GetAddressOf());
 	}
 	
 	// --- Create Index Buffer ---
 	{
 		// Set index count by finding the difference in memory from address
 		indexCount = indexSize;
-		printf("Index Count: %d\n", indexCount);
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -50,30 +49,35 @@ void Mesh::CreateMesh(Vertex vertices[], unsigned int indices[], unsigned int ve
 		ibd.StructureByteStride = 0;
 
 		D3D11_SUBRESOURCE_DATA indexData = {};
-		indexData.pSysMem = indices;
+		indexData.pSysMem = &indices[0];
 
-		Graphics::Device->CreateBuffer(&ibd, &indexData, IndexBuffer.GetAddressOf());
+		Graphics::Device->CreateBuffer(&ibd, &indexData, indexBuffer.GetAddressOf());
 	}
 }
 
 ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer()
 {
-	return VertexBuffer;
+	return vertexBuffer;
 }
 
 ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer()
 {
-	return IndexBuffer;
+	return indexBuffer;
 }
 
-unsigned int Mesh::GetVertexCount()
+int Mesh::GetVertexCount()
 {
 	return vertexCount;
 }
 
-unsigned int Mesh::GetIndexCount()
+int Mesh::GetIndexCount()
 {
 	return indexCount;
+}
+
+const char* Mesh::GetName()
+{
+	return name;
 }
 
 void Mesh::Draw()
@@ -81,8 +85,20 @@ void Mesh::Draw()
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
-	Graphics::Context->IASetVertexBuffers(1, 0, VertexBuffer.GetAddressOf(), &stride, &offset);
-	Graphics::Context->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	if (Debug::ShowMesh) {
+		Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
+		Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	Graphics::Context->DrawIndexed(indexCount, 0, 0);
+		Graphics::Context->DrawIndexed(indexCount, 0, 0);
+	}
+
+	if (Debug::ShowWireFrame)
+	{
+		Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
+		Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+		Graphics::Context->DrawIndexed(indexCount, 0, 0);
+	}
 }

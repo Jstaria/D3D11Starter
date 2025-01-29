@@ -4,6 +4,7 @@
 #include <wrl/client.h>
 #include "Vertex.h"
 #include "Graphics.h"
+#include "Debug.h"
 
 using namespace DirectX;
 using namespace std;
@@ -13,20 +14,23 @@ class Mesh
 {
 private:
 	// --- Mesh Buffers ---
-	ComPtr<ID3D11Buffer> VertexBuffer;
-	ComPtr<ID3D11Buffer> IndexBuffer;
+	ComPtr<ID3D11Buffer> vertexBuffer;
+	ComPtr<ID3D11Buffer> indexBuffer;
 
 	// --- Mesh Counts ---
 	unsigned int vertexCount;
 	unsigned int indexCount;
 
+	// --- General ---
+	const char* name;
+
 	// --- Mesh Creation ---
-	void CreateMesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize);
+	void CreateMesh(Vertex* vertices, unsigned int* indices, int vertSize, int indexSize);
 	void LoadData(char filePath[]);
 
 public:
 	// --- Constructor ---
-	Mesh(Vertex vertices[], unsigned int indices[], unsigned int vertSize, unsigned int indexSize);
+	Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize);
 	Mesh(char* filePath);
 	Mesh();
 	~Mesh();
@@ -34,8 +38,11 @@ public:
 	// --- Mesh Getters ---
 	ComPtr<ID3D11Buffer> GetVertexBuffer();
 	ComPtr<ID3D11Buffer> GetIndexBuffer();
-	unsigned int GetVertexCount();
-	unsigned int GetIndexCount();
+	int GetVertexCount();
+	int GetIndexCount();
+	const char* GetName();
+
+	// --- General ---
 	void Draw();
 };
 

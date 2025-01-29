@@ -55,5 +55,6 @@ private:
 
 	// Temp Mesh Data
 	Mesh* meshes;
+	int meshesSize;
 };
 
