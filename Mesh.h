@@ -5,7 +5,7 @@
 #include "Vertex.h"
 #include "Graphics.h"
 #include "Debug.h"
-
+#include "MeshData.h"
 using namespace DirectX;
 using namespace std;
 using namespace Microsoft::WRL;
@@ -23,14 +23,18 @@ private:
 
 	// --- General ---
 	const char* name;
+	bool meshToggle;
+	bool wireFrameToggle;
 
 	// --- Mesh Creation ---
-	void CreateMesh(Vertex* vertices, unsigned int* indices, int vertSize, int indexSize);
-	void LoadData(char filePath[]);
+	void InitializeMesh(MeshData meshData);
+	void CreateMesh(MeshData meshData);
+	MeshData LoadData(char filePath[]);
 
 public:
-	// --- Constructor ---
+	// --- Constructors ---
 	Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize);
+	Mesh(MeshData meshData);
 	Mesh(char* filePath);
 	Mesh();
 	~Mesh();
@@ -41,6 +45,9 @@ public:
 	int GetVertexCount();
 	int GetIndexCount();
 	const char* GetName();
+
+	bool* GetToggleMesh();
+	bool* GetToggleWireFrame();
 
 	// --- General ---
 	void Draw();

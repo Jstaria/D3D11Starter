@@ -344,8 +344,29 @@ void Game::BuildUI(float deltaTime) {
 		// Toggle Debug UI
 		{
 			if (ImGui::CollapsingHeader("Debug Information")) {
+				ImGui::SetWindowFontScale(0.9f);
+				ImGui::Text("(Note: Each mesh can override this debug toggle)");
+				ImGui::SetWindowFontScale(1.0f);
 				ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
 				ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
+			}
+		}
+
+		// Mesh Data and Toggles
+		{
+			if (ImGui::CollapsingHeader("All Current Mesh Details")) {
+				for (int i = 0; i < meshesSize; i++)
+				{
+					if (ImGui::CollapsingHeader(meshes[i].GetName())) {
+						ImGui::Text("Triangles: %d", meshes[i].GetIndexCount() / 3);
+						ImGui::Text("Vertices: %d", meshes[i].GetVertexCount());
+						ImGui::Text("Indices: %d", meshes[i].GetIndexCount());
+
+						// Adding unique identifiers to each checkbox because ImGUI yelled at me
+						ImGui::Checkbox(("Show Wireframe##" + to_string(i)).c_str(), meshes[i].GetToggleWireFrame());
+						ImGui::Checkbox(("Show Mesh##" + to_string(i)).c_str(), meshes[i].GetToggleMesh());
+					}
+				}
 			}
 		}
 
@@ -382,17 +403,6 @@ void Game::BuildUI(float deltaTime) {
 		// Color picker for background
 		{
 			ImGui::ColorEdit4("Color Picker", color);
-		}
-
-		if (ImGui::CollapsingHeader("All Current Mesh Details")) {
-			for (int i = 0; i < meshesSize; i++)
-			{
-				if (ImGui::CollapsingHeader(meshes[i].GetName())) {
-					ImGui::Text("Triangles: %d", meshes[i].GetIndexCount() / 3);
-					ImGui::Text("Vertices: %d", meshes[i].GetVertexCount());
-					ImGui::Text("Indices: %d", meshes[i].GetIndexCount());
-				}
-			}
 		}
 	}
 

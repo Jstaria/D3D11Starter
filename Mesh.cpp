@@ -1,9 +1,27 @@
 #include "Mesh.h"
-
+/// <summary>
+/// Initializes mesh using low level mesh data
+/// </summary>
+/// <param name="name"></param>
+/// <param name="vertices"></param>
+/// <param name="indices"></param>
+/// <param name="vertSize"></param>
+/// <param name="indexSize"></param>
 Mesh::Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize)
 {
-	this->name = name;
-	CreateMesh(vertices, indices, vertSize, indexSize);
+	MeshData meshData = {};
+	meshData.indexSize = indexSize;
+	meshData.indices = indices;
+	meshData.name = name;
+	meshData.vertices = vertices;
+	meshData.vertSize = vertSize;
+
+	InitializeMesh(meshData);
+}
+
+Mesh::Mesh(MeshData meshData)
+{
+	InitializeMesh(meshData);
 }
 
 Mesh::Mesh()
@@ -13,13 +31,33 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {
 }
+/// <summary>
+/// Will always initialize common mesh components
+/// </summary>
+/// <param name="name"></param>
+/// <param name="vertices"></param>
+/// <param name="indices"></param>
+/// <param name="vertSize"></param>
+/// <param name="indexSize"></param>
+void Mesh::InitializeMesh(MeshData meshData)
+{
+	// Will set name and generate buffers for the mesh
+	this->name = meshData.name;
+	CreateMesh(meshData);
+	
+	// Make sure the default values 
+	// for each mesh don't override Debug values
 
-void Mesh::CreateMesh(Vertex* vertices, unsigned int* indices, int vertSize, int indexSize)
+	meshToggle = true;
+	wireFrameToggle = true;
+}
+
+void Mesh::CreateMesh(MeshData meshData)
 {
 	// --- Create Vertex Buffer ---
 	{
 		// Set vertex count by finding the difference in memory from address
-		vertexCount = vertSize;
+		vertexCount = meshData.vertSize;
 
 		D3D11_BUFFER_DESC vbd = {};
 		vbd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -30,15 +68,15 @@ void Mesh::CreateMesh(Vertex* vertices, unsigned int* indices, int vertSize, int
 		vbd.StructureByteStride = 0;
 
 		D3D11_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pSysMem = &vertices[0];
+		vertexData.pSysMem = &meshData.vertices[0];
 
 		Graphics::Device->CreateBuffer(&vbd, &vertexData, vertexBuffer.GetAddressOf());
 	}
-	
+
 	// --- Create Index Buffer ---
 	{
 		// Set index count by finding the difference in memory from address
-		indexCount = indexSize;
+		indexCount = meshData.indexSize;
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -49,7 +87,7 @@ void Mesh::CreateMesh(Vertex* vertices, unsigned int* indices, int vertSize, int
 		ibd.StructureByteStride = 0;
 
 		D3D11_SUBRESOURCE_DATA indexData = {};
-		indexData.pSysMem = &indices[0];
+		indexData.pSysMem = &meshData.indices[0];
 
 		Graphics::Device->CreateBuffer(&ibd, &indexData, indexBuffer.GetAddressOf());
 	}
@@ -80,25 +118,44 @@ const char* Mesh::GetName()
 	return name;
 }
 
+bool* Mesh::GetToggleMesh()
+{
+	return &meshToggle;
+}
+
+bool* Mesh::GetToggleWireFrame()
+{
+	return &wireFrameToggle;
+}
+
 void Mesh::Draw()
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
-	if (Debug::ShowMesh) {
-		Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
-		Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	// Will show mesh based on debug mesh toggle
+	if (meshToggle) {
 
-		Graphics::Context->DrawIndexed(indexCount, 0, 0);
+		// Will show mesh based on this mesh's toggle
+		if (Debug::ShowMesh) {
+			Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
+			Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+			Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+			Graphics::Context->DrawIndexed(indexCount, 0, 0);
+		}
 	}
 
-	if (Debug::ShowWireFrame)
+	// Will show WF based on debug mesh toggle
+	if (wireFrameToggle)
 	{
-		Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
-		Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		// Will show WF based on this WF's toggle
+		if (Debug::ShowWireFrame) {
+			Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
+			Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+			Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-		Graphics::Context->DrawIndexed(indexCount, 0, 0);
+			Graphics::Context->DrawIndexed(indexCount, 0, 0);
+		}
 	}
 }
