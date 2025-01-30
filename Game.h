@@ -4,6 +4,8 @@
 #include <wrl/client.h>
 #include <vector>
 #include "Mesh.h"
+#include "ExternalData.h"
+#include <DirectXMath.h>
 
 class Game
 {
@@ -56,5 +58,6 @@ private:
 	// Temp Mesh Data
 	Mesh* meshes;
 	int meshesSize;
+	ComPtr<ID3D11Buffer> constantBuffer;
 };
 

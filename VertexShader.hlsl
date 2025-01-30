@@ -31,6 +31,12 @@ struct VertexToPixel
 	float4 color			: COLOR;        // RGBA color
 };
 
+cbuffer ExternalData : register(b0)
+{
+    float4 tint;
+    float3 offset;
+};
+
 // --------------------------------------------------------
 // The entry point (main method) for our vertex shader
 // 
@@ -38,6 +44,7 @@ struct VertexToPixel
 // - Output is a single struct of data to pass down the pipeline
 // - Named "main" because that's the default the shader compiler looks for
 // --------------------------------------------------------
+/*
 VertexToPixel main( VertexShaderInput input )
 {
 	// Set up output struct
@@ -61,4 +68,16 @@ VertexToPixel main( VertexShaderInput input )
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)
 	return output;
+}
+*/
+VertexToPixel main(VertexShaderInput input)
+{
+	// Set up output struct
+    VertexToPixel output;
+
+    output.screenPosition = float4(input.localPosition + offset, 1.0f);
+
+    output.color = input.color * tint;
+
+    return output;
 }

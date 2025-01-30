@@ -74,6 +74,23 @@ void Game::Initialize()
 		Debug::ShowMesh = true;
 		Debug::ShowWireFrame = false;
 	}
+
+	// Create constant buffer 
+	{
+		unsigned int bufferSize = (sizeof(ExternalData) + 15) / 16 * 16;
+		D3D11_BUFFER_DESC cbDesc{};
+		cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbDesc.ByteWidth = bufferSize,
+		cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbDesc.MiscFlags = 0;
+		cbDesc.StructureByteStride = 0;
+		cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+		Graphics::Device->CreateBuffer(&cbDesc, 0, constantBuffer.GetAddressOf());
+
+		// Bind buffer
+		Graphics::Context->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+	}
 }
 
 
@@ -290,6 +307,27 @@ void Game::Draw(float deltaTime, float totalTime)
 		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	I still want to see this example ^ */
 
+	// Get Data
+	ExternalData data{};
+	data.tint = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	data.offset = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	// Map the buffer
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+
+	Graphics::Context->Map(
+		constantBuffer.Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mapped);
+
+	// Copy to GPU
+	memcpy(mapped.pData, &data, sizeof(ExternalData));
+
+	// Unmap data
+	Graphics::Context->Unmap(constantBuffer.Get(), 0);
+
 	for (int i = 0; i < meshesSize; i++)
 	{
 		meshes[i].Draw();
@@ -343,10 +381,14 @@ void Game::BuildUI(float deltaTime) {
 		{
 			if (ImGui::CollapsingHeader("Debug Information")) {
 				ImGui::SetWindowFontScale(0.9f);
-				ImGui::Text("(Note: Each mesh can override this debug toggle)");
+				ImGui::Text("(Note: Meshes override this debug toggle)");
 				ImGui::SetWindowFontScale(1.0f);
 				ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
 				ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
+				
+				{
+					// Try to plot graph
+				}
 			}
 		}
 
@@ -386,14 +428,16 @@ void Game::BuildUI(float deltaTime) {
 				getFrameTimer = .0525f;
 
 				curFPS = currentFPS;
-				curDT = deltaTime;
+				curDT = deltaTime * 1000;
 			}
 
 			std::snprintf(label, sizeof(label), "Current Framerate: %.1f\n", curFPS);
-			ImGui::PlotHistogram(label, frameValues.data(), frameValueCount, 0, nullptr, 0.0f, maxFrameValue, ImVec2(200, 100));
+			ImGui::Text(label);
+			ImGui::PlotHistogram("FPS", frameValues.data(), frameValueCount, 0, nullptr, 0.0f, maxFrameValue, ImVec2(200, 100));
 
-			std::snprintf(label, sizeof(label), "Current DeltaTime: %.5f\n", curDT);
-			ImGui::PlotHistogram(label, deltaValues.data(), frameValueCount, 0, nullptr, 0.0f, 0.01f, ImVec2(200, 100));
+			std::snprintf(label, sizeof(label), "Current DeltaTime: %.2f ms\n", curDT);
+			ImGui::Text(label);
+			ImGui::PlotHistogram("Delta", deltaValues.data(), frameValueCount, 0, nullptr, 0.0f, 0.01f, ImVec2(200, 100));
 
 			getFrameTimer -= deltaTime;
 		}
