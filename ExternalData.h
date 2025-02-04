@@ -6,6 +6,6 @@ using namespace DirectX;
 struct ExternalData
 {
 	XMFLOAT4 tint;
-	XMFLOAT3 offset;
+	XMFLOAT4X4 transform;
 };
 

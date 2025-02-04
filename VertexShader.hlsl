@@ -34,7 +34,7 @@ struct VertexToPixel
 cbuffer ExternalData : register(b0)
 {
     float4 tint;
-    float3 offset;
+    float4x4 transform;
 };
 
 // --------------------------------------------------------
@@ -75,7 +75,7 @@ VertexToPixel main(VertexShaderInput input)
 	// Set up output struct
     VertexToPixel output;
 
-    output.screenPosition = float4(input.localPosition + offset, 1.0f);
+    output.screenPosition = mul(transform, float4(input.localPosition, 1.0f));
 
     output.color = input.color * tint;
 

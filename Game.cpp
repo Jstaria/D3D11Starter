@@ -73,6 +73,8 @@ void Game::Initialize()
 
 		Debug::ShowMesh = true;
 		Debug::ShowWireFrame = false;
+		//transform = XMFLOAT3(0, 0, 0);
+		tint = XMFLOAT4(1, 1, 1, 1);
 	}
 
 	// Create constant buffer 
@@ -222,8 +224,8 @@ void Game::CreateGeometry()
 	unsigned int indices2[] = { 0, 1, 2};
 
 	meshesSize = 3;
-	meshes = new Mesh[meshesSize];
-	meshes[0] = Mesh("Base Triangle", vertices, indices, 4, 6);
+	meshes = new shared_ptr<Mesh>[meshesSize];
+	meshes[0] = make_shared<Mesh>("Base Triangle", vertices, indices, 4, 6);
 	
 	Vertex vertices2[] =
 	{
@@ -239,8 +241,8 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(+1.0f, -0.4f, +0.0f), XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f) },
 	};
 
-	meshes[1] = Mesh("TopLeft", vertices2, indices2, 3, 3);
-	meshes[2] = Mesh("BottomRight", vertices3, indices2, 3, 3);
+	meshes[1] = make_shared<Mesh>("TopLeft", vertices2, indices2, 3, 3);
+	meshes[2] = make_shared<Mesh>("BottomRight", vertices3, indices2, 3, 3);
 }
 
 
@@ -311,10 +313,17 @@ void Game::Draw(float deltaTime, float totalTime)
 		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	I still want to see this example ^ */
 
+	XMMATRIX rotZMat = XMMatrixRotationZ(sin(totalTime));
+	XMMATRIX trMat = XMMatrixTranslation(sin(totalTime), 0, 0);
+
+	XMMATRIX transformMat = XMMatrixMultiply(trMat, rotZMat);
+
+	XMStoreFloat4x4(&transform, transformMat);
+
 	// Get Data
 	ExternalData data{};
-	data.tint = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	data.offset = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	data.tint = tint;
+	data.transform = transform;
 
 	// Map the buffer
 	D3D11_MAPPED_SUBRESOURCE mapped{};
@@ -334,7 +343,7 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	for (int i = 0; i < meshesSize; i++)
 	{
-		meshes[i].Draw();
+		meshes[i]->Draw();
 	}
 
 	{
@@ -381,39 +390,6 @@ void Game::BuildUI(float deltaTime) {
 			}
 		}
 
-		// Toggle Debug UI
-		{
-			if (ImGui::CollapsingHeader("Debug Information")) {
-				ImGui::SetWindowFontScale(0.9f);
-				ImGui::Text("(Note: Meshes override this debug toggle)");
-				ImGui::SetWindowFontScale(1.0f);
-				ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
-				ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
-				
-				{
-					// Try to plot graph
-				}
-			}
-		}
-
-		// Mesh Data and Toggles
-		{
-			if (ImGui::CollapsingHeader("All Current Mesh Details")) {
-				for (int i = 0; i < meshesSize; i++)
-				{
-					if (ImGui::CollapsingHeader(meshes[i].GetName())) {
-						ImGui::Text("Triangles: %d", meshes[i].GetIndexCount() / 3);
-						ImGui::Text("Vertices: %d", meshes[i].GetVertexCount());
-						ImGui::Text("Indices: %d", meshes[i].GetIndexCount());
-
-						// Adding unique identifiers to each checkbox because ImGUI yelled at me
-						ImGui::Checkbox(("Show Wireframe##" + to_string(i)).c_str(), meshes[i].GetToggleWireFrame());
-						ImGui::Checkbox(("Show Mesh##" + to_string(i)).c_str(), meshes[i].GetToggleMesh());
-					}
-				}
-			}
-		}
-
 		// Current frame data
 		{
 			float currentFPS = ImGui::GetIO().Framerate;
@@ -448,10 +424,49 @@ void Game::BuildUI(float deltaTime) {
 
 		// Color picker for background
 		{
-			ImGui::ColorEdit4("Color Picker", color);
+			ImGui::ColorEdit4(("Color Picker##" + to_string(0)).c_str(), color);
+		}
+	}
+	// Toggle Debug UI
+	{
+		if (ImGui::CollapsingHeader("Debug Information")) {
+			ImGui::SetWindowFontScale(0.9f);
+			ImGui::Text("(Note: Meshes override this debug toggle)");
+			ImGui::SetWindowFontScale(1.0f);
+			ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
+			ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
+
+			{
+				// Try to plot graph
+				ImGui::Text("Simple Mesh Shader Var");
+				//float plot[3] = { transform.x, transform.y };
+				//ImGui::DragFloat2("Shader Offset", plot, .001f, -1, 1);
+				//transform = XMFLOAT3(plot);
+
+				float color[4] = { tint.x, tint.y, tint.z, tint.w };
+				ImGui::ColorEdit4("Color Picker", color);
+				tint = XMFLOAT4(color);
+			}
 		}
 	}
 
+	// Mesh Data and Toggles
+	{
+		if (ImGui::CollapsingHeader("All Current Mesh Details")) {
+			for (int i = 0; i < meshesSize; i++)
+			{
+				if (ImGui::CollapsingHeader(meshes[i]->GetName())) {
+					ImGui::Text("Triangles: %d", meshes[i]->GetIndexCount() / 3);
+					ImGui::Text("Vertices: %d", meshes[i]->GetVertexCount());
+					ImGui::Text("Indices: %d", meshes[i]->GetIndexCount());
+
+					// Adding unique identifiers to each checkbox because ImGUI yelled at me
+					ImGui::Checkbox(("Show Wireframe##" + to_string(i)).c_str(), meshes[i]->GetToggleWireFrame());
+					ImGui::Checkbox(("Show Mesh##" + to_string(i)).c_str(), meshes[i]->GetToggleMesh());
+				}
+			}
+		}
+	}
 	
 
 	ImGui::End();

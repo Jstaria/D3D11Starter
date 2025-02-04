@@ -5,6 +5,7 @@
 #include <vector>
 #include "Mesh.h"
 #include "ExternalData.h"
+#include <memory>
 #include <DirectXMath.h>
 
 class Game
@@ -56,8 +57,10 @@ private:
 	float curDT = 0;
 
 	// Temp Mesh Data
-	Mesh* meshes;
+	shared_ptr<Mesh>* meshes;
 	int meshesSize;
 	ComPtr<ID3D11Buffer> constantBuffer;
+	XMFLOAT4 tint;
+	XMFLOAT4X4 transform;
 };
 
