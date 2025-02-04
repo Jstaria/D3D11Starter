@@ -177,6 +177,8 @@ void Game::LoadShaders()
 			vertexShaderBlob->GetBufferSize(),		// Size of the shader code that uses this layout
 			inputLayout.GetAddressOf());			// Address of the resulting ID3D11InputLayout pointer
 	}
+
+	
 }
 
 
@@ -275,6 +277,8 @@ void Game::Update(float deltaTime, float totalTime)
 
 	// Build custom UI
 	BuildUI(deltaTime);
+
+	//printf("Mouse pos: {%d,%d}\n", Input::GetMouseX(), Input::GetMouseY());
 }
 
 

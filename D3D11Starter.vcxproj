@@ -171,6 +171,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="PathHelpers.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="ShaderHelper.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -191,6 +192,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="PathHelpers.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="ShaderHelper.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
