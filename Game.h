@@ -61,6 +61,8 @@ private:
 	int meshesSize;
 	ComPtr<ID3D11Buffer> constantBuffer;
 	XMFLOAT4 tint;
+	XMFLOAT3 offset;
+	float rotationZ;
 	XMFLOAT4X4 transform;
 };
 

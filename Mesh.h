@@ -25,11 +25,13 @@ private:
 	const char* name;
 	bool meshToggle;
 	bool wireFrameToggle;
+	Vertex center;
 
 	// --- Mesh Creation ---
 	void InitializeMesh(MeshData meshData);
 	void CreateMesh(MeshData meshData);
 	MeshData LoadData(char filePath[]);
+	void FindCenterOfMesh(MeshData meshData);
 
 public:
 	// --- Constructors ---
@@ -45,6 +47,8 @@ public:
 	int GetVertexCount();
 	int GetIndexCount();
 	const char* GetName();
+
+	Vertex GetCenter();
 
 	bool* GetToggleMesh();
 	bool* GetToggleWireFrame();

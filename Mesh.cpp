@@ -44,7 +44,8 @@ void Mesh::InitializeMesh(MeshData meshData)
 	// Will set name and generate buffers for the mesh
 	this->name = meshData.name;
 	CreateMesh(meshData);
-	
+	FindCenterOfMesh(meshData);
+
 	// Make sure the default values 
 	// for each mesh don't override Debug values
 
@@ -93,6 +94,41 @@ void Mesh::CreateMesh(MeshData meshData)
 	}
 }
 
+void Mesh::FindCenterOfMesh(MeshData meshData)
+{
+	Vertex* centers = new Vertex[meshData.indexSize / 3];
+
+	for (int i = 0; i < meshData.indexSize; i += 3)
+	{
+		Vertex v1 = meshData.vertices[meshData.indices[i + 0]];
+		Vertex v2 = meshData.vertices[meshData.indices[i + 1]];
+		Vertex v3 = meshData.vertices[meshData.indices[i + 2]];
+
+		Vertex c1{};
+		c1.Position = 
+			XMFLOAT3(
+				(v1.Position.x + v2.Position.x + v3.Position.x) / 3, 
+				(v1.Position.y + v2.Position.y + v3.Position.y) / 3, 
+				(v1.Position.z + v2.Position.z + v3.Position.z) / 3);
+		centers[(i / 3)] = c1;
+	}
+
+	Vertex c{};
+
+	for (int i = 0; i < meshData.indexSize / 3; i++)
+	{
+		c.Position.x += centers[i].Position.x;
+		c.Position.y += centers[i].Position.y;
+		c.Position.z += centers[i].Position.z;
+	}
+
+	c.Position.x /= (meshData.indexSize / 3);
+	c.Position.y /= (meshData.indexSize / 3);
+	c.Position.z /= (meshData.indexSize / 3);
+
+	center = c;
+}
+
 ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer()
 {
 	return vertexBuffer;
@@ -116,6 +152,11 @@ int Mesh::GetIndexCount()
 const char* Mesh::GetName()
 {
 	return name;
+}
+
+Vertex Mesh::GetCenter()
+{
+	return center;
 }
 
 bool* Mesh::GetToggleMesh()

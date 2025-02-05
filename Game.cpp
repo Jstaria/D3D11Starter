@@ -277,6 +277,8 @@ void Game::Update(float deltaTime, float totalTime)
 	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
 	Input::SetMouseCapture(io.WantCaptureMouse);
 
+	//Input::Update();
+
 	// Build custom UI
 	BuildUI(deltaTime);
 
@@ -313,10 +315,17 @@ void Game::Draw(float deltaTime, float totalTime)
 		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	I still want to see this example ^ */
 
-	XMMATRIX rotZMat = XMMatrixRotationZ(sin(totalTime));
-	XMMATRIX trMat = XMMatrixTranslation(sin(totalTime), 0, 0);
+	XMFLOAT3 center = meshes[1]->GetCenter().Position;
 
-	XMMATRIX transformMat = XMMatrixMultiply(trMat, rotZMat);
+	FXMVECTOR rotZAxis = XMVectorSet(0.0f,0.0f,1.0f,0.0f);
+
+	XMMATRIX rotZMat = XMMatrixRotationAxis(rotZAxis, rotationZ * 3.1415);
+	XMMATRIX trMat = XMMatrixTranslation(offset.x, offset.y, offset.z);
+	XMMATRIX trCenter = XMMatrixTranslation(-center.x, -center.y, -center.z);
+	XMMATRIX trBack = XMMatrixTranslation(center.x, center.y, center.z);
+
+	//XMMATRIX transformMat = XMMatrixMultiply(trCenter, XMMatrixMultiply(trMat, XMMatrixMultiply(rotZMat, trBack)));
+	XMMATRIX transformMat = XMMatrixMultiply(trBack, XMMatrixMultiply(XMMatrixMultiply(rotZMat, trCenter), trMat));
 
 	XMStoreFloat4x4(&transform, transformMat);
 
@@ -439,9 +448,11 @@ void Game::BuildUI(float deltaTime) {
 			{
 				// Try to plot graph
 				ImGui::Text("Simple Mesh Shader Var");
-				//float plot[3] = { transform.x, transform.y };
-				//ImGui::DragFloat2("Shader Offset", plot, .001f, -1, 1);
-				//transform = XMFLOAT3(plot);
+				float plot[3] = { offset.x, offset.y };
+				ImGui::DragFloat2("Shader Offset", plot, .001f, -1, 1);
+				offset = XMFLOAT3(plot);
+
+				ImGui::DragFloat("Shader Rotation", &rotationZ, .001f, -1, 1);
 
 				float color[4] = { tint.x, tint.y, tint.z, tint.w };
 				ImGui::ColorEdit4("Color Picker", color);
