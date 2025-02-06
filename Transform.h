@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "ImgUtil.h"
 #include <wrl/client.h>
+#include "Window.h"
 
 class Transform
 {
@@ -17,6 +18,7 @@ private:
 
 	// -=| Matrix |=-
 	DirectX::XMFLOAT4X4 worldMatrix;
+	DirectX::XMFLOAT4X4 worldInverseTransposeMatrix;
 	bool dirty;
 
 public:
@@ -30,10 +32,10 @@ public:
 	void SetScale(DirectX::XMFLOAT3 scale);
 
 	DirectX::XMFLOAT3 GetPosition();
-	XMFLOAT3 GetPitchYawRoll(); // XMFLOAT4 GetRotation() for quaternion
-	XMFLOAT3 GetScale();
-	XMFLOAT4X4 GetWorldMatrix();
-	XMFLOAT4X4 GetWorldInverseTransposeMatrix();
+	DirectX::XMFLOAT3 GetPitchYawRoll(); // XMFLOAT4 GetRotation() for quaternion
+	DirectX::XMFLOAT3 GetScale();
+	DirectX::XMFLOAT4X4 GetWorldMatrix();
+	DirectX::XMFLOAT4X4 GetWorldInverseTransposeMatrix();
 
 	void MoveAbsolute(float x, float y, float z); // Based on world axis
 	void MoveAbsolute(DirectX::XMFLOAT3 offset);

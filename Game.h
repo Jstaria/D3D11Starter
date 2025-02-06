@@ -57,12 +57,12 @@ private:
 	float curDT = 0;
 
 	// Temp Mesh Data
-	shared_ptr<Mesh>* meshes;
+	std::shared_ptr<Mesh>* meshes;
 	int meshesSize;
-	ComPtr<ID3D11Buffer> constantBuffer;
-	XMFLOAT4 tint;
-	XMFLOAT3 offset;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
+	DirectX::XMFLOAT4 tint;
+	DirectX::XMFLOAT3 offset;
 	float rotationZ;
-	XMFLOAT4X4 transform;
+	DirectX::XMFLOAT4X4 transform;
 };
 

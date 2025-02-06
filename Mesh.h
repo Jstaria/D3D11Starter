@@ -6,16 +6,13 @@
 #include "Graphics.h"
 #include "Debug.h"
 #include "MeshData.h"
-using namespace DirectX;
-using namespace std;
-using namespace Microsoft::WRL;
 
 class Mesh
 {
 private:
 	// --- Mesh Buffers ---
-	ComPtr<ID3D11Buffer> vertexBuffer;
-	ComPtr<ID3D11Buffer> indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 
 	// --- Mesh Counts ---
 	unsigned int vertexCount;
@@ -42,8 +39,8 @@ public:
 	~Mesh();
 
 	// --- Mesh Getters ---
-	ComPtr<ID3D11Buffer> GetVertexBuffer();
-	ComPtr<ID3D11Buffer> GetIndexBuffer();
+	Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer();
+	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer();
 	int GetVertexCount();
 	int GetIndexCount();
 	const char* GetName();

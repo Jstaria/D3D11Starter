@@ -1,4 +1,9 @@
 #include "Mesh.h"
+
+using namespace DirectX;
+using namespace std;
+using namespace Microsoft::WRL;
+
 /// <summary>
 /// Initializes mesh using low level mesh data
 /// </summary>

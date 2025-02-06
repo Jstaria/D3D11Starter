@@ -5,9 +5,12 @@ using namespace DirectX;
 Transform::Transform() :
 	position(0, 0, 0),
 	rotation(0, 0, 0),
-	scale(1, 1, 1)
+	scale(1, 1, 1),
+	dirty(false)
 {
 	XMStoreFloat4x4(&worldMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&worldInverseTransposeMatrix, XMMatrixIdentity());
+	XMStoreFloat4(&quaternion, XMQuaternionIdentity());
 }
 
 void Transform::SetPosition(float x, float y, float z)
@@ -64,11 +67,18 @@ XMFLOAT3 Transform::GetScale()
 XMFLOAT4X4 Transform::GetWorldMatrix()
 {
 	if (dirty) {
-		XMMATRIX trMatrix = XMMatrixTranslationFromVector(XMLoadFloat3(&position));
-		XMMATRIX rotMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation));
-		XMMATRIX scMatrix = XMMatrixScalingFromVector(XMLoadFloat3(&scale));
+		XMStoreFloat4(&quaternion, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)));
 
-		XMStoreFloat4x4(&worldMatrix, XMMatrixMultiply(XMMatrixMultiply(scMatrix, rotMatrix), trMatrix));
+		XMMATRIX trMatrix = XMMatrixTranslationFromVector(XMLoadFloat3(&position));
+		XMMATRIX rotMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&quaternion));
+		XMMATRIX scMatrix = XMMatrixScalingFromVector(XMLoadFloat3(&scale));
+		XMMATRIX aspectScaleMatrix = XMMatrixScaling((float)Window::Height() / (float)Window::Width(), 1, 1);
+
+		//XMMATRIX world = XMMatrixMultiply(XMMatrixMultiply(scMatrix, rotMatrix), trMatrix); // No aspect ratio correction
+		XMMATRIX world = XMMatrixMultiply(XMMatrixMultiply(XMMatrixMultiply(scMatrix, rotMatrix), trMatrix), aspectScaleMatrix);
+
+		XMStoreFloat4x4(&worldMatrix, world);
+		XMStoreFloat4x4(&worldInverseTransposeMatrix, XMMatrixInverse(0, XMMatrixTranspose(world)));
 
 		dirty = false;
 	}

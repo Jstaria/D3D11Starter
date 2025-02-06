@@ -17,8 +17,9 @@
 #include <d3dcompiler.h>
 #include "Transform.h"
 
-// For the DirectX Math library
 using namespace DirectX;
+using namespace std;
+using namespace Microsoft::WRL;
 
 // --------------------------------------------------------
 // Called once per program, after the window and graphics API
