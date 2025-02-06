@@ -173,6 +173,7 @@
     <ClCompile Include="PathHelpers.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="ShaderHelper.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +195,7 @@
     <ClInclude Include="PathHelpers.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="ShaderHelper.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

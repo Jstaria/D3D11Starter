@@ -320,3 +320,18 @@ LRESULT Window::ProcessMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	// Let Windows handle any messages we're not touching
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
+
+void Window::AdjustWindowSize(unsigned int width, unsigned int height)
+{
+	windowWidth = width;
+	windowHeight = height;
+
+	RECT clientRect;
+	SetRect(&clientRect, 0, 0, width, height);
+	AdjustWindowRect(
+		&clientRect,
+		WS_OVERLAPPEDWINDOW,	
+		false);					
+
+	// Doesn't resize yet
+}

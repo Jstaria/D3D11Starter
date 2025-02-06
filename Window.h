@@ -33,4 +33,6 @@ namespace Window
 		UINT uMsg,
 		WPARAM wParam,
 		LPARAM lParam);
+
+	void AdjustWindowSize(unsigned int width, unsigned  int height);
 }

@@ -15,6 +15,7 @@
 // Needed for a helper function to load pre-compiled shader files
 #pragma comment(lib, "d3dcompiler.lib")
 #include <d3dcompiler.h>
+#include "Transform.h"
 
 // For the DirectX Math library
 using namespace DirectX;
@@ -315,11 +316,11 @@ void Game::Draw(float deltaTime, float totalTime)
 		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	I still want to see this example ^ */
 
-	XMFLOAT3 center = meshes[1]->GetCenter().Position;
+	XMFLOAT3 center = meshes[0]->GetCenter().Position;
 
 	FXMVECTOR rotZAxis = XMVectorSet(0.0f,0.0f,1.0f,0.0f);
 
-	XMMATRIX rotZMat = XMMatrixRotationAxis(rotZAxis, rotationZ * 3.1415);
+	XMMATRIX rotZMat = XMMatrixRotationAxis(rotZAxis, (float)(rotationZ * 3.1415f));
 	XMMATRIX trMat = XMMatrixTranslation(offset.x, offset.y, offset.z);
 	XMMATRIX trCenter = XMMatrixTranslation(-center.x, -center.y, -center.z);
 	XMMATRIX trBack = XMMatrixTranslation(center.x, center.y, center.z);
@@ -329,10 +330,15 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	XMStoreFloat4x4(&transform, transformMat);
 
+	Transform tr;
+
+	tr.SetPosition(offset);
+	tr.SetRotation(XMFLOAT3(0,0,rotationZ * 3.1415f));
+
 	// Get Data
 	ExternalData data{};
 	data.tint = tint;
-	data.transform = transform;
+	data.transform = tr.GetWorldMatrix();
 
 	// Map the buffer
 	D3D11_MAPPED_SUBRESOURCE mapped{};
@@ -444,6 +450,10 @@ void Game::BuildUI(float deltaTime) {
 			ImGui::SetWindowFontScale(1.0f);
 			ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
 			ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
+			
+			if (ImGui::Button("Change Window Size: 720x720")) {
+				Window::AdjustWindowSize(720, 720);
+			}
 
 			{
 				// Try to plot graph
