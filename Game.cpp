@@ -76,25 +76,10 @@ void Game::Initialize()
 		Debug::ShowMesh = true;
 		Debug::ShowWireFrame = false;
 		//transform = XMFLOAT3(0, 0, 0);
-		tint = XMFLOAT4(1, 1, 1, 1);
+		//tint = XMFLOAT4(1, 1, 1, 1);
 	}
 
-	// Create constant buffer 
-	{
-		unsigned int bufferSize = (sizeof(ExternalData) + 15) / 16 * 16;
-		D3D11_BUFFER_DESC cbDesc{};
-		cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbDesc.ByteWidth = bufferSize,
-		cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbDesc.MiscFlags = 0;
-		cbDesc.StructureByteStride = 0;
-		cbDesc.Usage = D3D11_USAGE_DYNAMIC;
-
-		Graphics::Device->CreateBuffer(&cbDesc, 0, constantBuffer.GetAddressOf());
-
-		// Bind buffer
-		Graphics::Context->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
-	}
+	Renderer::Init();
 }
 
 
@@ -182,7 +167,7 @@ void Game::LoadShaders()
 			inputLayout.GetAddressOf());			// Address of the resulting ID3D11InputLayout pointer
 	}
 
-	
+
 }
 
 
@@ -222,29 +207,54 @@ void Game::CreateGeometry()
 	// - Indices are technically not required if the vertices are in the buffer 
 	//    in the correct order and each one will be used exactly once
 	// - But just to see how it's done...
-	unsigned int indices[] = { 0, 1, 2, 0, 2, 3};
-	unsigned int indices2[] = { 0, 1, 2};
+	unsigned int indices[] = { 0, 1, 2, 0, 2, 3 };
+	unsigned int indices2[] = { 0, 1, 2 };
 
 	meshesSize = 3;
 	meshes = new shared_ptr<Mesh>[meshesSize];
 	meshes[0] = make_shared<Mesh>("Base Triangle", vertices, indices, 4, 6);
-	
+
 	Vertex vertices2[] =
 	{
-		{ XMFLOAT3(-1.0f, +1.0f, +0.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(-0.4f, +1.0f, +0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(-1.0f, +0.4f, +0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(+0.5f, +0.0f, +0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(+0.0f, -0.5f, +0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 	};
-	
+
 	Vertex vertices3[] =
 	{
-		{ XMFLOAT3(+1.0f, -1.0f, +0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(+0.4f, -1.0f, +0.0f), XMFLOAT4(0.5f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(+1.0f, -0.4f, +0.0f), XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f) },
+		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, +0.0f, +0.0f), XMFLOAT4(0.5f, 0.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(+0.0f, +0.5f, +0.0f), XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f) },
 	};
 
 	meshes[1] = make_shared<Mesh>("TopLeft", vertices2, indices2, 3, 3);
 	meshes[2] = make_shared<Mesh>("BottomRight", vertices3, indices2, 3, 3);
+
+	gameObjsSize = 5;
+
+	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
+
+	float Degree90 = 90.0f * (3.1415f / 180.0f);
+
+	gameObjs[0] = make_shared<GameObject>("MiddleSquare", meshes[0], nullptr);
+	gameObjs[0].get()->GetTransform().get()->SetRotation(0, 0, Degree90 / 2);
+	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], nullptr);
+	gameObjs[1].get()->GetTransform().get()->SetPosition(-1.0f, 1.0f, 0);
+	gameObjs[2] = make_shared<GameObject>("TopRight", meshes[2], nullptr);
+	gameObjs[2].get()->GetTransform().get()->SetPosition(1.0f, 1.0f, 0);
+	gameObjs[2].get()->GetTransform().get()->SetRotation(0, 0, Degree90);
+	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], nullptr);
+	gameObjs[3].get()->GetTransform().get()->SetPosition(1.0f, -1.0f, 0);
+	gameObjs[3].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
+	gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr);
+	gameObjs[4].get()->GetTransform().get()->SetPosition(-1.0f, -1.0f, 0);
+	gameObjs[4].get()->GetTransform().get()->SetRotation(0, 0, -Degree90);
+
+	for (int i = 0; i < gameObjsSize; i++)
+	{
+		Renderer::AddObjectToRender(gameObjs[i]);
+	}
 }
 
 
@@ -254,6 +264,10 @@ void Game::CreateGeometry()
 // --------------------------------------------------------
 void Game::OnResize()
 {
+	for (int i = 0; i < gameObjsSize; i++)
+	{
+		gameObjs[i].get()->GetTransform().get()->SetDirty(true);
+	}
 }
 
 
@@ -279,7 +293,26 @@ void Game::Update(float deltaTime, float totalTime)
 	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
 	Input::SetMouseCapture(io.WantCaptureMouse);
 
-	//Input::Update();
+	float primaryFrequency = 3.0f; 
+	float secondaryFrequency = 2.0f; 
+	float primaryAmplitude = 1.0f;
+	float secondaryAmplitude = 0.75f;
+
+	float beat = primaryAmplitude * sin(2 * 3.1415f * primaryFrequency * totalTime);
+	beat += secondaryAmplitude * sin(2 * 3.1415f * secondaryFrequency * totalTime);
+
+	float noise = 0.1f * ((float)rand() / RAND_MAX - 0.5f);
+	beat += noise;
+	beat = (beat + 1.0f) * 0.25f + 0.5f;
+
+	int speed = 10;
+
+	Transform* transform = gameObjs[0].get()->GetTransform().get();
+	XMFLOAT3 pyr = transform->GetPitchYawRoll();
+	XMFLOAT3 scale = transform->GetScale();
+	transform->SetRotation(pyr.x, pyr.y , totalTime + beat / 2);
+	transform->SetScale(beat, beat, scale.z);
+	
 
 	// Build custom UI
 	BuildUI(deltaTime);
@@ -298,69 +331,11 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - At the beginning of Game::Draw() before drawing *anything*
 	{
 		// Clear the back buffer (erase what's on screen) and depth buffer
-		Graphics::Context->ClearRenderTargetView(Graphics::BackBufferRTV.Get(),	color);
+		Graphics::Context->ClearRenderTargetView(Graphics::BackBufferRTV.Get(), color);
 		Graphics::Context->ClearDepthStencilView(Graphics::DepthBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
-	// DRAW geometry
-	// - These steps are generally repeated for EACH object you draw
-	// - Other Direct3D calls will also be necessary to do more complex things
-	/* {
-		// Set buffers in the input assembler (IA) stage
-		//  - Do this ONCE PER OBJECT, since each object may have different geometry
-		//  - For this demo, this step *could* simply be done once during Init()
-		//  - However, this needs to be done between EACH DrawIndexed() call
-		//     when drawing different geometry, so it's here as an example
-		UINT stride = sizeof(Vertex);
-		UINT offset = 0;
-		Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	I still want to see this example ^ */
-
-	XMFLOAT3 center = meshes[0]->GetCenter().Position;
-
-	FXMVECTOR rotZAxis = XMVectorSet(0.0f,0.0f,1.0f,0.0f);
-
-	XMMATRIX rotZMat = XMMatrixRotationAxis(rotZAxis, (float)(rotationZ * 3.1415f));
-	XMMATRIX trMat = XMMatrixTranslation(offset.x, offset.y, offset.z);
-	XMMATRIX trCenter = XMMatrixTranslation(-center.x, -center.y, -center.z);
-	XMMATRIX trBack = XMMatrixTranslation(center.x, center.y, center.z);
-
-	//XMMATRIX transformMat = XMMatrixMultiply(trCenter, XMMatrixMultiply(trMat, XMMatrixMultiply(rotZMat, trBack)));
-	XMMATRIX transformMat = XMMatrixMultiply(trBack, XMMatrixMultiply(XMMatrixMultiply(rotZMat, trCenter), trMat));
-
-	XMStoreFloat4x4(&transform, transformMat);
-
-	Transform tr;
-
-	tr.SetPosition(offset);
-	tr.SetRotation(XMFLOAT3(0,0,rotationZ * 3.1415f));
-
-	// Get Data
-	ExternalData data{};
-	data.tint = tint;
-	data.transform = tr.GetWorldMatrix();
-
-	// Map the buffer
-	D3D11_MAPPED_SUBRESOURCE mapped{};
-
-	Graphics::Context->Map(
-		constantBuffer.Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mapped);
-
-	// Copy to GPU
-	memcpy(mapped.pData, &data, sizeof(ExternalData));
-
-	// Unmap data
-	Graphics::Context->Unmap(constantBuffer.Get(), 0);
-
-	for (int i = 0; i < meshesSize; i++)
-	{
-		meshes[i]->Draw();
-	}
+	Renderer::DrawObjects();
 
 	{
 		ImGui::Render(); // Turns this frame’s UI into renderable triangles
@@ -451,23 +426,19 @@ void Game::BuildUI(float deltaTime) {
 			ImGui::SetWindowFontScale(1.0f);
 			ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
 			ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
-			
+
 			if (ImGui::Button("Change Window Size: 720x720")) {
 				Window::AdjustWindowSize(720, 720);
 			}
+		}
+	}
 
+	// Game Object Data
+	{
+		if (ImGui::CollapsingHeader("All Current GameObject Details")) {
+			for (int i = 0; i < gameObjsSize; i++)
 			{
-				// Try to plot graph
-				ImGui::Text("Simple Mesh Shader Var");
-				float plot[3] = { offset.x, offset.y };
-				ImGui::DragFloat2("Shader Offset", plot, .001f, -1, 1);
-				offset = XMFLOAT3(plot);
-
-				ImGui::DragFloat("Shader Rotation", &rotationZ, .001f, -1, 1);
-
-				float color[4] = { tint.x, tint.y, tint.z, tint.w };
-				ImGui::ColorEdit4("Color Picker", color);
-				tint = XMFLOAT4(color);
+				gameObjs[i].get()->DrawImGui();
 			}
 		}
 	}
@@ -477,7 +448,7 @@ void Game::BuildUI(float deltaTime) {
 		if (ImGui::CollapsingHeader("All Current Mesh Details")) {
 			for (int i = 0; i < meshesSize; i++)
 			{
-				if (ImGui::CollapsingHeader(meshes[i]->GetName())) {
+				if (ImGui::TreeNode(meshes[i]->GetName())) {
 					ImGui::Text("Triangles: %d", meshes[i]->GetIndexCount() / 3);
 					ImGui::Text("Vertices: %d", meshes[i]->GetVertexCount());
 					ImGui::Text("Indices: %d", meshes[i]->GetIndexCount());
@@ -485,11 +456,12 @@ void Game::BuildUI(float deltaTime) {
 					// Adding unique identifiers to each checkbox because ImGUI yelled at me
 					ImGui::Checkbox(("Show Wireframe##" + to_string(i)).c_str(), meshes[i]->GetToggleWireFrame());
 					ImGui::Checkbox(("Show Mesh##" + to_string(i)).c_str(), meshes[i]->GetToggleMesh());
+					ImGui::TreePop();
 				}
 			}
 		}
 	}
-	
+
 
 	ImGui::End();
 }

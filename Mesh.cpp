@@ -36,6 +36,7 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {
 }
+
 /// <summary>
 /// Will always initialize common mesh components
 /// </summary>

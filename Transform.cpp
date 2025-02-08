@@ -6,7 +6,7 @@ Transform::Transform() :
 	position(0, 0, 0),
 	rotation(0, 0, 0),
 	scale(1, 1, 1),
-	dirty(false)
+	dirty(true)
 {
 	XMStoreFloat4x4(&worldMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&worldInverseTransposeMatrix, XMMatrixIdentity());
@@ -49,6 +49,11 @@ void Transform::SetScale(DirectX::XMFLOAT3 scale)
 	dirty = true;
 }
 
+void Transform::SetDirty(bool value)
+{
+	dirty = value;
+}
+
 DirectX::XMFLOAT3 Transform::GetPosition()
 {
 	return position;
@@ -88,7 +93,12 @@ XMFLOAT4X4 Transform::GetWorldMatrix()
 
 XMFLOAT4X4 Transform::GetWorldInverseTransposeMatrix()
 {
-	return XMFLOAT4X4();
+	return worldInverseTransposeMatrix;
+}
+
+bool Transform::GetDirty()
+{
+	return dirty;
 }
 
 void Transform::MoveAbsolute(float x, float y, float z)

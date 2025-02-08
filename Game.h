@@ -4,9 +4,9 @@
 #include <wrl/client.h>
 #include <vector>
 #include "Mesh.h"
-#include "ExternalData.h"
 #include <memory>
 #include <DirectXMath.h>
+#include "Renderer.h"
 
 class Game
 {
@@ -58,11 +58,13 @@ private:
 
 	// Temp Mesh Data
 	std::shared_ptr<Mesh>* meshes;
+
+	std::shared_ptr<GameObject>* gameObjs;
+
 	int meshesSize;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
-	DirectX::XMFLOAT4 tint;
-	DirectX::XMFLOAT3 offset;
-	float rotationZ;
-	DirectX::XMFLOAT4X4 transform;
+	int gameObjsSize;
+	// Add this constant buffer to the renderer to allow the transform to bind data via it
+	
+
 };
 

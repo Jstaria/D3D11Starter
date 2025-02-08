@@ -30,12 +30,14 @@ public:
 	void SetRotation(DirectX::XMFLOAT3 rotation); // XMFLOAT4 for quaternion
 	void SetScale(float x, float y, float z);
 	void SetScale(DirectX::XMFLOAT3 scale);
+	void SetDirty(bool value);
 
 	DirectX::XMFLOAT3 GetPosition();
 	DirectX::XMFLOAT3 GetPitchYawRoll(); // XMFLOAT4 GetRotation() for quaternion
 	DirectX::XMFLOAT3 GetScale();
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
 	DirectX::XMFLOAT4X4 GetWorldInverseTransposeMatrix();
+	bool GetDirty();
 
 	void MoveAbsolute(float x, float y, float z); // Based on world axis
 	void MoveAbsolute(DirectX::XMFLOAT3 offset);
