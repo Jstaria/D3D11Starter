@@ -212,7 +212,7 @@ void Game::CreateGeometry()
 
 	meshesSize = 3;
 	meshes = new shared_ptr<Mesh>[meshesSize];
-	meshes[0] = make_shared<Mesh>("Base Triangle", vertices, indices, 4, 6);
+	meshes[0] = make_shared<Mesh>("Square", vertices, indices, 4, 6);
 
 	Vertex vertices2[] =
 	{
@@ -228,8 +228,8 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(+0.0f, +0.5f, +0.0f), XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f) },
 	};
 
-	meshes[1] = make_shared<Mesh>("TopLeft", vertices2, indices2, 3, 3);
-	meshes[2] = make_shared<Mesh>("BottomRight", vertices3, indices2, 3, 3);
+	meshes[1] = make_shared<Mesh>("TriangleOne", vertices2, indices2, 3, 3);
+	meshes[2] = make_shared<Mesh>("TriangleTwo", vertices3, indices2, 3, 3);
 
 	gameObjsSize = 5;
 
@@ -239,14 +239,16 @@ void Game::CreateGeometry()
 
 	gameObjs[0] = make_shared<GameObject>("MiddleSquare", meshes[0], nullptr);
 	gameObjs[0].get()->GetTransform().get()->SetRotation(0, 0, Degree90 / 2);
-	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], nullptr);
-	gameObjs[1].get()->GetTransform().get()->SetPosition(-1.0f, 1.0f, 0);
+
+	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], gameObjs[0]);
+	gameObjs[1].get()->GetTransform().get()->SetPosition(-0.5f, 0.5f, 0);
+	gameObjs[1].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
 	gameObjs[2] = make_shared<GameObject>("TopRight", meshes[2], nullptr);
 	gameObjs[2].get()->GetTransform().get()->SetPosition(1.0f, 1.0f, 0);
 	gameObjs[2].get()->GetTransform().get()->SetRotation(0, 0, Degree90);
-	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], nullptr);
-	gameObjs[3].get()->GetTransform().get()->SetPosition(1.0f, -1.0f, 0);
-	gameObjs[3].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
+	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0]);
+	gameObjs[3].get()->GetTransform().get()->SetPosition(0.5f, -0.5f, 0);
+	//gameObjs[3].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
 	gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr);
 	gameObjs[4].get()->GetTransform().get()->SetPosition(-1.0f, -1.0f, 0);
 	gameObjs[4].get()->GetTransform().get()->SetRotation(0, 0, -Degree90);
@@ -293,10 +295,10 @@ void Game::Update(float deltaTime, float totalTime)
 	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
 	Input::SetMouseCapture(io.WantCaptureMouse);
 
-	float primaryFrequency = 3.0f; 
+	float primaryFrequency = 4.0f; 
 	float secondaryFrequency = 2.0f; 
-	float primaryAmplitude = 1.0f;
-	float secondaryAmplitude = 0.75f;
+	float primaryAmplitude = 0.75f;
+	float secondaryAmplitude = 0.5f;
 
 	float beat = primaryAmplitude * sin(2 * 3.1415f * primaryFrequency * totalTime);
 	beat += secondaryAmplitude * sin(2 * 3.1415f * secondaryFrequency * totalTime);

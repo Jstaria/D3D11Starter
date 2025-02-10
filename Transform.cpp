@@ -16,37 +16,49 @@ Transform::Transform() :
 void Transform::SetPosition(float x, float y, float z)
 {
 	XMStoreFloat3(&position, XMVectorSet(x, y, z, 0.0f));
-	dirty = true;
+	NotifyOfCleanliness(true);
 }
 
 void Transform::SetPosition(DirectX::XMFLOAT3 position)
 {
 	XMStoreFloat3(&this->position, XMVECTOR(XMLoadFloat3(&position)));
-	dirty = true;
+	NotifyOfCleanliness(true);
 }
 
 void Transform::SetRotation(float p, float y, float r)
 {
 	XMStoreFloat3(&rotation, XMVectorSet(p, y, r, 0.0f));
-	dirty = true;
+	NotifyOfCleanliness(true);
 }
 
 void Transform::SetRotation(DirectX::XMFLOAT3 rotation)
 {
 	XMStoreFloat3(&this->rotation, XMVECTOR(XMLoadFloat3(&rotation)));
-	dirty = true;
+	NotifyOfCleanliness(true);
 }
 
 void Transform::SetScale(float x, float y, float z)
 {
 	XMStoreFloat3(&scale, XMVectorSet(x, y, z, 0.0f));
-	dirty = true;
+	NotifyOfCleanliness(true);
 }
 
 void Transform::SetScale(DirectX::XMFLOAT3 scale)
 {
 	XMStoreFloat3(&this->scale, XMVECTOR(XMLoadFloat3(&scale)));
-	dirty = true;
+	NotifyOfCleanliness(true);
+}
+void Transform::SetParentTransform(std::shared_ptr<Transform> transform)
+{
+	parentTransform = transform;
+	
+	if (transform != nullptr)
+		parentTransform.get()->SetChildTransform(this);
+}
+
+void Transform::SetChildTransform(Transform* transform)
+{
+	childTransforms.push_back(transform);
 }
 
 void Transform::SetDirty(bool value)
@@ -77,10 +89,15 @@ XMFLOAT4X4 Transform::GetWorldMatrix()
 		XMMATRIX trMatrix = XMMatrixTranslationFromVector(XMLoadFloat3(&position));
 		XMMATRIX rotMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&quaternion));
 		XMMATRIX scMatrix = XMMatrixScalingFromVector(XMLoadFloat3(&scale));
-		XMMATRIX aspectScaleMatrix = XMMatrixScaling((float)Window::Height() / (float)Window::Width(), 1, 1);
+		XMMATRIX parentMatrix = XMMatrixIdentity();
+
+		if (parentTransform != nullptr) {
+			XMFLOAT4X4 parent = parentTransform.get()->GetWorldMatrix();
+			parentMatrix = XMLoadFloat4x4(&parent);
+		}
 
 		//XMMATRIX world = XMMatrixMultiply(XMMatrixMultiply(scMatrix, rotMatrix), trMatrix); // No aspect ratio correction
-		XMMATRIX world = XMMatrixMultiply(XMMatrixMultiply(XMMatrixMultiply(scMatrix, rotMatrix), trMatrix), aspectScaleMatrix);
+		XMMATRIX world = XMMatrixMultiply(XMMatrixMultiply(XMMatrixMultiply(scMatrix, rotMatrix), trMatrix), parentMatrix);
 
 		XMStoreFloat4x4(&worldMatrix, world);
 		XMStoreFloat4x4(&worldInverseTransposeMatrix, XMMatrixInverse(0, XMMatrixTranspose(world)));
@@ -94,6 +111,11 @@ XMFLOAT4X4 Transform::GetWorldMatrix()
 XMFLOAT4X4 Transform::GetWorldInverseTransposeMatrix()
 {
 	return worldInverseTransposeMatrix;
+}
+
+std::shared_ptr<Transform> Transform::GetParentTransform()
+{
+	return parentTransform;
 }
 
 bool Transform::GetDirty()
@@ -137,4 +159,17 @@ void Transform::Scale(float x, float y, float z)
 void Transform::Scale(DirectX::XMFLOAT3 scale)
 {
 	XMStoreFloat3(&scale, XMVectorSet(this->scale.x * scale.x, this->scale.y * scale.y, this->scale.z * scale.z, 0.0f));
+}
+
+void Transform::NotifyOfCleanliness(bool success) {
+	dirty = true;
+
+	for (const auto& child : childTransforms) {
+		child->OnClean(success);
+	}
+}
+
+void Transform::OnClean(bool success)
+{
+	dirty = success;
 }

@@ -49,9 +49,14 @@ namespace Renderer {
 
 		void BindDataToDraw(Transform* tr, DirectX::XMFLOAT4 tint) {
 			// Get Data
+			XMMATRIX aspectScaleMatrix = XMMatrixScaling((float)Window::Height() / (float)Window::Width(), 1, 1);
+			
+			XMFLOAT4X4 trM = tr->GetWorldMatrix();
+			XMMATRIX transformMatrix = XMLoadFloat4x4(&trM);
+
 			ExternalData data{};
 			data.tint = tint;
-			data.transform = tr->GetWorldMatrix();
+			XMStoreFloat4x4(&data.transform, XMMatrixMultiply(transformMatrix, aspectScaleMatrix));
 
 			// Map the buffer
 			D3D11_MAPPED_SUBRESOURCE mapped{};

@@ -6,6 +6,9 @@
 #include "ImgUtil.h"
 #include <wrl/client.h>
 #include "Window.h"
+#include <memory>
+#include <vector>
+#include <functional>
 
 class Transform
 {
@@ -15,6 +18,12 @@ private:
 	DirectX::XMFLOAT3 scale;
 	DirectX::XMFLOAT4 quaternion;
 	DirectX::XMFLOAT3 rotation; //	float pitch; float yaw; float roll;
+
+	// -=| Parent Transform |=-
+	std::shared_ptr<Transform> parentTransform;
+	std::vector<Transform*> childTransforms;
+	void NotifyOfCleanliness(bool success);
+	void OnClean(bool success);
 
 	// -=| Matrix |=-
 	DirectX::XMFLOAT4X4 worldMatrix;
@@ -30,6 +39,8 @@ public:
 	void SetRotation(DirectX::XMFLOAT3 rotation); // XMFLOAT4 for quaternion
 	void SetScale(float x, float y, float z);
 	void SetScale(DirectX::XMFLOAT3 scale);
+	void SetParentTransform(std::shared_ptr<Transform> transform);
+	void SetChildTransform(Transform* transform);
 	void SetDirty(bool value);
 
 	DirectX::XMFLOAT3 GetPosition();
@@ -37,6 +48,7 @@ public:
 	DirectX::XMFLOAT3 GetScale();
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
 	DirectX::XMFLOAT4X4 GetWorldInverseTransposeMatrix();
+	std::shared_ptr<Transform> GetParentTransform();
 	bool GetDirty();
 
 	void MoveAbsolute(float x, float y, float z); // Based on world axis
@@ -48,3 +60,4 @@ public:
 	void Scale(float x, float y, float z);
 	void Scale(DirectX::XMFLOAT3 scale);
 };
+
