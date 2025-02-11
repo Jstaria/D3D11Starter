@@ -95,6 +95,9 @@ Game::~Game()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	delete[] meshes;
+	delete[] gameObjs;
 }
 
 
@@ -200,7 +203,7 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(+0.5f, +0.5f, +0.0f), magenta },
 		{ XMFLOAT3(+0.5f, -0.5f, +0.0f), yellow },
 		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), cyan },
-	};
+	}; 
 
 	// Set up indices, which tell us which vertices to use and in which order
 	// - This is redundant for just 3 vertices, but will be more useful later
@@ -295,8 +298,8 @@ void Game::Update(float deltaTime, float totalTime)
 	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
 	Input::SetMouseCapture(io.WantCaptureMouse);
 
-	float primaryFrequency = 4.0f; 
-	float secondaryFrequency = 2.0f; 
+	float primaryFrequency = 1.5f; 
+	float secondaryFrequency = 1.0f; 
 	float primaryAmplitude = 0.75f;
 	float secondaryAmplitude = 0.5f;
 
@@ -305,7 +308,7 @@ void Game::Update(float deltaTime, float totalTime)
 
 	float noise = 0.1f * ((float)rand() / RAND_MAX - 0.5f);
 	beat += noise;
-	beat = (beat + 1.0f) * 0.25f + 0.5f;
+	beat = (beat + 1.0f) * 0.15f + 0.5f;
 
 	int speed = 10;
 

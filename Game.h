@@ -63,8 +63,5 @@ private:
 
 	int meshesSize;
 	int gameObjsSize;
-	// Add this constant buffer to the renderer to allow the transform to bind data via it
-	
-
 };
 

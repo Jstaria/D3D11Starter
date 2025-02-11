@@ -32,6 +32,7 @@ private:
 
 public:
 	Transform();
+	~Transform();
 
 	void SetPosition(float x, float y, float z);
 	void SetPosition(DirectX::XMFLOAT3 position);

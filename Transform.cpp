@@ -13,6 +13,11 @@ Transform::Transform() :
 	XMStoreFloat4(&quaternion, XMQuaternionIdentity());
 }
 
+Transform::~Transform()
+{
+	
+}
+
 void Transform::SetPosition(float x, float y, float z)
 {
 	XMStoreFloat3(&position, XMVectorSet(x, y, z, 0.0f));
