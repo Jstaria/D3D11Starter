@@ -27,6 +27,8 @@ namespace Graphics
 
 // Getters
 bool Graphics::VsyncState() { return vsyncDesired || !supportsTearing || isFullscreen; }
+void Graphics::SetVsyncState(bool useVsync) { vsyncDesired = useVsync; }
+
 std::wstring Graphics::APIName() 
 { 
 	switch (featureLevel)

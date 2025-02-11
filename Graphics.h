@@ -25,6 +25,7 @@ namespace Graphics
 
 	// Getters
 	bool VsyncState();
+	void SetVsyncState(bool useVsync);
 	std::wstring APIName();
 
 	// General functions

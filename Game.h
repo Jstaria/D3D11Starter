@@ -46,12 +46,14 @@ private:
 
 	// UI Data
 	bool isImGuiDemoOpen;
+	bool isInVsync;
 	bool inDebugMode;
 	std::vector<float> frameValues;
 	std::vector<float> deltaValues;
 	int frameValueCount = 100;
 	float maxFrameValue = 0;
 	float getFrameTimer;
+	int getResetTimer;
 	float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 	float curFPS = 0;
 	float curDT = 0;

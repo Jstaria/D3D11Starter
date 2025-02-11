@@ -133,6 +133,8 @@ void Mesh::FindCenterOfMesh(MeshData meshData)
 	c.Position.z /= (meshData.indexSize / 3);
 
 	center = c;
+
+	delete[] centers;
 }
 
 ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer()

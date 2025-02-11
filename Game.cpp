@@ -80,6 +80,9 @@ void Game::Initialize()
 	}
 
 	Renderer::Init();
+
+	isInVsync = true;
+	Graphics::SetVsyncState(isInVsync);
 }
 
 
@@ -384,6 +387,10 @@ void Game::BuildUI(float deltaTime) {
 			if (isImGuiDemoOpen) {
 				ImGui::ShowDemoWindow(&isImGuiDemoOpen);
 			}
+
+			ImGui::Checkbox("Toggle Vsync", &isInVsync);
+
+			Graphics::SetVsyncState(isInVsync);
 		}
 
 		// Current frame data
@@ -392,8 +399,16 @@ void Game::BuildUI(float deltaTime) {
 
 			char label[64];
 
+			if (getResetTimer < 0) {
+				maxFrameValue = 0;
+			}
+
 			if (getFrameTimer < 0) {
-				maxFrameValue = currentFPS > maxFrameValue ? currentFPS : maxFrameValue;
+				
+				if (currentFPS > maxFrameValue) {
+					maxFrameValue = currentFPS;
+					getResetTimer = 100;
+				}
 
 				frameValues.insert(frameValues.begin(), currentFPS);
 				frameValues.pop_back();
@@ -402,6 +417,7 @@ void Game::BuildUI(float deltaTime) {
 				deltaValues.pop_back();
 
 				getFrameTimer = .0525f;
+				getResetTimer--;
 
 				curFPS = currentFPS;
 				curDT = deltaTime * 1000;
@@ -409,11 +425,11 @@ void Game::BuildUI(float deltaTime) {
 
 			std::snprintf(label, sizeof(label), "Current Framerate: %.1f\n", curFPS);
 			ImGui::Text(label);
-			ImGui::PlotHistogram("FPS", frameValues.data(), frameValueCount, 0, nullptr, 0.0f, maxFrameValue, ImVec2(200, 100));
+			ImGui::PlotHistogram("FPS", frameValues.data(), frameValueCount, 0, nullptr, 0.0f, maxFrameValue * 1.25f, ImVec2(200, 100));
 
 			std::snprintf(label, sizeof(label), "Current DeltaTime: %.2f ms\n", curDT);
 			ImGui::Text(label);
-			ImGui::PlotHistogram("Delta", deltaValues.data(), frameValueCount, 0, nullptr, 0.0f, 0.01f, ImVec2(200, 100));
+			ImGui::PlotHistogram("Delta", deltaValues.data(), frameValueCount, 0, nullptr, 0.0f, 0.02f, ImVec2(200, 100));
 
 			getFrameTimer -= deltaTime;
 		}

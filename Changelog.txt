@@ -1,0 +1,31 @@
+	--=:#| Changelog |#:=--
+
+- Assignment 03:
+	
+	### NEW ###
+	>   Added "Debug Information" header
+	>   Added "All Current Mesh Details" header
+	>   Added Mesh class
+		>   Toggle wireframe added
+		>   Toggle mesh added
+	
+	### CHANGES ###
+	>   Moved debug toggles under "Debug Information"
+	
+
+- Assignment 02:
+
+	### NEW ###
+	>   Added ImGui interface
+	>   Added "Host Details" to "Host Window"
+		>   Window client size added
+		>   Toggle Demo added
+		>   Toggle Debug added
+		>   Current FPS histogram added
+		>   Current DeltaTime histogram added
+		>   Background color picker added
+
+- Assignment 01:
+	
+	### NEW ###
+	>   Added starter code
