@@ -315,12 +315,24 @@ void Game::Update(float deltaTime, float totalTime)
 
 	int speed = 10;
 
-	Transform* transform = gameObjs[0].get()->GetTransform().get();
-	XMFLOAT3 pyr = transform->GetPitchYawRoll();
-	XMFLOAT3 scale = transform->GetScale();
-	transform->SetRotation(pyr.x, pyr.y , totalTime + beat / 2);
-	transform->SetScale(beat, beat, scale.z);
-	
+	{
+		Transform* transform = gameObjs[0].get()->GetTransform().get();
+		XMFLOAT3 pyr = transform->GetPitchYawRoll();
+		XMFLOAT3 scale = transform->GetScale();
+		transform->SetRotation(pyr.x, pyr.y, totalTime + beat / 2);
+		transform->SetScale(beat, beat, scale.z);
+	}
+
+	{
+		Transform* triTr1 = gameObjs[1].get()->GetTransform().get();
+		Transform* triTr2 = gameObjs[3].get()->GetTransform().get();
+
+		XMFLOAT3 scale = triTr1->GetScale();
+		float speed = 10;
+		triTr1->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
+		triTr2->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
+	}
+
 
 	// Build custom UI
 	BuildUI(deltaTime);

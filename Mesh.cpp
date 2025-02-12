@@ -35,6 +35,8 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
+	indexBuffer.ReleaseAndGetAddressOf();
+	vertexBuffer.ReleaseAndGetAddressOf();
 }
 
 /// <summary>

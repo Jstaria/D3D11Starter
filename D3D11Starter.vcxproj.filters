@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Structures">
       <UniqueIdentifier>{4877fdd7-84f8-46a7-8829-f2aa70e44001}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documents">
+      <UniqueIdentifier>{9e09a850-afbe-43aa-8691-43011d9713ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -178,5 +181,10 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Changelog.txt">
+      <Filter>Documents</Filter>
+    </Text>
   </ItemGroup>
 </Project>

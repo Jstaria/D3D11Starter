@@ -1,5 +1,31 @@
 	--=:#| Changelog |#:=--
 
+- Assignment 05:
+
+	### NEW ###
+	>   Added "Transform" class
+	>   Added "GameObject" class
+		>   Each GameObject has its own transforms which the renderer uses
+		>   Shared meshes among objects
+	>   Added global "Renderer" class
+	>   Added "Changelog" text file
+	>   Added Vsync toggle
+	>   Added each GameObject's transform information to "All Current GameObjects Details", including current mesh name
+	>   Added 5 GameObjects
+
+	### CHANGES ###
+	>   Moved mesh rendering to "Renderer"
+	>   Moved Constant Buffer mapping to "Renderer"
+	>   Updated "ExternalData" to use a 4x4 transform matrix instead of a Vec3 offset
+
+- Assignment 04:
+	
+	### NEW ###
+	>   Added "Physics" class for later use
+	>   Constant Buffer used for 2D transformations
+	>   Added 2D Offset to "Debug Information"
+	>   Added Tint to "Debug Information"
+
 - Assignment 03:
 	
 	### NEW ###
@@ -8,6 +34,8 @@
 	>   Added Mesh class
 		>   Toggle wireframe added
 		>   Toggle mesh added
+	>   Added "Shaderhelper" class for later use
+	>   Added 3 meshes
 	
 	### CHANGES ###
 	>   Moved debug toggles under "Debug Information"
