@@ -7,6 +7,7 @@
 #include <memory>
 #include <DirectXMath.h>
 #include "Renderer.h"
+#include "Camera.h"
 
 class Game
 {
@@ -62,6 +63,8 @@ private:
 	std::shared_ptr<Mesh>* meshes;
 
 	std::shared_ptr<GameObject>* gameObjs;
+
+	std::shared_ptr<Camera> cam;
 
 	int meshesSize;
 	int gameObjsSize;

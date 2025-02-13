@@ -8,6 +8,7 @@ namespace Renderer {
 	namespace {
 		std::vector<std::shared_ptr<GameObject>> sortedGameObjs;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
+		std::shared_ptr<Camera> currentCamera;
 
 		// Sorting method(s)
 		#pragma region Sort
@@ -52,11 +53,14 @@ namespace Renderer {
 			XMMATRIX aspectScaleMatrix = XMMatrixScaling((float)Window::Height() / (float)Window::Width(), 1, 1);
 			
 			XMFLOAT4X4 trM = tr->GetWorldMatrix();
-			XMMATRIX transformMatrix = XMLoadFloat4x4(&trM);
+			XMFLOAT4X4 projMatrix = currentCamera->GetProjection();
+			XMFLOAT4X4 viewMatrix = currentCamera->GetView();
 
 			ExternalData data{};
 			data.tint = tint;
-			XMStoreFloat4x4(&data.transform, XMMatrixMultiply(transformMatrix, aspectScaleMatrix));
+			XMStoreFloat4x4(&data.worldMatrix, XMLoadFloat4x4(&trM));
+			XMStoreFloat4x4(&data.projMatrix, XMLoadFloat4x4(&projMatrix));
+			XMStoreFloat4x4(&data.viewMatrix, XMLoadFloat4x4(&viewMatrix));
 
 			// Map the buffer
 			D3D11_MAPPED_SUBRESOURCE mapped{};
@@ -89,6 +93,11 @@ void Renderer::AddObjectToRender(std::shared_ptr<GameObject> gameObj)
 	sortedGameObjs.push_back(gameObj);
 
 	SortObjectsViaDistance();
+}
+
+void Renderer::SetCurrentCamera(std::shared_ptr<Camera> camera)
+{
+	currentCamera = camera;
 }
 
 void Renderer::DrawObjects()

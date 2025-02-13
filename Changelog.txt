@@ -1,5 +1,9 @@
 	--=:#| Changelog |#:=--
 
+- Assignment 06:
+	> Proposed changes:
+		> Add Generic Camera class and then an FPS class implementation
+
 - Assignment 05:
 
 	### NEW ###

@@ -18,17 +18,22 @@ private:
 	DirectX::XMFLOAT3 scale;
 	DirectX::XMFLOAT4 quaternion;
 	DirectX::XMFLOAT3 rotation; //	float pitch; float yaw; float roll;
+	DirectX::XMFLOAT3 up;
+	DirectX::XMFLOAT3 right;
+	DirectX::XMFLOAT3 forward;
 
 	// -=| Parent Transform |=-
 	std::shared_ptr<Transform> parentTransform;
 	std::vector<Transform*> childTransforms;
 	void NotifyOfCleanliness(bool success);
 	void OnClean(bool success);
+	void UpdateVectors();
 
 	// -=| Matrix |=-
 	DirectX::XMFLOAT4X4 worldMatrix;
 	DirectX::XMFLOAT4X4 worldInverseTransposeMatrix;
-	bool dirty;
+	bool matricesDirty;
+	bool vectorsDirty; // for up,right,forward
 
 public:
 	Transform();
@@ -51,6 +56,9 @@ public:
 	DirectX::XMFLOAT4X4 GetWorldInverseTransposeMatrix();
 	std::shared_ptr<Transform> GetParentTransform();
 	bool GetDirty();
+	DirectX::XMFLOAT3 GetUp();
+	DirectX::XMFLOAT3 GetRight();
+	DirectX::XMFLOAT3 GetForward();
 
 	void MoveAbsolute(float x, float y, float z); // Based on world axis
 	void MoveAbsolute(DirectX::XMFLOAT3 offset);

@@ -83,6 +83,16 @@ void Game::Initialize()
 
 	isInVsync = true;
 	Graphics::SetVsyncState(isInVsync);
+
+	cam = make_shared<Camera>(
+		XMFLOAT3(0, 0, -5.0f),
+		5.0f,
+		0.05f,
+		90,
+		Window::AspectRatio(),
+		0.01f,
+		1000.0f);
+	Renderer::SetCurrentCamera(cam);
 }
 
 
@@ -272,9 +282,8 @@ void Game::CreateGeometry()
 // --------------------------------------------------------
 void Game::OnResize()
 {
-	for (int i = 0; i < gameObjsSize; i++)
-	{
-		gameObjs[i].get()->GetTransform().get()->SetDirty(true);
+	if (cam != nullptr) {
+		cam->UpdateProjectionMatrix(Window::AspectRatio());
 	}
 }
 
@@ -337,6 +346,7 @@ void Game::Update(float deltaTime, float totalTime)
 	// Build custom UI
 	BuildUI(deltaTime);
 
+	cam->Update(deltaTime);
 	//printf("Mouse pos: {%d,%d}\n", Input::GetMouseX(), Input::GetMouseY());
 }
 

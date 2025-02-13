@@ -3,7 +3,9 @@
 
 struct ExternalData
 {
+	DirectX::XMFLOAT4X4 viewMatrix;
+	DirectX::XMFLOAT4X4 projMatrix;
+	DirectX::XMFLOAT4X4 worldMatrix;
 	DirectX::XMFLOAT4 tint;
-	DirectX::XMFLOAT4X4 transform;
 };
 
