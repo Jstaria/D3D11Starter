@@ -52,15 +52,15 @@ namespace Renderer {
 			// Get Data
 			XMMATRIX aspectScaleMatrix = XMMatrixScaling((float)Window::Height() / (float)Window::Width(), 1, 1);
 			
-			XMFLOAT4X4 trM = tr->GetWorldMatrix();
-			XMFLOAT4X4 projMatrix = currentCamera->GetProjection();
-			XMFLOAT4X4 viewMatrix = currentCamera->GetView();
+			XMFLOAT4X4 worldmatrix = tr->GetWorldMatrix();
+			XMFLOAT4X4 projMatrix = currentCamera->GetProjection();; //XMStoreFloat4x4(&projMatrix,XMMatrixIdentity());//
+			XMFLOAT4X4 viewMatrix = currentCamera->GetView(); //XMStoreFloat4x4(&viewMatrix,XMMatrixIdentity());//currentCamera->GetView();
 
 			ExternalData data{};
 			data.tint = tint;
-			XMStoreFloat4x4(&data.worldMatrix, XMLoadFloat4x4(&trM));
-			XMStoreFloat4x4(&data.projMatrix, XMLoadFloat4x4(&projMatrix));
-			XMStoreFloat4x4(&data.viewMatrix, XMLoadFloat4x4(&viewMatrix));
+			data.worldMatrix = worldmatrix;
+			data.viewMatrix = viewMatrix;
+			data.projMatrix = projMatrix;
 
 			// Map the buffer
 			D3D11_MAPPED_SUBRESOURCE mapped{};

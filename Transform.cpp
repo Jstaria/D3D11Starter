@@ -8,8 +8,8 @@ Transform::Transform() :
 	scale(1, 1, 1),
 	matricesDirty(true),
 	up(XMFLOAT3(0,1,0)),
-	right(XMFLOAT3(0, 0, 1)),
-	forward(XMFLOAT3(1, 0, 0))
+	right(XMFLOAT3(1, 0, 0)),
+	forward(XMFLOAT3(0, 0, 1))
 {
 	XMStoreFloat4x4(&worldMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&worldInverseTransposeMatrix, XMMatrixIdentity());
@@ -181,6 +181,7 @@ void Transform::OnClean(bool success)
 
 void Transform::UpdateVectors()
 {
+	XMStoreFloat4(&quaternion, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)));
 	XMVECTOR rotQuat = XMLoadFloat4(&quaternion);
 
 	XMStoreFloat3(&up, XMVector3Rotate(XMLoadFloat3(&up), rotQuat));

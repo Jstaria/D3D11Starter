@@ -87,7 +87,7 @@ void Game::Initialize()
 	cam = make_shared<Camera>(
 		XMFLOAT3(0, 0, -5.0f),
 		5.0f,
-		0.05f,
+		0.002f,
 		90,
 		Window::AspectRatio(),
 		0.01f,
