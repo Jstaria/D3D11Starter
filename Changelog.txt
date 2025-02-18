@@ -1,8 +1,15 @@
 	--=:#| Changelog |#:=--
 
 - Assignment 06:
-	> Proposed changes:
-		> Add Generic Camera class and then an FPS class implementation
+	
+	### NEW ###
+	>   Added camera class
+	>   Added camera selection under "Current Camera Details"
+	>   Added camera transform under "Current Camera Details"
+
+	### CHANGES ###
+	>   Added angle type enum to "Transform" Class
+	>   Converted most overloaded functions to call another in "Transform" Class
 
 - Assignment 05:
 

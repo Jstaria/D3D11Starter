@@ -10,6 +10,13 @@
 #include <vector>
 #include <functional>
 
+#define Pi 0.01745329251f;
+
+enum Angle {
+	PI,
+	DEGREES
+};
+
 class Transform
 {
 private:
@@ -41,8 +48,8 @@ public:
 
 	void SetPosition(float x, float y, float z);
 	void SetPosition(DirectX::XMFLOAT3 position);
-	void SetRotation(float p, float y, float r);
-	void SetRotation(DirectX::XMFLOAT3 rotation); // XMFLOAT4 for quaternion
+	void SetRotation(float p, float y, float r, Angle angle);
+	void SetRotation(DirectX::XMFLOAT3 rotation, Angle angle); // XMFLOAT4 for quaternion
 	void SetScale(float x, float y, float z);
 	void SetScale(DirectX::XMFLOAT3 scale);
 	void SetParentTransform(std::shared_ptr<Transform> transform);
@@ -64,8 +71,8 @@ public:
 	void MoveAbsolute(DirectX::XMFLOAT3 offset);
 	void MoveRelative(float x, float y, float z); // Based on my rotation
 	void MoveRelative(DirectX::XMFLOAT3 offset);
-	void Rotate(float p, float y, float r);
-	void Rotate(DirectX::XMFLOAT3 rotation);
+	void Rotate(float p, float y, float r, Angle angle);
+	void Rotate(DirectX::XMFLOAT3 rotation, Angle angle);
 	void Scale(float x, float y, float z);
 	void Scale(DirectX::XMFLOAT3 scale);
 };

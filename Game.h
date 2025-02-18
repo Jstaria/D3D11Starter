@@ -59,14 +59,14 @@ private:
 	float curFPS = 0;
 	float curDT = 0;
 
-	// Temp Mesh Data
+	// Arrays
 	std::shared_ptr<Mesh>* meshes;
-
 	std::shared_ptr<GameObject>* gameObjs;
-
-	std::shared_ptr<Camera> cam;
+	std::shared_ptr<Camera>* cameras;
+	int currentCam;
 
 	int meshesSize;
 	int gameObjsSize;
+	int camerasSize;
 };
 

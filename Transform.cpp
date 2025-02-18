@@ -29,21 +29,25 @@ void Transform::SetPosition(float x, float y, float z)
 
 void Transform::SetPosition(DirectX::XMFLOAT3 position)
 {
-	XMStoreFloat3(&this->position, XMVECTOR(XMLoadFloat3(&position)));
-	NotifyOfCleanliness(true);
+	SetPosition(position.x, position.y, position.z);
 }
 
-void Transform::SetRotation(float p, float y, float r)
+void Transform::SetRotation(float p, float y, float r, Angle angle)
 {
+	if (angle == Angle::DEGREES)
+	{
+		p *= Pi;
+		y *= Pi;
+		r *= Pi;
+	}
+
 	XMStoreFloat3(&rotation, XMVectorSet(p, y, r, 0.0f));
 	NotifyOfCleanliness(true);
 }
 
-void Transform::SetRotation(DirectX::XMFLOAT3 rotation)
+void Transform::SetRotation(DirectX::XMFLOAT3 rotation,Angle angle)
 {
-	XMStoreFloat3(&this->rotation, XMVECTOR(XMLoadFloat3(&rotation)));
-	NotifyOfCleanliness(true);
-	//UpdateVectors();
+	SetRotation(rotation.x, rotation.y, rotation.z, angle);
 }
 
 void Transform::SetScale(float x, float y, float z)
@@ -54,8 +58,8 @@ void Transform::SetScale(float x, float y, float z)
 
 void Transform::SetScale(DirectX::XMFLOAT3 scale)
 {
-	XMStoreFloat3(&this->scale, XMVECTOR(XMLoadFloat3(&scale)));
-	NotifyOfCleanliness(true);
+	SetScale(scale.x, scale.y, scale.z);
+	
 }
 void Transform::SetParentTransform(std::shared_ptr<Transform> transform)
 {
@@ -119,11 +123,12 @@ bool Transform::GetDirty() { return matricesDirty; }
 void Transform::MoveAbsolute(float x, float y, float z)
 {
 	XMStoreFloat3(&position, XMLoadFloat3(&position) + XMVectorSet(x, y, z, 0.0f));
+	NotifyOfCleanliness(true);
 }
 
 void Transform::MoveAbsolute(DirectX::XMFLOAT3 offset)
 {
-	XMStoreFloat3(&position, XMLoadFloat3(&position) + XMLoadFloat3(&offset));
+	MoveAbsolute(offset.x, offset.y, offset.z);
 }
 
 void Transform::MoveRelative(float x, float y, float z)
@@ -143,28 +148,35 @@ void Transform::MoveRelative(DirectX::XMFLOAT3 offset)
 	MoveRelative(offset.x, offset.y, offset.z);
 }
 
-void Transform::Rotate(float p, float y, float r)
+void Transform::Rotate(float p, float y, float r, Angle angle)
 {
+	if (angle == Angle::DEGREES)
+	{
+		p *= Pi;
+		y *= Pi;
+		r *= Pi;
+	}
+
 	this->rotation.x += p;
 	this->rotation.y += y;
 	this->rotation.z += r;
+	NotifyOfCleanliness(true);
 }
 
-void Transform::Rotate(DirectX::XMFLOAT3 rotation)
+void Transform::Rotate(DirectX::XMFLOAT3 rotation, Angle angle)
 {
-	this->rotation.x += rotation.x;
-	this->rotation.y += rotation.y;
-	this->rotation.z += rotation.z;
+	Rotate(rotation.x, rotation.y, rotation.z, angle);
 }
 
 void Transform::Scale(float x, float y, float z)
 {
 	XMStoreFloat3(&scale, XMVectorSet(scale.x * x, scale.y * y, scale.z * z, 0.0f));
+	NotifyOfCleanliness(true);
 }
 
 void Transform::Scale(DirectX::XMFLOAT3 scale)
 {
-	XMStoreFloat3(&this->scale, XMVectorSet(this->scale.x * scale.x, this->scale.y * scale.y, this->scale.z * scale.z, 0.0f));
+	Scale(scale.x, scale.y, scale.z);
 }
 
 void Transform::NotifyOfCleanliness(bool success) {

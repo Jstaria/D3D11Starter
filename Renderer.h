@@ -15,5 +15,8 @@ namespace Renderer
 	void SetCurrentCamera(std::shared_ptr<Camera> camera);
 	void DrawObjects();
 	void UpdateObjectList();
+
+	// -=| Getters |=-
+	std::shared_ptr<Camera> GetCamera();
 };
 

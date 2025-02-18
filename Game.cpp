@@ -84,16 +84,39 @@ void Game::Initialize()
 	isInVsync = true;
 	Graphics::SetVsyncState(isInVsync);
 
-	cam = make_shared<Camera>(
+	camerasSize = 3;
+	cameras = new shared_ptr<Camera>[camerasSize];
+
+	cameras[0] = make_shared<Camera>(
 		"FirstCamera",
 		XMFLOAT3(0, 0, -5.0f),
+		5.0f,
+		0.002f,
+		80,
+		Window::AspectRatio(),
+		0.01f,
+		1000.0f);
+	cameras[1] = make_shared<Camera>(
+		"SecondCamera",
+		XMFLOAT3(5, 0, -5.0f),
 		5.0f,
 		0.002f,
 		90,
 		Window::AspectRatio(),
 		0.01f,
 		1000.0f);
-	Renderer::SetCurrentCamera(cam);
+	cameras[1]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
+	cameras[2] = make_shared<Camera>(
+		"ThirdCamera",
+		XMFLOAT3(-5, 0, -5.0f),
+		5.0f,
+		0.002f,
+		20,
+		Window::AspectRatio(),
+		0.01f,
+		1000.0f);
+	cameras[2]->GetTransform()->SetRotation(0, 45, 0,Angle::DEGREES);
+	Renderer::SetCurrentCamera(cameras[0]);
 }
 
 
@@ -112,6 +135,7 @@ Game::~Game()
 
 	delete[] meshes;
 	delete[] gameObjs;
+	delete[] cameras;
 }
 
 
@@ -255,20 +279,20 @@ void Game::CreateGeometry()
 	float Degree90 = 90.0f * (3.1415f / 180.0f);
 
 	gameObjs[0] = make_shared<GameObject>("MiddleSquare", meshes[0], nullptr);
-	gameObjs[0].get()->GetTransform().get()->SetRotation(0, 0, Degree90 / 2);
+	gameObjs[0].get()->GetTransform().get()->SetRotation(0, 0, 45, Angle::DEGREES);
 
 	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], gameObjs[0]);
 	gameObjs[1].get()->GetTransform().get()->SetPosition(-0.5f, 0.5f, 0);
-	gameObjs[1].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
+	gameObjs[1].get()->GetTransform().get()->SetRotation(0, 0, 180, Angle::DEGREES);
 	gameObjs[2] = make_shared<GameObject>("TopRight", meshes[2], nullptr);
 	gameObjs[2].get()->GetTransform().get()->SetPosition(1.0f, 1.0f, 0);
-	gameObjs[2].get()->GetTransform().get()->SetRotation(0, 0, Degree90);
+	gameObjs[2].get()->GetTransform().get()->SetRotation(0, 0, 90, Angle::DEGREES);
 	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0]);
 	gameObjs[3].get()->GetTransform().get()->SetPosition(0.5f, -0.5f, 0);
 	//gameObjs[3].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
 	gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr);
 	gameObjs[4].get()->GetTransform().get()->SetPosition(-1.0f, -1.0f, 0);
-	gameObjs[4].get()->GetTransform().get()->SetRotation(0, 0, -Degree90);
+	gameObjs[4].get()->GetTransform().get()->SetRotation(0, 0, -90, Angle::DEGREES);
 
 	for (int i = 0; i < gameObjsSize; i++)
 	{
@@ -283,6 +307,7 @@ void Game::CreateGeometry()
 // --------------------------------------------------------
 void Game::OnResize()
 {
+	shared_ptr<Camera> cam = Renderer::GetCamera();
 	if (cam != nullptr) {
 		cam->UpdateProjectionMatrix(Window::AspectRatio());
 	}
@@ -329,7 +354,7 @@ void Game::Update(float deltaTime, float totalTime)
 		Transform* transform = gameObjs[0].get()->GetTransform().get();
 		XMFLOAT3 pyr = transform->GetPitchYawRoll();
 		XMFLOAT3 scale = transform->GetScale();
-		transform->SetRotation(pyr.x, pyr.y, totalTime + beat / 2);
+		transform->SetRotation(pyr.x, pyr.y, totalTime + beat / 2, Angle::PI);
 		transform->SetScale(beat, beat, scale.z);
 	}
 
@@ -347,7 +372,7 @@ void Game::Update(float deltaTime, float totalTime)
 	// Build custom UI
 	BuildUI(deltaTime);
 
-	cam->Update(deltaTime);
+	Renderer::GetCamera()->Update(deltaTime);
 	//printf("Mouse pos: {%d,%d}\n", Input::GetMouseX(), Input::GetMouseY());
 }
 
@@ -508,9 +533,24 @@ void Game::BuildUI(float deltaTime) {
 
 	{
 		if (ImGui::CollapsingHeader("Current Camera Details")) {
-			for (int i = 0; i < 1; i++)
-			{
-				cam->UIDraw();
+			shared_ptr<Camera> cam = Renderer::GetCamera();
+			cam->UIDraw();
+
+			if (ImGui::TreeNode("Camera Select")) {
+				const char** items = new const char* [camerasSize];
+
+				for (int i = 0; i < camerasSize; i++)
+				{
+					items[i] = cameras[i]->GetName();
+				}
+
+				ImGui::ListBox(" ", &currentCam, items, camerasSize);
+
+				Renderer::SetCurrentCamera(cameras[currentCam]);
+
+				delete[] items;
+
+				ImGui::TreePop();
 			}
 		}
 	}

@@ -37,16 +37,16 @@ void Camera::Update(float dt)
 		//printf("{%.5f,%.5f}\n", xRot, yRot);
 		//printf("{%d,%d}\n", Input::GetMouseXDelta(), Input::GetMouseYDelta());
 		
-		transform->Rotate(yRot, xRot, 0);
+		transform->Rotate(yRot, xRot, 0, Angle::PI);
 
 		XMFLOAT3 rot = transform->GetPitchYawRoll();
 		if (rot.x > XM_PIDIV2) rot.x = XM_PIDIV2 - 0.0000001f;
 		if (rot.x < -XM_PIDIV2) rot.x = -XM_PIDIV2 + 0.0000001f;
-		transform->SetRotation(rot);
+		transform->SetRotation(rot, Angle::PI);
 	}
 
 	if (Input::MouseLeftDown()) {
-		transform->SetRotation(0,0,0);
+		transform->SetRotation(0,0,0, Angle::PI);
 	}
 
 	UpdateViewMatrix();
@@ -74,32 +74,34 @@ DirectX::XMFLOAT4X4 Camera::GetView() { return viewMatrix; }
 DirectX::XMFLOAT4X4 Camera::GetProjection() { return projMatrix; }
 std::shared_ptr<Transform> Camera::GetTransform() { return transform; }
 
+const char* Camera::GetName()
+{
+	return name;
+}
+
 void Camera::UIDraw()
 {
-	if (ImGui::TreeNode(name)) {
+	ImGui::Text(name);
 
-		if (parentObj != nullptr)
-			ImGui::Text("Parent GameObject: %s", parentObj.get()->GetName());
+	if (parentObj != nullptr)
+		ImGui::Text("Parent GameObject: %s", parentObj->GetName());
 
-		{
-			XMFLOAT3 pos = transform.get()->GetPosition();
-			ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .01f);
-			transform.get()->SetPosition(pos);
-		}
+	{
+		XMFLOAT3 pos = transform->GetPosition();
+		ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .01f);
+		transform->SetPosition(pos);
+	}
 
-		{
-			XMFLOAT3 rot = transform.get()->GetPitchYawRoll();
-			ImGui::DragFloat3(("Rotation##" + std::string(name)).c_str(), &rot.x, .01f);
-			transform.get()->SetRotation(rot);
-		}
+	{
+		XMFLOAT3 rot = transform->GetPitchYawRoll();
+		ImGui::DragFloat3(("Rotation##" + std::string(name)).c_str(), &rot.x, .01f);
+		transform->SetRotation(rot, Angle::PI);
+	}
 
-		{
-			XMFLOAT3 scale = transform.get()->GetScale();
-			ImGui::DragFloat3(("Scale##" + std::string(name)).c_str(), &scale.x, .01f);
-			transform.get()->SetScale(scale);
-		}
-
-		ImGui::TreePop();
+	{
+		XMFLOAT3 scale = transform->GetScale();
+		ImGui::DragFloat3(("Scale##" + std::string(name)).c_str(), &scale.x, .01f);
+		transform->SetScale(scale);
 	}
 }
 

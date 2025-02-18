@@ -46,6 +46,7 @@ public:
 	DirectX::XMFLOAT4X4 GetView();
 	DirectX::XMFLOAT4X4 GetProjection();
 	std::shared_ptr<Transform> GetTransform();
+	const char* GetName();
 
 	// -=| ImGui |=-
 	void UIDraw();

@@ -118,3 +118,8 @@ void Renderer::UpdateObjectList()
 	// Right now would only call for objects to be sorted
 	SortObjectsViaDistance();
 }
+
+std::shared_ptr<Camera> Renderer::GetCamera()
+{
+	return currentCamera;
+}

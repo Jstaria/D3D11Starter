@@ -61,26 +61,26 @@ void GameObject::DrawImGui()
 	if (ImGui::TreeNode(name)) {
 
 		if (parentObj != nullptr)
-			ImGui::Text("Parent GameObject: %s", parentObj.get()->GetName());
+			ImGui::Text("Parent GameObject: %s", parentObj->GetName());
 
-		ImGui::Text("Mesh: %s", mesh.get()->GetName());
+		ImGui::Text("Mesh: %s", mesh->GetName());
 
 		{
-			XMFLOAT3 pos = transform.get()->GetPosition();
+			XMFLOAT3 pos = transform->GetPosition();
 			ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .01f);
-			transform.get()->SetPosition(pos);
+			transform->SetPosition(pos);
 		}
 
 		{
-			XMFLOAT3 rot = transform.get()->GetPitchYawRoll();
+			XMFLOAT3 rot = transform->GetPitchYawRoll();
 			ImGui::DragFloat3(("Rotation##" + std::string(name)).c_str(), &rot.x, .01f);
-			transform.get()->SetRotation(rot);
+			transform->SetRotation(rot, Angle::PI);
 		}
 
 		{
-			XMFLOAT3 scale = transform.get()->GetScale();
+			XMFLOAT3 scale = transform->GetScale();
 			ImGui::DragFloat3(("Scale##" + std::string(name)).c_str(), &scale.x, .01f);
-			transform.get()->SetScale(scale);
+			transform->SetScale(scale);
 		}
 
 		{
