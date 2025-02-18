@@ -4,6 +4,8 @@
 #include <DirectXMath.h>
 #include <memory>
 #include "Input.h"
+#include "ImGui/imgui.h"
+#include "GameObject.h"
 
 class Camera
 {
@@ -12,7 +14,8 @@ private:
 	DirectX::XMFLOAT4X4 projMatrix;
 
 	std::shared_ptr<Transform> transform;
-
+	std::shared_ptr<GameObject> parentObj;
+	const char* name;
 	// Camera Var
 	float FOV;
 	float movementSpeed;
@@ -23,6 +26,7 @@ private:
 
 public:
 	Camera(
+		const char* name,
 		DirectX::XMFLOAT3 pos, 
 		float moveSpeed, 
 		float lookSpeed, 
@@ -42,5 +46,8 @@ public:
 	DirectX::XMFLOAT4X4 GetView();
 	DirectX::XMFLOAT4X4 GetProjection();
 	std::shared_ptr<Transform> GetTransform();
+
+	// -=| ImGui |=-
+	void UIDraw();
 };
 

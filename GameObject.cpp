@@ -67,24 +67,24 @@ void GameObject::DrawImGui()
 
 		{
 			XMFLOAT3 pos = transform.get()->GetPosition();
-			ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .001f);
+			ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .01f);
 			transform.get()->SetPosition(pos);
 		}
 
 		{
 			XMFLOAT3 rot = transform.get()->GetPitchYawRoll();
-			ImGui::DragFloat3(("Rotation##" + std::string(name)).c_str(), &rot.x, .001f);
+			ImGui::DragFloat3(("Rotation##" + std::string(name)).c_str(), &rot.x, .01f);
 			transform.get()->SetRotation(rot);
 		}
 
 		{
 			XMFLOAT3 scale = transform.get()->GetScale();
-			ImGui::DragFloat3(("Scale##" + std::string(name)).c_str(), &scale.x, .001f);
+			ImGui::DragFloat3(("Scale##" + std::string(name)).c_str(), &scale.x, .01f);
 			transform.get()->SetScale(scale);
 		}
 
 		{
-			ImGui::ColorEdit4(("Tint##" + std::string(name)).c_str(), &tint.x, .001f);
+			ImGui::ColorEdit4(("Tint##" + std::string(name)).c_str(), &tint.x, .01f);
 		}
 
 		ImGui::TreePop();

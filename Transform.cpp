@@ -43,14 +43,13 @@ void Transform::SetRotation(DirectX::XMFLOAT3 rotation)
 {
 	XMStoreFloat3(&this->rotation, XMVECTOR(XMLoadFloat3(&rotation)));
 	NotifyOfCleanliness(true);
-	UpdateVectors();
+	//UpdateVectors();
 }
 
 void Transform::SetScale(float x, float y, float z)
 {
 	XMStoreFloat3(&scale, XMVectorSet(x, y, z, 0.0f));
 	NotifyOfCleanliness(true);
-	UpdateVectors();
 }
 
 void Transform::SetScale(DirectX::XMFLOAT3 scale)
@@ -80,9 +79,9 @@ DirectX::XMFLOAT3 Transform::GetPosition() { return position; }
 XMFLOAT3 Transform::GetPitchYawRoll() { return rotation; }
 XMFLOAT3 Transform::GetScale() { return scale; }
 
-DirectX::XMFLOAT3 Transform::GetUp() { return up; }
-DirectX::XMFLOAT3 Transform::GetRight() { return right; }
-DirectX::XMFLOAT3 Transform::GetForward() { return forward; }
+DirectX::XMFLOAT3 Transform::GetUp() { UpdateVectors(); return up; }
+DirectX::XMFLOAT3 Transform::GetRight() { UpdateVectors(); return right; }
+DirectX::XMFLOAT3 Transform::GetForward() { UpdateVectors(); return forward; }
 
 XMFLOAT4X4 Transform::GetWorldMatrix()
 {
@@ -146,14 +145,16 @@ void Transform::MoveRelative(DirectX::XMFLOAT3 offset)
 
 void Transform::Rotate(float p, float y, float r)
 {
-	XMStoreFloat3(&rotation, XMVectorSet(rotation.x + p, rotation.y + y, rotation.z + r, 0.0f));
-	UpdateVectors();
+	this->rotation.x += p;
+	this->rotation.y += y;
+	this->rotation.z += r;
 }
 
 void Transform::Rotate(DirectX::XMFLOAT3 rotation)
 {
-	XMStoreFloat3(&this->rotation, XMLoadFloat3(&this->rotation) + XMLoadFloat3(&rotation));
-	UpdateVectors();
+	this->rotation.x += rotation.x;
+	this->rotation.y += rotation.y;
+	this->rotation.z += rotation.z;
 }
 
 void Transform::Scale(float x, float y, float z)
@@ -184,7 +185,7 @@ void Transform::UpdateVectors()
 	XMStoreFloat4(&quaternion, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)));
 	XMVECTOR rotQuat = XMLoadFloat4(&quaternion);
 
-	XMStoreFloat3(&up, XMVector3Rotate(XMLoadFloat3(&up), rotQuat));
-	XMStoreFloat3(&right, XMVector3Rotate(XMLoadFloat3(&right), rotQuat));
-	XMStoreFloat3(&forward, XMVector3Rotate(XMLoadFloat3(&forward), rotQuat));
+	XMStoreFloat3(&up, XMVector3Rotate(XMVectorSet(0, 1, 0, 0), rotQuat));
+	XMStoreFloat3(&right, XMVector3Rotate(XMVectorSet(1, 0, 0, 0), rotQuat));
+	XMStoreFloat3(&forward, XMVector3Rotate(XMVectorSet(0, 0, 1, 0), rotQuat));
 }

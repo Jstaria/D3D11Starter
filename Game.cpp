@@ -85,6 +85,7 @@ void Game::Initialize()
 	Graphics::SetVsyncState(isInVsync);
 
 	cam = make_shared<Camera>(
+		"FirstCamera",
 		XMFLOAT3(0, 0, -5.0f),
 		5.0f,
 		0.002f,
@@ -501,6 +502,15 @@ void Game::BuildUI(float deltaTime) {
 					ImGui::Checkbox(("Show Mesh##" + to_string(i)).c_str(), meshes[i]->GetToggleMesh());
 					ImGui::TreePop();
 				}
+			}
+		}
+	}
+
+	{
+		if (ImGui::CollapsingHeader("Current Camera Details")) {
+			for (int i = 0; i < 1; i++)
+			{
+				cam->UIDraw();
 			}
 		}
 	}
