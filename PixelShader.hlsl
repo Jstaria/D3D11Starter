@@ -30,5 +30,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
 	//   of the triangle we're rendering
+	
+    input.color = (sin(distance(input.screenPosition.xy, float2(1280 / 2, 360))) + 1) / 2;
+	
 	return input.color;
 }

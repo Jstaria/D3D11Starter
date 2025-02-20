@@ -8,6 +8,9 @@
 #include <DirectXMath.h>
 #include "Renderer.h"
 #include "Camera.h"
+#include "FPSCamera.h"
+#include "SimpleShader.h"
+#include "Material.h"
 
 class Game
 {
@@ -68,5 +71,8 @@ private:
 	int meshesSize;
 	int gameObjsSize;
 	int camerasSize;
+
+	std::shared_ptr<SimpleVertexShader> sVS;
+	std::shared_ptr<SimplePixelShader> sPS;
 };
 

@@ -9,7 +9,7 @@
 
 class Camera
 {
-private:
+protected:
 	DirectX::XMFLOAT4X4 viewMatrix;
 	DirectX::XMFLOAT4X4 projMatrix;
 
@@ -18,8 +18,7 @@ private:
 	const char* name;
 	// Camera Var
 	float FOV;
-	float movementSpeed;
-	float mouseLookSpeed;
+
 	float nearClipPlane;
 	float farClipPlane;
 	float aspectRatio;
@@ -28,8 +27,6 @@ public:
 	Camera(
 		const char* name,
 		DirectX::XMFLOAT3 pos, 
-		float moveSpeed, 
-		float lookSpeed, 
 		float FOV, 
 		float aspectRatio, 
 		float nearClipPlane, 
@@ -38,7 +35,7 @@ public:
 
 	// -=| Updates |=-
 
-	void Update(float dt);
+	virtual void Update(float dt);
 	void UpdateViewMatrix();
 	void UpdateProjectionMatrix(float aspectRatio);
 
@@ -49,6 +46,6 @@ public:
 	const char* GetName();
 
 	// -=| ImGui |=-
-	void UIDraw();
+	virtual void UIDraw();
 };
 

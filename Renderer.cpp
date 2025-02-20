@@ -48,7 +48,7 @@ namespace Renderer {
 			}
 		}
 
-		void BindDataToDraw(Transform* tr, DirectX::XMFLOAT4 tint) {
+		void BindDataToDraw(Transform* tr, Material* mat) {
 			// Get Data
 			XMMATRIX aspectScaleMatrix = XMMatrixScaling((float)Window::Height() / (float)Window::Width(), 1, 1);
 			
@@ -57,26 +57,16 @@ namespace Renderer {
 			XMFLOAT4X4 viewMatrix = currentCamera->GetView(); //XMStoreFloat4x4(&viewMatrix,XMMatrixIdentity());//currentCamera->GetView();
 
 			ExternalData data{};
-			data.tint = tint;
+			data.tint = {1,1,1,1};
 			data.worldMatrix = worldmatrix;
 			data.viewMatrix = viewMatrix;
 			data.projMatrix = projMatrix;
 
-			// Map the buffer
-			D3D11_MAPPED_SUBRESOURCE mapped{};
+			mat->GetVS()->SetShader();
+			mat->GetPS()->SetShader();
 
-			Graphics::Context->Map(
-				constantBuffer.Get(),
-				0,
-				D3D11_MAP_WRITE_DISCARD,
-				0,
-				&mapped);
-
-			// Copy to GPU
-			memcpy(mapped.pData, &data, sizeof(ExternalData));
-
-			// Unmap data
-			Graphics::Context->Unmap(constantBuffer.Get(), 0);
+			mat->GetVS()->SetData("data", &data, sizeof(ExternalData));
+			mat->GetVS()->CopyAllBufferData();
 		}
 		#pragma endregion
 
@@ -107,8 +97,9 @@ void Renderer::DrawObjects()
 		GameObject* gameObj = sortedGameObjs[i].get();
 		Transform* transform = gameObj->GetTransform().get();
 		Mesh* mesh = gameObj->GetMesh().get();
+		Material* material = gameObj->GetMaterial().get();
 
-		BindDataToDraw(transform, gameObj->GetTint());
+		BindDataToDraw(transform, material);
 		mesh->Draw();
 	}
 }

@@ -31,7 +31,7 @@ struct VertexToPixel
 	float4 color			: COLOR;        // RGBA color
 };
 
-cbuffer ExternalData : register(b0)
+struct ExternalData
 {
     float4x4 viewMatrix;
     float4x4 projMatrix;
@@ -72,16 +72,19 @@ VertexToPixel main( VertexShaderInput input )
 	return output;
 }
 */
+ExternalData data;
+
 VertexToPixel main(VertexShaderInput input)
 {
 	// Set up output struct
     VertexToPixel output;
 
-    float4x4 wvp = mul(projMatrix, mul(viewMatrix, worldMatrix));
+    float4x4 wvp = mul(data.projMatrix, mul(data.viewMatrix, data.worldMatrix));
 	
     output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
 
-    output.color = input.color * tint;
+    output.color = input.color * data.tint;
+
 
     return output;
 }

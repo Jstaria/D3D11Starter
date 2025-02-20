@@ -87,8 +87,8 @@ void Game::Initialize()
 	camerasSize = 3;
 	cameras = new shared_ptr<Camera>[camerasSize];
 
-	cameras[0] = make_shared<Camera>(
-		"FirstCamera",
+	cameras[0] = make_shared<FPSCamera>(
+		"FPSCamera",
 		XMFLOAT3(0, 0, -5.0f),
 		5.0f,
 		0.002f,
@@ -97,20 +97,16 @@ void Game::Initialize()
 		0.01f,
 		1000.0f);
 	cameras[1] = make_shared<Camera>(
-		"SecondCamera",
+		"StationaryCamera01",
 		XMFLOAT3(5, 0, -5.0f),
-		5.0f,
-		0.002f,
 		90,
 		Window::AspectRatio(),
 		0.01f,
 		1000.0f);
 	cameras[1]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
 	cameras[2] = make_shared<Camera>(
-		"ThirdCamera",
+		"StationaryCamera02",
 		XMFLOAT3(-5, 0, -5.0f),
-		5.0f,
-		0.002f,
 		20,
 		Window::AspectRatio(),
 		0.01f,
@@ -149,66 +145,8 @@ Game::~Game()
 // --------------------------------------------------------
 void Game::LoadShaders()
 {
-	// BLOBs (or Binary Large OBjects) for reading raw data from external files
-	// - This is a simplified way of handling big chunks of external data
-	// - Literally just a big array of bytes read from a file
-	ID3DBlob* pixelShaderBlob;
-	ID3DBlob* vertexShaderBlob;
-
-	// Loading shaders
-	//  - Visual Studio will compile our shaders at build time
-	//  - They are saved as .cso (Compiled Shader Object) files
-	//  - We need to load them when the application starts
-	{
-		// Read our compiled shader code files into blobs
-		// - Essentially just "open the file and plop its contents here"
-		// - Uses the custom FixPath() helper from Helpers.h to ensure relative paths
-		// - Note the "L" before the string - this tells the compiler the string uses wide characters
-		D3DReadFileToBlob(FixPath(L"PixelShader.cso").c_str(), &pixelShaderBlob);
-		D3DReadFileToBlob(FixPath(L"VertexShader.cso").c_str(), &vertexShaderBlob);
-
-		// Create the actual Direct3D shaders on the GPU
-		Graphics::Device->CreatePixelShader(
-			pixelShaderBlob->GetBufferPointer(),	// Pointer to blob's contents
-			pixelShaderBlob->GetBufferSize(),		// How big is that data?
-			0,										// No classes in this shader
-			pixelShader.GetAddressOf());			// Address of the ID3D11PixelShader pointer
-
-		Graphics::Device->CreateVertexShader(
-			vertexShaderBlob->GetBufferPointer(),	// Get a pointer to the blob's contents
-			vertexShaderBlob->GetBufferSize(),		// How big is that data?
-			0,										// No classes in this shader
-			vertexShader.GetAddressOf());			// The address of the ID3D11VertexShader pointer
-	}
-
-	// Create an input layout 
-	//  - This describes the layout of data sent to a vertex shader
-	//  - In other words, it describes how to interpret data (numbers) in a vertex buffer
-	//  - Doing this NOW because it requires a vertex shader's byte code to verify against!
-	//  - Luckily, we already have that loaded (the vertex shader blob above)
-	{
-		D3D11_INPUT_ELEMENT_DESC inputElements[2] = {};
-
-		// Set up the first element - a position, which is 3 float values
-		inputElements[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;				// Most formats are described as color channels; really it just means "Three 32-bit floats"
-		inputElements[0].SemanticName = "POSITION";							// This is "POSITION" - needs to match the semantics in our vertex shader input!
-		inputElements[0].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;	// How far into the vertex is this?  Assume it's after the previous element
-
-		// Set up the second element - a color, which is 4 more float values
-		inputElements[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;			// 4x 32-bit floats
-		inputElements[1].SemanticName = "COLOR";							// Match our vertex shader input!
-		inputElements[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;	// After the previous element
-
-		// Create the input layout, verifying our description against actual shader code
-		Graphics::Device->CreateInputLayout(
-			inputElements,							// An array of descriptions
-			2,										// How many elements in that array?
-			vertexShaderBlob->GetBufferPointer(),	// Pointer to the code of a shader that uses this layout
-			vertexShaderBlob->GetBufferSize(),		// Size of the shader code that uses this layout
-			inputLayout.GetAddressOf());			// Address of the resulting ID3D11InputLayout pointer
-	}
-
-
+	sVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
+	sPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"PixelShader.cso").c_str());
 }
 
 
@@ -278,19 +216,21 @@ void Game::CreateGeometry()
 
 	float Degree90 = 90.0f * (3.1415f / 180.0f);
 
-	gameObjs[0] = make_shared<GameObject>("MiddleSquare", meshes[0], nullptr);
+	shared_ptr<Material> mat = make_shared<Material>(sVS, sPS);
+
+	gameObjs[0] = make_shared<GameObject>("MiddleSquare", meshes[0], nullptr, mat);
 	gameObjs[0].get()->GetTransform().get()->SetRotation(0, 0, 45, Angle::DEGREES);
 
-	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], gameObjs[0]);
+	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], gameObjs[0], mat);
 	gameObjs[1].get()->GetTransform().get()->SetPosition(-0.5f, 0.5f, 0);
 	gameObjs[1].get()->GetTransform().get()->SetRotation(0, 0, 180, Angle::DEGREES);
-	gameObjs[2] = make_shared<GameObject>("TopRight", meshes[2], nullptr);
+	gameObjs[2] = make_shared<GameObject>("TopRight", meshes[2], nullptr, mat);
 	gameObjs[2].get()->GetTransform().get()->SetPosition(1.0f, 1.0f, 0);
 	gameObjs[2].get()->GetTransform().get()->SetRotation(0, 0, 90, Angle::DEGREES);
-	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0]);
+	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0], mat);
 	gameObjs[3].get()->GetTransform().get()->SetPosition(0.5f, -0.5f, 0);
 	//gameObjs[3].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
-	gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr);
+	gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr, mat);
 	gameObjs[4].get()->GetTransform().get()->SetPosition(-1.0f, -1.0f, 0);
 	gameObjs[4].get()->GetTransform().get()->SetRotation(0, 0, -90, Angle::DEGREES);
 
@@ -382,6 +322,9 @@ void Game::Update(float deltaTime, float totalTime)
 // --------------------------------------------------------
 void Game::Draw(float deltaTime, float totalTime)
 {
+	sVS->SetShader();
+	sPS->SetShader();
+
 	// Frame START
 	// - These things should happen ONCE PER FRAME
 	// - At the beginning of Game::Draw() before drawing *anything*

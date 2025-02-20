@@ -1,5 +1,12 @@
 	--=:#| Changelog |#:=--
 
+- Assignment 07:
+	### NEW ###
+	>   
+
+	### CHANGES ###
+	>   
+
 - Assignment 06:
 	
 	### NEW ###

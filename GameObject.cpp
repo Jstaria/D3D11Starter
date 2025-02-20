@@ -3,8 +3,8 @@
 using namespace std;
 using namespace DirectX;
 
-GameObject::GameObject(const char* name, std::shared_ptr<Mesh> mesh, std::shared_ptr<GameObject> parentObj)
-	: name(name), mesh(mesh), parentObj(parentObj)
+GameObject::GameObject(const char* name, std::shared_ptr<Mesh> mesh, std::shared_ptr<GameObject> parentObj, std::shared_ptr<Material> material)
+	: name(name), mesh(mesh), parentObj(parentObj), material(material)
 {
 	transform = make_shared<Transform>();
 	
@@ -34,6 +34,11 @@ std::shared_ptr<Transform> GameObject::GetParentTransform()
 std::shared_ptr<Mesh> GameObject::GetMesh()
 {
 	return mesh;
+}
+
+std::shared_ptr<Material> GameObject::GetMaterial()
+{
+	return material;
 }
 
 const char* GameObject::GetName()
