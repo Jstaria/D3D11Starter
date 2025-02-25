@@ -8,7 +8,7 @@
 // Include ImGui's Win32 backend and forward declare the window handler function
 // Note: This CANNOT be inside a namespace!
 // Note: The include assumes files are in an “ImGui” folder. Adjust as necessary
-#include "ImGui/imgui_impl_win32.h"
+#include "../ImGui/imgui_impl_win32.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND hWnd,
