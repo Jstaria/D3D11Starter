@@ -10,6 +10,7 @@
 	>   Each GameObject now has its own material to draw with   
 	>   GameObject now inherits from IRenderable
 	>   Renderer now has a list of IRenderables
+	>   Folder hierarchy implemented
 
 - Assignment 06:
 	
