@@ -2,10 +2,10 @@
 #include <Windows.h>
 #include <crtdbg.h>
 
-#include "Window.h"
-#include "Graphics.h"
-#include "Game.h"
-#include "Input.h"
+#include "MainComponents/Window.h"
+#include "MainComponents/Graphics.h"
+#include "MainComponents/Game.h"
+#include "MainComponents/Input.h"
 
 // Annonymous namespace to hold variables
 // only accessible in this file

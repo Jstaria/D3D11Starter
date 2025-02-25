@@ -155,13 +155,10 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="ExternalData.cpp" />
-    <ClCompile Include="FPSCamera.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Helper\Debug.cpp" />
+    <ClCompile Include="Helper\PathHelpers.cpp" />
+    <ClCompile Include="Helper\Physics.cpp" />
+    <ClCompile Include="Helper\SimpleShader.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
@@ -169,27 +166,25 @@
     <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshData.cpp" />
-    <ClCompile Include="PathHelpers.cpp" />
-    <ClCompile Include="Physics.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="ShaderHelper.cpp" />
-    <ClCompile Include="SimpleShader.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="MainComponents\Game.cpp" />
+    <ClCompile Include="MainComponents\Graphics.cpp" />
+    <ClCompile Include="MainComponents\Input.cpp" />
+    <ClCompile Include="MainComponents\Renderer.cpp" />
+    <ClCompile Include="MainComponents\Window.cpp" />
+    <ClCompile Include="Objects\Camera.cpp" />
+    <ClCompile Include="Objects\FPSCamera.cpp" />
+    <ClCompile Include="Objects\GameObject.cpp" />
+    <ClCompile Include="Objects\Material.cpp" />
+    <ClCompile Include="Objects\Mesh.cpp" />
+    <ClCompile Include="Objects\ParticleSystem.cpp" />
+    <ClCompile Include="Objects\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Debug.h" />
-    <ClInclude Include="ExternalData.h" />
-    <ClInclude Include="FPSCamera.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Helper\Debug.h" />
+    <ClInclude Include="Helper\PathHelpers.h" />
+    <ClInclude Include="Helper\Physics.h" />
+    <ClInclude Include="Helper\SimpleShader.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
     <ClInclude Include="ImGui\imgui_impl_dx11.h" />
@@ -198,43 +193,48 @@
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshData.h" />
-    <ClInclude Include="PathHelpers.h" />
-    <ClInclude Include="Physics.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="ShaderHelper.h" />
-    <ClInclude Include="SimpleShader.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="Window.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
+    <ClInclude Include="Interfaces\ICompute.h" />
+    <ClInclude Include="Interfaces\IRenderable.h" />
+    <ClInclude Include="Interfaces\IUpdatable.h" />
+    <ClInclude Include="MainComponents\Game.h" />
+    <ClInclude Include="MainComponents\Graphics.h" />
+    <ClInclude Include="MainComponents\Input.h" />
+    <ClInclude Include="MainComponents\Renderer.h" />
+    <ClInclude Include="MainComponents\Window.h" />
+    <ClInclude Include="Objects\Camera.h" />
+    <ClInclude Include="Objects\FPSCamera.h" />
+    <ClInclude Include="Objects\GameObject.h" />
+    <ClInclude Include="Objects\Material.h" />
+    <ClInclude Include="Objects\Mesh.h" />
+    <ClInclude Include="Objects\ParticleSystem.h" />
+    <ClInclude Include="Objects\Transform.h" />
+    <ClInclude Include="Structures\BufType.h" />
+    <ClInclude Include="Structures\ExternalData.h" />
+    <ClInclude Include="Structures\MeshData.h" />
+    <ClInclude Include="Structures\Particle.h" />
+    <ClInclude Include="Structures\Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Changelog.txt" />
+    <FxCompile Include="Shaders\Compute\PSEmit.hlsl">
+      <FileType>Text</FileType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PSInit.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shaders\Pixel\PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shaders\Vertex\VertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

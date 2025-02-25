@@ -2,10 +2,14 @@
 
 - Assignment 07:
 	### NEW ###
-	>   
+	>   Added "Material" class
+	>   Added Particle and Particle System
+	>   Added IRenderable
 
 	### CHANGES ###
-	>   
+	>   Each GameObject now has its own material to draw with   
+	>   GameObject now inherits from IRenderable
+	>   Renderer now has a list of IRenderables
 
 - Assignment 06:
 	
