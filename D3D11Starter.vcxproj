@@ -216,6 +216,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Changelog.txt" />
+    <FxCompile Include="PSSim.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shaders\Compute\PSEmit.hlsl">
       <FileType>Text</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>

@@ -4,13 +4,13 @@
 	### NEW ###
 	>   Added "Material" class
 	>   Added Particle and Particle System
+	    >   Compute Shaders "PSInit","PSEmit","PSSim"
 	>   Added IRenderable
 
 	### CHANGES ###
 	>   Each GameObject now has its own material to draw with   
 	>   GameObject now inherits from IRenderable
 	>   Renderer now has a list of IRenderables
-	>   Folder hierarchy implemented
 
 - Assignment 06:
 	

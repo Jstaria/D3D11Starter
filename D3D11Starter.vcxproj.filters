@@ -246,5 +246,8 @@
     <FxCompile Include="Shaders\Compute\PSEmit.hlsl">
       <Filter>Shaders\Compute</Filter>
     </FxCompile>
+    <FxCompile Include="PSSim.hlsl">
+      <Filter>Shaders\Compute</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
