@@ -5,6 +5,7 @@
 
 #include "../MainComponents/Graphics.h"
 #include "../Helper/Debug.h"
+#include "../Helper/OBJLoader.h"
 #include "../Structures/Vertex.h"
 #include "../Structures/MeshData.h"
 
@@ -35,7 +36,7 @@ public:
 	// --- Constructors ---
 	Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize);
 	Mesh(MeshData meshData);
-	Mesh(char* filePath);
+	Mesh(const char* name, char* filePath);
 	Mesh();
 	~Mesh();
 

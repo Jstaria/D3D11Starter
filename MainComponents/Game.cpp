@@ -7,7 +7,7 @@
 #include "../Structures/Vertex.h"
 #include "../Helper/PathHelpers.h"
 #include "../Helper/Debug.h"
-#include "../Objects/Transform.h"
+#include "../Components/Transform.h"
 
 #include "../ImGui/imgui.h"
 #include "../ImGui/imgui_impl_dx11.h"
@@ -190,10 +190,6 @@ void Game::CreateGeometry()
 	unsigned int indices[] = { 0, 1, 2, 0, 2, 3 };
 	unsigned int indices2[] = { 0, 1, 2 };
 
-	meshesSize = 3;
-	meshes = new shared_ptr<Mesh>[meshesSize];
-	meshes[0] = make_shared<Mesh>("Square", vertices, indices, 4, 6);
-
 	Vertex vertices2[] =
 	{
 		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
@@ -208,8 +204,11 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(+0.0f, +0.5f, +0.0f), XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f) },
 	};
 
-	meshes[1] = make_shared<Mesh>("TriangleOne", vertices2, indices2, 3, 3);
-	meshes[2] = make_shared<Mesh>("TriangleTwo", vertices3, indices2, 3, 3);
+	meshesSize = 3;
+	meshes = new shared_ptr<Mesh>[meshesSize];
+	meshes[0] = make_shared<Mesh>("Square", FixPath(L"../Assets/Objects/cube.obj"));
+	meshes[1] = make_shared<Mesh>("TriangleOne", FixPath(L"../Assets/Objects/cube.obj"));
+	meshes[2] = make_shared<Mesh>("TriangleTwo", FixPath(L"../Assets/Objects/cube.obj"));
 
 	gameObjsSize = 5;
 

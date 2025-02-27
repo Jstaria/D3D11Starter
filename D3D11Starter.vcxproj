@@ -155,7 +155,15 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Components\Camera.cpp" />
+    <ClCompile Include="Components\FPSCamera.cpp" />
+    <ClCompile Include="Components\GameObject.cpp" />
+    <ClCompile Include="Components\Material.cpp" />
+    <ClCompile Include="Components\Mesh.cpp" />
+    <ClCompile Include="Components\ParticleSystem.cpp" />
+    <ClCompile Include="Components\Transform.cpp" />
     <ClCompile Include="Helper\Debug.cpp" />
+    <ClCompile Include="Helper\OBJLoader.cpp" />
     <ClCompile Include="Helper\PathHelpers.cpp" />
     <ClCompile Include="Helper\Physics.cpp" />
     <ClCompile Include="Helper\SimpleShader.cpp" />
@@ -172,16 +180,17 @@
     <ClCompile Include="MainComponents\Input.cpp" />
     <ClCompile Include="MainComponents\Renderer.cpp" />
     <ClCompile Include="MainComponents\Window.cpp" />
-    <ClCompile Include="Objects\Camera.cpp" />
-    <ClCompile Include="Objects\FPSCamera.cpp" />
-    <ClCompile Include="Objects\GameObject.cpp" />
-    <ClCompile Include="Objects\Material.cpp" />
-    <ClCompile Include="Objects\Mesh.cpp" />
-    <ClCompile Include="Objects\ParticleSystem.cpp" />
-    <ClCompile Include="Objects\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Components\Camera.h" />
+    <ClInclude Include="Components\FPSCamera.h" />
+    <ClInclude Include="Components\GameObject.h" />
+    <ClInclude Include="Components\Material.h" />
+    <ClInclude Include="Components\Mesh.h" />
+    <ClInclude Include="Components\ParticleSystem.h" />
+    <ClInclude Include="Components\Transform.h" />
     <ClInclude Include="Helper\Debug.h" />
+    <ClInclude Include="Helper\OBJLoader.h" />
     <ClInclude Include="Helper\PathHelpers.h" />
     <ClInclude Include="Helper\Physics.h" />
     <ClInclude Include="Helper\SimpleShader.h" />
@@ -201,13 +210,6 @@
     <ClInclude Include="MainComponents\Input.h" />
     <ClInclude Include="MainComponents\Renderer.h" />
     <ClInclude Include="MainComponents\Window.h" />
-    <ClInclude Include="Objects\Camera.h" />
-    <ClInclude Include="Objects\FPSCamera.h" />
-    <ClInclude Include="Objects\GameObject.h" />
-    <ClInclude Include="Objects\Material.h" />
-    <ClInclude Include="Objects\Mesh.h" />
-    <ClInclude Include="Objects\ParticleSystem.h" />
-    <ClInclude Include="Objects\Transform.h" />
     <ClInclude Include="Structures\BufType.h" />
     <ClInclude Include="Structures\ExternalData.h" />
     <ClInclude Include="Structures\MeshData.h" />

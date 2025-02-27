@@ -7,10 +7,10 @@
 #include <DirectXMath.h>
 #include "Renderer.h"
 
-#include "../Objects/Mesh.h"
-#include "../Objects/Camera.h"
-#include "../Objects/FPSCamera.h"
-#include "../Objects/Material.h"
+#include "../Components/Mesh.h"
+#include "../Components/Camera.h"
+#include "../Components/FPSCamera.h"
+#include "../Components/Material.h"
 
 #include "../Helper/SimpleShader.h"
 

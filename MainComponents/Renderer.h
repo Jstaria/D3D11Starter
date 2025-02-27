@@ -5,7 +5,7 @@
 #include "Graphics.h"
 
 #include "../Structures/ExternalData.h"
-#include "../Objects/Camera.h"
+#include "../Components/Camera.h"
 
 namespace Renderer
 {

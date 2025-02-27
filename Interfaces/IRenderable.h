@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "../Objects/Mesh.h"
-#include "../Objects/Transform.h"
-#include "../Objects/Material.h"
+#include "../Components/Mesh.h"
+#include "../Components/Transform.h"
+#include "../Components/Material.h"
 
 class IRenderable {
 public:

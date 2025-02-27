@@ -14,18 +14,27 @@ using namespace Microsoft::WRL;
 /// <param name="indexSize"></param>
 Mesh::Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize)
 {
-	MeshData meshData = {};
+	/*MeshData meshData = {};
+	meshData.type = MeshDataType::Basic;
 	meshData.indexSize = indexSize;
 	meshData.indices = indices;
 	meshData.name = name;
 	meshData.vertices = vertices;
-	meshData.vertSize = vertSize;
+	meshData.vertSize = vertSize;*/
 
-	InitializeMesh(meshData);
+	//InitializeMesh(meshData);
 }
 
 Mesh::Mesh(MeshData meshData)
 {
+	InitializeMesh(meshData);
+}
+
+Mesh::Mesh(const char* name, char* filePath)
+{
+	MeshData meshData = OBJLoader::LoadOBJ(filePath);
+	meshData.name = name;
+
 	InitializeMesh(meshData);
 }
 
@@ -66,7 +75,7 @@ void Mesh::CreateMesh(MeshData meshData)
 	// --- Create Vertex Buffer ---
 	{
 		// Set vertex count by finding the difference in memory from address
-		vertexCount = meshData.vertSize;
+		vertexCount = meshData.vertices.size();
 
 		D3D11_BUFFER_DESC vbd = {};
 		vbd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -85,7 +94,7 @@ void Mesh::CreateMesh(MeshData meshData)
 	// --- Create Index Buffer ---
 	{
 		// Set index count by finding the difference in memory from address
-		indexCount = meshData.indexSize;
+		indexCount = meshData.indices.size();
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -104,9 +113,9 @@ void Mesh::CreateMesh(MeshData meshData)
 
 void Mesh::FindCenterOfMesh(MeshData meshData)
 {
-	Vertex* centers = new Vertex[meshData.indexSize / 3];
+	Vertex* centers = new Vertex[meshData.indices.size() / 3];
 
-	for (int i = 0; i < meshData.indexSize; i += 3)
+	for (int i = 0; i < meshData.indices.size(); i += 3)
 	{
 		Vertex v1 = meshData.vertices[meshData.indices[i + 0]];
 		Vertex v2 = meshData.vertices[meshData.indices[i + 1]];
@@ -123,16 +132,16 @@ void Mesh::FindCenterOfMesh(MeshData meshData)
 
 	Vertex c{};
 
-	for (int i = 0; i < meshData.indexSize / 3; i++)
+	for (int i = 0; i < meshData.indices.size() / 3; i++)
 	{
 		c.Position.x += centers[i].Position.x;
 		c.Position.y += centers[i].Position.y;
 		c.Position.z += centers[i].Position.z;
 	}
 
-	c.Position.x /= (meshData.indexSize / 3);
-	c.Position.y /= (meshData.indexSize / 3);
-	c.Position.z /= (meshData.indexSize / 3);
+	c.Position.x /= (meshData.indices.size() / 3);
+	c.Position.y /= (meshData.indices.size() / 3);
+	c.Position.z /= (meshData.indices.size() / 3);
 
 	center = c;
 

@@ -2,16 +2,17 @@
 #include <DirectXMath.h>
 #include <d3d11.h>
 #include "Vertex.h"
+#include <vector>
 
 struct MeshData
 {
-	// -=| Basic Mesh Data |=-
 	const char* name;
-	Vertex* vertices;
-	unsigned int* indices;
-	int vertSize;
-	int indexSize;
 
-	// -=| Other |=-
+	// -=| Vector |=-
+	std::vector<XMFLOAT3> positions;	// Positions from the file
+	std::vector<XMFLOAT3> normals;		// Normals from the file
+	std::vector<XMFLOAT2> uvs;		// UVs from the file
+	std::vector<Vertex> vertices;		// Verts we're assembling
+	std::vector<unsigned int> indices;		// Indices of these verts
 };
 
