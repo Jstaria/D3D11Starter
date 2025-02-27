@@ -31,15 +31,6 @@
     <Filter Include="Documents">
       <UniqueIdentifier>{9e09a850-afbe-43aa-8691-43011d9713ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Objects">
-      <UniqueIdentifier>{4d595e69-331c-4fbc-ad6d-619d12ac7311}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Objects">
-      <UniqueIdentifier>{f07b9ea4-d2fb-4a0f-9e68-0af5a51b1b4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\MainComponents">
-      <UniqueIdentifier>{584d29dd-fe6f-4c64-b032-4e4c5d78ca0b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\MainComponents">
       <UniqueIdentifier>{0057e165-54ba-4658-8e0f-48f56e7fa902}</UniqueIdentifier>
     </Filter>
@@ -54,6 +45,15 @@
     </Filter>
     <Filter Include="Header Files\Interfaces">
       <UniqueIdentifier>{be4f2f86-2ce9-45e2-966e-7e59296a5a5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{4d595e69-331c-4fbc-ad6d-619d12ac7311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MainComponents">
+      <UniqueIdentifier>{584d29dd-fe6f-4c64-b032-4e4c5d78ca0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{f07b9ea4-d2fb-4a0f-9e68-0af5a51b1b4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -109,25 +109,25 @@
       <Filter>Source Files\MainComponents</Filter>
     </ClCompile>
     <ClCompile Include="Components\Camera.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\FPSCamera.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\GameObject.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\Material.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\Mesh.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\ParticleSystem.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\Transform.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Helper\OBJLoader.cpp">
       <Filter>Source Files\Helpers</Filter>
@@ -210,25 +210,25 @@
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Components\Camera.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\FPSCamera.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\GameObject.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\Material.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\Mesh.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\ParticleSystem.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\Transform.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Helper\OBJLoader.h">
       <Filter>Header Files\Helpers</Filter>

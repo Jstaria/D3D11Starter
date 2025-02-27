@@ -44,17 +44,6 @@ void Game::Initialize()
 		// Essentially: "What kind of shape should the GPU draw with our vertices?"
 		Graphics::Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		// Ensure the pipeline knows how to interpret all the numbers stored in
-		// the vertex buffer. For this course, all of your vertices will probably
-		// have the same layout, so we can just set this once at startup.
-		Graphics::Context->IASetInputLayout(inputLayout.Get());
-
-		// Set the active vertex and pixel shaders
-		//  - Once you start applying different shaders to different objects,
-		//    these calls will need to happen multiple times per frame
-		Graphics::Context->VSSetShader(vertexShader.Get(), 0, 0);
-		Graphics::Context->PSSetShader(pixelShader.Get(), 0, 0);
-
 		// Initialize ImGui itself & platform/renderer backends
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -162,77 +151,38 @@ void Game::CreateGeometry()
 	XMFLOAT4 yellow = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 cyan = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
 
-	// Set up the vertices of the triangle we would like to draw
-	// - We're going to copy this array, exactly as it exists in CPU memory
-	//    over to a Direct3D-controlled data structure on the GPU (the vertex buffer)
-	// - Note: Since we don't have a camera or really any concept of
-	//    a "3d world" yet, we're simply describing positions within the
-	//    bounds of how the rasterizer sees our screen: [-1 to +1] on X and Y
-	// - This means (0,0) is at the very center of the screen.
-	// - These are known as "Normalized Device Coordinates" or "Homogeneous 
-	//    Screen Coords", which are ways to describe a position without
-	//    knowing the exact size (in pixels) of the image/window/etc.  
-	// - Long story short: Resizing the window also resizes the triangle,
-	//    since we're describing the triangle in terms of the window itself
-	Vertex vertices[] =
-	{
-		{ XMFLOAT3(-0.5f, +0.5f, +0.0f), XMFLOAT4(0.0f,0.0f,0.0f,1.0f)},
-		{ XMFLOAT3(+0.5f, +0.5f, +0.0f), magenta },
-		{ XMFLOAT3(+0.5f, -0.5f, +0.0f), yellow },
-		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), cyan },
-	}; 
-
-	// Set up indices, which tell us which vertices to use and in which order
-	// - This is redundant for just 3 vertices, but will be more useful later
-	// - Indices are technically not required if the vertices are in the buffer 
-	//    in the correct order and each one will be used exactly once
-	// - But just to see how it's done...
-	unsigned int indices[] = { 0, 1, 2, 0, 2, 3 };
-	unsigned int indices2[] = { 0, 1, 2 };
-
-	Vertex vertices2[] =
-	{
-		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(+0.5f, +0.0f, +0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(+0.0f, -0.5f, +0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-	};
-
-	Vertex vertices3[] =
-	{
-		{ XMFLOAT3(+0.0f, +0.0f, +0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f, +0.0f, +0.0f), XMFLOAT4(0.5f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(+0.0f, +0.5f, +0.0f), XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f) },
-	};
-
 	meshesSize = 3;
 	meshes = new shared_ptr<Mesh>[meshesSize];
-	meshes[0] = make_shared<Mesh>("Square", FixPath(L"../Assets/Objects/cube.obj"));
-	meshes[1] = make_shared<Mesh>("TriangleOne", FixPath(L"../Assets/Objects/cube.obj"));
-	meshes[2] = make_shared<Mesh>("TriangleTwo", FixPath(L"../Assets/Objects/cube.obj"));
+	meshes[0] = make_shared<Mesh>("Square", FixPath("../../Assets/Models/cube.obj").c_str());
+	meshes[1] = make_shared<Mesh>("TriangleOne", FixPath("../../Assets/Models/cube.obj").c_str());
+	meshes[2] = make_shared<Mesh>("TriangleTwo", FixPath("../../Assets/Models/cube.obj").c_str());
 
 	gameObjsSize = 5;
 
 	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
 
-	float Degree90 = 90.0f * (3.1415f / 180.0f);
+	shared_ptr<Material> mat = make_shared<Material>(vs, ps, magenta);
 
-	shared_ptr<Material> mat = make_shared<Material>(vs, ps);
+	float scale = .15f;
 
 	gameObjs[0] = make_shared<GameObject>("MiddleSquare", meshes[0], nullptr, mat);
-	gameObjs[0].get()->GetTransform().get()->SetRotation(0, 0, 45, Angle::DEGREES);
-
+	gameObjs[0]->GetTransform()->SetRotation(0, 0, 45, Angle::DEGREES);
+	gameObjs[0]->GetTransform()->SetScale(scale);
 	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], gameObjs[0], mat);
-	gameObjs[1].get()->GetTransform().get()->SetPosition(-0.5f, 0.5f, 0);
-	gameObjs[1].get()->GetTransform().get()->SetRotation(0, 0, 180, Angle::DEGREES);
+	gameObjs[1]->GetTransform()->SetPosition(-0.5f, 0.5f, 0);
+	gameObjs[1]->GetTransform()->SetRotation(0, 0, 180, Angle::DEGREES);
+	gameObjs[1]->GetTransform()->SetScale(scale);
 	gameObjs[2] = make_shared<GameObject>("TopRight", meshes[2], nullptr, mat);
-	gameObjs[2].get()->GetTransform().get()->SetPosition(1.0f, 1.0f, 0);
-	gameObjs[2].get()->GetTransform().get()->SetRotation(0, 0, 90, Angle::DEGREES);
+	gameObjs[2]->GetTransform()->SetPosition(1.0f, 1.0f, 0);
+	gameObjs[2]->GetTransform()->SetRotation(0, 0, 90, Angle::DEGREES);
+	gameObjs[2]->GetTransform()->SetScale(scale);
 	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0], mat);
-	gameObjs[3].get()->GetTransform().get()->SetPosition(0.5f, -0.5f, 0);
-	//gameObjs[3].get()->GetTransform().get()->SetRotation(0, 0, Degree90 * 2);
+	gameObjs[3]->GetTransform()->SetPosition(0.5f, -0.5f, 0);
+	gameObjs[3]->GetTransform()->SetScale(scale);
 	gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr, mat);
-	gameObjs[4].get()->GetTransform().get()->SetPosition(-1.0f, -1.0f, 0);
-	gameObjs[4].get()->GetTransform().get()->SetRotation(0, 0, -90, Angle::DEGREES);
+	gameObjs[4]->GetTransform()->SetPosition(-1.0f, -1.0f, 0);
+	gameObjs[4]->GetTransform()->SetRotation(0, 0, -90, Angle::DEGREES);
+	gameObjs[4]->GetTransform()->SetScale(scale);
 
 	for (int i = 0; i < gameObjsSize; i++)
 	{

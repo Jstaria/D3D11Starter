@@ -54,6 +54,7 @@ public:
 	void SetRotation(DirectX::XMFLOAT3 rotation, Angle angle); // XMFLOAT4 for quaternion
 	void SetScale(float x, float y, float z);
 	void SetScale(DirectX::XMFLOAT3 scale);
+	void SetScale(float scale);
 	void SetParentTransform(std::shared_ptr<Transform> transform);
 	void SetChildTransform(Transform* transform);
 	void SetDirty(bool value);

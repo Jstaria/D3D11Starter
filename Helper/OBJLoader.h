@@ -8,6 +8,6 @@
 
 namespace OBJLoader
 {
-	MeshData LoadOBJ(char* objFile);
+	MeshData LoadOBJ(const char* objFile);
 };
 

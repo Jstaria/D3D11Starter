@@ -29,14 +29,14 @@ private:
 	// --- Mesh Creation ---
 	void InitializeMesh(MeshData meshData);
 	void CreateMesh(MeshData meshData);
-	MeshData LoadData(char* filePath);
+	MeshData LoadData(const char* filePath);
 	void FindCenterOfMesh(MeshData meshData);
 
 public:
 	// --- Constructors ---
 	Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize);
 	Mesh(MeshData meshData);
-	Mesh(const char* name, char* filePath);
+	Mesh(const char* name, const char* filePath);
 	Mesh();
 	~Mesh();
 

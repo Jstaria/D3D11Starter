@@ -35,8 +35,6 @@ namespace Renderer {
 			XMFLOAT4X4 viewMatrix = currentCamera->GetView();
 			
 			Material* mat = gameObj->GetMaterial().get();
-			mat->GetVS()->SetShader();
-			mat->GetPS()->SetShader();
 
 			switch (gameObj->GetRenderType()) {
 			case IRenderable::RenderType::ParticleSys:
@@ -50,17 +48,23 @@ namespace Renderer {
 				XMFLOAT4X4 projMatrix = currentCamera->GetProjection();;
 
 				ExternalData data{};
-				data.tint = { 1,1,1,1 };
 				data.worldMatrix = worldmatrix;
 				data.viewMatrix = viewMatrix;
 				data.projMatrix = projMatrix;
 
+				mat->GetVS()->SetShader();
+				mat->GetPS()->SetShader();
+
 				mat->GetVS()->SetData("data", &data, sizeof(ExternalData));
+				mat->GetVS()->CopyAllBufferData();
+
+				mat->GetPS()->SetFloat3("colorTint", {1,1,1});
+				mat->GetPS()->CopyAllBufferData();
 
 				break;
 			}
 
-			mat->GetVS()->CopyAllBufferData();
+			
 		}
 		#pragma endregion
 

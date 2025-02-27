@@ -2,7 +2,7 @@
 
 using namespace DirectX;
 
-MeshData OBJLoader::LoadOBJ(char* objFile)
+MeshData OBJLoader::LoadOBJ(const char* objFile)
 {
 	// Author: Chris Cascioli
 // Purpose: Basic .OBJ 3D model loading, supporting positions, uvs and normals
@@ -226,11 +226,13 @@ MeshData OBJLoader::LoadOBJ(char* objFile)
 	//std::memcpy(&meshData.vertices, &verts, sizeof(verts));
 	//std::memcpy(&meshData.normals, &normals, sizeof(normals));
 	//std::memcpy(&meshData.uvs, &uvs, sizeof(uvs));
-	meshData.positions = std::vector<DirectX::XMFLOAT3>(positions);
+	meshData.positions = positions;
 	meshData.indices = indices;
 	meshData.vertices = verts;
 	meshData.normals = normals;
 	meshData.uvs = uvs;
+
+	return meshData;
 
 	// *************************************
 	//      IMPLEMENTATION NOTES (2/2)

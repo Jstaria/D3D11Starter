@@ -30,7 +30,7 @@ Mesh::Mesh(MeshData meshData)
 	InitializeMesh(meshData);
 }
 
-Mesh::Mesh(const char* name, char* filePath)
+Mesh::Mesh(const char* name, const char* filePath)
 {
 	MeshData meshData = OBJLoader::LoadOBJ(filePath);
 	meshData.name = name;
@@ -74,8 +74,7 @@ void Mesh::CreateMesh(MeshData meshData)
 {
 	// --- Create Vertex Buffer ---
 	{
-		// Set vertex count by finding the difference in memory from address
-		vertexCount = meshData.vertices.size();
+		vertexCount = (unsigned int)meshData.vertices.size();
 
 		D3D11_BUFFER_DESC vbd = {};
 		vbd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -93,8 +92,7 @@ void Mesh::CreateMesh(MeshData meshData)
 
 	// --- Create Index Buffer ---
 	{
-		// Set index count by finding the difference in memory from address
-		indexCount = meshData.indices.size();
+		indexCount = (unsigned int)meshData.indices.size();
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;

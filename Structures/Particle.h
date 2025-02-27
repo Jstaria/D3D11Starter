@@ -4,8 +4,8 @@
 
 #include "DirectXMath.h"
 
-#include "../Objects/Mesh.h"
-#include "../Objects/Transform.h"
+#include "../Components/Mesh.h"
+#include "../Components/Transform.h"
 
 struct Particle {
 	std::shared_ptr<Transform> transform;

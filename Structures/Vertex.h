@@ -10,7 +10,6 @@
 struct Vertex
 {
 	DirectX::XMFLOAT3 Position;	    // The local position of the vertex
-	DirectX::XMFLOAT4 Color;
 	DirectX::XMFLOAT2 UV;
 	DirectX::XMFLOAT3 Normal;
 };

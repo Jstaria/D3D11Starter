@@ -12,8 +12,11 @@ struct VertexToPixel
 	//  |    |                |
 	//  v    v                v
 	float4 screenPosition	: SV_POSITION;
-	float4 color			: COLOR;
+    float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
 };
+
+float4 tint;
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -33,5 +36,11 @@ float4 main(VertexToPixel input) : SV_TARGET
 	
     // input.color = (sin(distance(input.screenPosition.xy, float2(1280 / 2, 360))) + 1) / 2;
 	
-	return input.color;
+    float4 color = float4((input.uv + 1) / 2, 0, 1);
+	
+    // https://www.shadertoy.com/view/ldcyR4
+	// https://www.shadertoy.com/view/XlfGRj
+	// https://www.shadertoy.com/view/ldl3W8
+	
+	return color;
 }

@@ -61,6 +61,10 @@ void Transform::SetScale(DirectX::XMFLOAT3 scale)
 	SetScale(scale.x, scale.y, scale.z);
 	
 }
+void Transform::SetScale(float scale)
+{
+	SetScale(scale, scale, scale);
+}
 void Transform::SetParentTransform(std::shared_ptr<Transform> transform)
 {
 	parentTransform = transform;
