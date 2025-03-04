@@ -13,6 +13,7 @@
 #include "../Components/Material.h"
 
 #include "../Helper/SimpleShader.h"
+#include "../Helper/GlobalVar.h"
 
 #include "../Structures/BufType.h"
 
@@ -75,9 +76,5 @@ private:
 	int meshesSize;
 	int gameObjsSize;
 	int camerasSize;
-
-	std::shared_ptr<SimpleVertexShader> vs;
-	std::shared_ptr<SimplePixelShader> ps;
-	std::shared_ptr<SimpleComputeShader> cs;
 };
 

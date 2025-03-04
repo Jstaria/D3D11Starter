@@ -30,6 +30,21 @@ namespace Renderer {
 		//   > Buffers
 		#pragma region Buffers
 
+		void SetDefaultVar(IRenderable* obj, ExternalData data) {
+			
+			Material* mat = obj->GetMaterial().get();
+			mat->GetPS()->SetFloat("iTime", GlobalVar::Time::getElapsedTime());
+			mat->GetPS()->SetFloat2("iResolution", DirectX::XMFLOAT2((float)Window::Width(), (float)Window::Height()));
+			mat->GetPS()->SetFloat3("iEyePosition", currentCamera->GetTransform()->GetPosition());
+			mat->GetPS()->SetFloat3("iEyeDirection", currentCamera->GetTransform()->GetForward());
+			mat->GetPS()->SetFloat3("iPosition", obj->GetTransform()->GetPosition());
+			mat->GetVS()->SetFloat3("iPosition", obj->GetTransform()->GetPosition());
+			mat->GetVS()->SetFloat("iTime", GlobalVar::Time::getElapsedTime());
+
+			mat->GetVS()->SetData("data", &data, sizeof(ExternalData));
+			mat->GetPS()->SetFloat3("iTint", { 1,1,1 });
+		}
+
 		void BindDataToDraw(IRenderable* gameObj) {
 			
 			XMFLOAT4X4 viewMatrix = currentCamera->GetView();
@@ -55,10 +70,9 @@ namespace Renderer {
 				mat->GetVS()->SetShader();
 				mat->GetPS()->SetShader();
 
-				mat->GetVS()->SetData("data", &data, sizeof(ExternalData));
-				mat->GetVS()->CopyAllBufferData();
+				SetDefaultVar(gameObj, data);
 
-				mat->GetPS()->SetFloat3("colorTint", {1,1,1});
+				mat->GetVS()->CopyAllBufferData();
 				mat->GetPS()->CopyAllBufferData();
 
 				break;

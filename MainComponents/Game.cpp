@@ -134,9 +134,6 @@ Game::~Game()
 // --------------------------------------------------------
 void Game::LoadShaders()
 {
-	vs = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
-	ps = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"PixelShader.cso").c_str());
-	cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
 }
 
 
@@ -151,38 +148,47 @@ void Game::CreateGeometry()
 	XMFLOAT4 yellow = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 cyan = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
 
+	shared_ptr<SimpleVertexShader> vs = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
+	shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
+	shared_ptr<SimplePixelShader> RainbowFlowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowNoisePS.cso").c_str());
+	shared_ptr<SimplePixelShader> RainbowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowPS.cso").c_str());
+	shared_ptr<SimplePixelShader> NormalPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"NormalPS.cso").c_str());
+	shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
+
 	meshesSize = 3;
 	meshes = new shared_ptr<Mesh>[meshesSize];
-	meshes[0] = make_shared<Mesh>("Square", FixPath("../../Assets/Models/cube.obj").c_str());
-	meshes[1] = make_shared<Mesh>("TriangleOne", FixPath("../../Assets/Models/cube.obj").c_str());
-	meshes[2] = make_shared<Mesh>("TriangleTwo", FixPath("../../Assets/Models/cube.obj").c_str());
+	meshes[0] = make_shared<Mesh>("Cube", FixPath("../../Assets/Models/quad.obj").c_str());
+	meshes[1] = make_shared<Mesh>("Sphere", FixPath("../../Assets/Models/sphere.obj").c_str());
+	meshes[2] = make_shared<Mesh>("Helix", FixPath("../../Assets/Models/helix.obj").c_str());
 
-	gameObjsSize = 5;
+	gameObjsSize = 3;
 
 	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
 
-	shared_ptr<Material> mat = make_shared<Material>(vs, ps, magenta);
+	shared_ptr<Material> rainbowFlow_mat = make_shared<Material>(vs, RainbowFlowPS, magenta);
+	shared_ptr<Material> rainbow_mat = make_shared<Material>(vs, RainbowPS, yellow);
+	shared_ptr<Material> normal_mat = make_shared<Material>(MorphVS, NormalPS, cyan);
 
-	float scale = .15f;
+	float scale = 1;
 
-	gameObjs[0] = make_shared<GameObject>("MiddleSquare", meshes[0], nullptr, mat);
-	gameObjs[0]->GetTransform()->SetRotation(0, 0, 45, Angle::DEGREES);
+	gameObjs[0] = make_shared<GameObject>("Plane", meshes[0], nullptr, rainbowFlow_mat);
+	gameObjs[0]->GetTransform()->SetRotation(-90, 0, 0, Angle::DEGREES);
 	gameObjs[0]->GetTransform()->SetScale(scale);
-	gameObjs[1] = make_shared<GameObject>("TopLeft", meshes[1], gameObjs[0], mat);
-	gameObjs[1]->GetTransform()->SetPosition(-0.5f, 0.5f, 0);
-	gameObjs[1]->GetTransform()->SetRotation(0, 0, 180, Angle::DEGREES);
+	gameObjs[1] = make_shared<GameObject>("Sphere", meshes[1], nullptr, rainbow_mat);
+	gameObjs[1]->GetTransform()->SetPosition(-3, 0.0f, 0);
+	//gameObjs[1]->GetTransform()->SetRotation(0, 0, 180, Angle::DEGREES);
 	gameObjs[1]->GetTransform()->SetScale(scale);
-	gameObjs[2] = make_shared<GameObject>("TopRight", meshes[2], nullptr, mat);
-	gameObjs[2]->GetTransform()->SetPosition(1.0f, 1.0f, 0);
-	gameObjs[2]->GetTransform()->SetRotation(0, 0, 90, Angle::DEGREES);
+	gameObjs[2] = make_shared<GameObject>("Helix", meshes[2], nullptr, normal_mat);
+	gameObjs[2]->GetTransform()->SetPosition(3.0f, 0.0f, 0);
+	gameObjs[2]->GetTransform()->SetRotation(0, 135, 0, Angle::DEGREES);
 	gameObjs[2]->GetTransform()->SetScale(scale);
-	gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0], mat);
-	gameObjs[3]->GetTransform()->SetPosition(0.5f, -0.5f, 0);
-	gameObjs[3]->GetTransform()->SetScale(scale);
-	gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr, mat);
-	gameObjs[4]->GetTransform()->SetPosition(-1.0f, -1.0f, 0);
-	gameObjs[4]->GetTransform()->SetRotation(0, 0, -90, Angle::DEGREES);
-	gameObjs[4]->GetTransform()->SetScale(scale);
+	//gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0], mat);
+	//gameObjs[3]->GetTransform()->SetPosition(0.5f, -0.5f, 0);
+	//gameObjs[3]->GetTransform()->SetScale(scale);
+	//gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr, mat);
+	//gameObjs[4]->GetTransform()->SetPosition(-1.0f, -1.0f, 0);
+	//gameObjs[4]->GetTransform()->SetRotation(0, 0, -90, Angle::DEGREES);
+	//gameObjs[4]->GetTransform()->SetScale(scale);
 
 	for (int i = 0; i < gameObjsSize; i++)
 	{
@@ -226,43 +232,45 @@ void Game::Update(float deltaTime, float totalTime)
 	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
 	Input::SetMouseCapture(io.WantCaptureMouse);
 
-	float primaryFrequency = 1.5f; 
-	float secondaryFrequency = 1.0f; 
-	float primaryAmplitude = 0.75f;
-	float secondaryAmplitude = 0.5f;
+	//float primaryFrequency = 1.5f; 
+	//float secondaryFrequency = 1.0f; 
+	//float primaryAmplitude = 0.75f;
+	//float secondaryAmplitude = 0.5f;
 
-	float beat = primaryAmplitude * sin(2 * 3.1415f * primaryFrequency * totalTime);
-	beat += secondaryAmplitude * sin(2 * 3.1415f * secondaryFrequency * totalTime);
+	//float beat = primaryAmplitude * sin(2 * 3.1415f * primaryFrequency * totalTime);
+	//beat += secondaryAmplitude * sin(2 * 3.1415f * secondaryFrequency * totalTime);
 
-	float noise = 0.1f * ((float)rand() / RAND_MAX - 0.5f);
-	beat += noise;
-	beat = (beat + 1.0f) * 0.15f + 0.5f;
+	//float noise = 0.1f * ((float)rand() / RAND_MAX - 0.5f);
+	//beat += noise;
+	//beat = (beat + 1.0f) * 0.15f + 0.5f;
 
-	int speed = 10;
+	//int speed = 10;
 
-	{
-		Transform* transform = gameObjs[0].get()->GetTransform().get();
-		XMFLOAT3 pyr = transform->GetPitchYawRoll();
-		XMFLOAT3 scale = transform->GetScale();
-		transform->SetRotation(pyr.x, pyr.y, totalTime + beat / 2, Angle::PI);
-		transform->SetScale(beat, beat, scale.z);
-	}
+	//{
+	//	Transform* transform = gameObjs[0].get()->GetTransform().get();
+	//	XMFLOAT3 pyr = transform->GetPitchYawRoll();
+	//	XMFLOAT3 scale = transform->GetScale();
+	//	transform->SetRotation(pyr.x, pyr.y, totalTime + beat / 2, Angle::PI);
+	//	transform->SetScale(beat, beat, scale.z);
+	//}
 
-	{
-		Transform* triTr1 = gameObjs[1].get()->GetTransform().get();
-		Transform* triTr2 = gameObjs[3].get()->GetTransform().get();
+	//{
+	//	Transform* triTr1 = gameObjs[1].get()->GetTransform().get();
+	//	Transform* triTr2 = gameObjs[3].get()->GetTransform().get();
 
-		XMFLOAT3 scale = triTr1->GetScale();
-		float speed = 10;
-		triTr1->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
-		triTr2->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
-	}
+	//	XMFLOAT3 scale = triTr1->GetScale();
+	//	float speed = 10;
+	//	triTr1->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
+	//	triTr2->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
+	//}
 
 
 	// Build custom UI
 	BuildUI(deltaTime);
 
 	Renderer::GetCamera()->Update(deltaTime);
+	GlobalVar::Time::setDeltaTime(deltaTime);
+	GlobalVar::Time::setElapsedTime(totalTime);
 }
 
 
@@ -271,8 +279,6 @@ void Game::Update(float deltaTime, float totalTime)
 // --------------------------------------------------------
 void Game::Draw(float deltaTime, float totalTime)
 {
-	vs->SetShader();
-	ps->SetShader();
 
 	// Frame START
 	// - These things should happen ONCE PER FRAME

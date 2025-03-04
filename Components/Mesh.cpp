@@ -12,17 +12,14 @@ using namespace Microsoft::WRL;
 /// <param name="indices"></param>
 /// <param name="vertSize"></param>
 /// <param name="indexSize"></param>
-Mesh::Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize)
+Mesh::Mesh(const char* name, std::vector<Vertex> vertices, std::vector<unsigned int> indices)
 {
-	/*MeshData meshData = {};
-	meshData.type = MeshDataType::Basic;
-	meshData.indexSize = indexSize;
+	MeshData meshData = {};
 	meshData.indices = indices;
 	meshData.name = name;
 	meshData.vertices = vertices;
-	meshData.vertSize = vertSize;*/
 
-	//InitializeMesh(meshData);
+	InitializeMesh(meshData);
 }
 
 Mesh::Mesh(MeshData meshData)
@@ -60,6 +57,8 @@ void Mesh::InitializeMesh(MeshData meshData)
 {
 	// Will set name and generate buffers for the mesh
 	this->name = meshData.name;
+	this->meshData = meshData;
+	
 	CreateMesh(meshData);
 	FindCenterOfMesh(meshData);
 
@@ -74,7 +73,7 @@ void Mesh::CreateMesh(MeshData meshData)
 {
 	// --- Create Vertex Buffer ---
 	{
-		vertexCount = (unsigned int)meshData.vertices.size();
+		unsigned int vertexCount = (unsigned int)meshData.vertices.size();
 
 		D3D11_BUFFER_DESC vbd = {};
 		vbd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -92,7 +91,7 @@ void Mesh::CreateMesh(MeshData meshData)
 
 	// --- Create Index Buffer ---
 	{
-		indexCount = (unsigned int)meshData.indices.size();
+		unsigned int indexCount = (unsigned int)meshData.indices.size();
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -111,39 +110,49 @@ void Mesh::CreateMesh(MeshData meshData)
 
 void Mesh::FindCenterOfMesh(MeshData meshData)
 {
-	Vertex* centers = new Vertex[meshData.indices.size() / 3];
+	int triangleCount = (int)meshData.indices.size() / 3;
+	Vertex* vertices = new Vertex[triangleCount]();
+
+	if (meshData.indices.size() % 3 != 0) {
+		throw std::runtime_error("Mesh indices size is not a multiple of 3.");
+	}
 
 	for (int i = 0; i < meshData.indices.size(); i += 3)
 	{
-		Vertex v1 = meshData.vertices[meshData.indices[i + 0]];
+		int index = i / 3;
+		if (index >= triangleCount) {
+			throw std::runtime_error("Index out of bounds for vertices array.");
+		}
+
+		Vertex v1 = meshData.vertices[meshData.indices[i]];
 		Vertex v2 = meshData.vertices[meshData.indices[i + 1]];
 		Vertex v3 = meshData.vertices[meshData.indices[i + 2]];
 
 		Vertex c1{};
-		c1.Position = 
-			XMFLOAT3(
-				(v1.Position.x + v2.Position.x + v3.Position.x) / 3, 
-				(v1.Position.y + v2.Position.y + v3.Position.y) / 3, 
-				(v1.Position.z + v2.Position.z + v3.Position.z) / 3);
-		centers[(i / 3)] = c1;
+		c1.Position = XMFLOAT3(
+			(v1.Position.x + v2.Position.x + v3.Position.x) / 3,
+			(v1.Position.y + v2.Position.y + v3.Position.y) / 3,
+			(v1.Position.z + v2.Position.z + v3.Position.z) / 3
+		);
+
+		vertices[index] = c1;
 	}
 
 	Vertex c{};
-
-	for (int i = 0; i < meshData.indices.size() / 3; i++)
+	for (int i = 0; i < triangleCount; i++)
 	{
-		c.Position.x += centers[i].Position.x;
-		c.Position.y += centers[i].Position.y;
-		c.Position.z += centers[i].Position.z;
+		c.Position.x += vertices[i].Position.x;
+		c.Position.y += vertices[i].Position.y;
+		c.Position.z += vertices[i].Position.z;
 	}
 
-	c.Position.x /= (meshData.indices.size() / 3);
-	c.Position.y /= (meshData.indices.size() / 3);
-	c.Position.z /= (meshData.indices.size() / 3);
+	c.Position.x /= triangleCount;
+	c.Position.y /= triangleCount;
+	c.Position.z /= triangleCount;
 
 	center = c;
 
-	delete[] centers;
+	delete[] vertices; 
 }
 
 ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer()
@@ -158,12 +167,12 @@ ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer()
 
 int Mesh::GetVertexCount()
 {
-	return vertexCount;
+	return (int)meshData.vertices.size();
 }
 
 int Mesh::GetIndexCount()
 {
-	return indexCount;
+	return (int)meshData.indices.size();
 }
 
 const char* Mesh::GetName()
@@ -200,7 +209,7 @@ void Mesh::Draw()
 			Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 			Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-			Graphics::Context->DrawIndexed(indexCount, 0, 0);
+			Graphics::Context->DrawIndexed((int)meshData.vertices.size(), 0, 0);
 		}
 	}
 
@@ -213,7 +222,7 @@ void Mesh::Draw()
 			Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 			Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-			Graphics::Context->DrawIndexed(indexCount, 0, 0);
+			Graphics::Context->DrawIndexed((int)meshData.indices.size(), 0, 0);
 		}
 	}
 }

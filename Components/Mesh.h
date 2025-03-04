@@ -3,6 +3,8 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
+#include <vector>
+
 #include "../MainComponents/Graphics.h"
 #include "../Helper/Debug.h"
 #include "../Helper/OBJLoader.h"
@@ -16,9 +18,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 
-	// --- Mesh Counts ---
-	unsigned int vertexCount;
-	unsigned int indexCount;
+	MeshData meshData;
 
 	// --- General ---
 	const char* name;
@@ -34,7 +34,7 @@ private:
 
 public:
 	// --- Constructors ---
-	Mesh(const char* name, Vertex* vertices, unsigned int* indices, int vertSize, int indexSize);
+	Mesh(const char* name, std::vector<Vertex> vertices, std::vector<unsigned int> indices);
 	Mesh(MeshData meshData);
 	Mesh(const char* name, const char* filePath);
 	Mesh();

@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include "../Helper/SimpleShader.h"
+#include "../Helper/GlobalVar.h"
+#include "../MainComponents/Window.h"
 
 class Material
 {
