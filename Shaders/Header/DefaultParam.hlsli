@@ -5,12 +5,15 @@
 #define TAU 6.283185307179586476925286766559
 #define HALF_PI 1.5707963267948966192313216916398
 
-uniform float iTime;
+uniform float  iTime;
 uniform float2 iResolution;
 uniform float3 iEyePosition;
 uniform float3 iEyeDirection;
 uniform float4 iTint;
 uniform float3 iPosition;
+
+Texture2D ColorTexture : register(t0);
+SamplerState BasicSampler : register(s0);
 
 struct VertexToPixel
 {

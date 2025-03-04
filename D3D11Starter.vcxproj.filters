@@ -281,7 +281,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Include\DefaultParam.hlsli" />
     <None Include="Shaders\Header\DefaultParam.hlsli">
       <Filter>Shaders\Headers</Filter>
     </None>

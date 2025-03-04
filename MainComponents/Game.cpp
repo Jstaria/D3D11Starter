@@ -144,9 +144,10 @@ void Game::CreateGeometry()
 {
 	// Create some temporary variables to represent colors
 	// - Not necessary, just makes things more readable
-	XMFLOAT4 magenta = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
-	XMFLOAT4 yellow = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
-	XMFLOAT4 cyan = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
+	XMFLOAT4 magenta(1.0f, 0.0f, 1.0f, 1.0f);
+	XMFLOAT4 yellow(1.0f, 1.0f, 0.0f, 1.0f);
+	XMFLOAT4 cyan(0.0f, 1.0f, 1.0f, 1.0f);
+	XMFLOAT4 white(1,1,1,1);
 
 	shared_ptr<SimpleVertexShader> vs = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
 	shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
@@ -163,18 +164,27 @@ void Game::CreateGeometry()
 	meshes[2] = make_shared<Mesh>("Helix", FixPath("../../Assets/Models/helix.obj").c_str());
 	meshes[3] = make_shared<Mesh>("Ugly Emoji", FixPath("../../Assets/Models/UGLY_EMOJI.obj").c_str());
 
-	shared_ptr<Material> rainbowFlow_mat = make_shared<Material>(vs, RainbowFlowPS, magenta);
-	shared_ptr<Material> rainbow_mat = make_shared<Material>(vs, RainbowPS, yellow);
-	shared_ptr<Material> normal_mat = make_shared<Material>(MorphVS, NormalPS, cyan);
-	shared_ptr<Material> emoji_mat = make_shared<Material>(vs, ps, yellow);
+	ComPtr<ID3D11SamplerState> baseSampler;
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;	
+	samplerDesc.MaxAnisotropy = 16;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	Graphics::Device->CreateSamplerState(&samplerDesc, baseSampler.GetAddressOf());
 
 	ComPtr<ID3D11ShaderResourceView> textureSRV;
 
-	CreateWICTextureFromFile(
-		Graphics::Device.Get().c_str(),
-		FixPath(L"../../Assets/emo_tex.png"),
-		0,
-		textureSRV.GetAddressOf());
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../Assets/emo_tex.png").c_str(), 0, textureSRV.GetAddressOf());
+
+	shared_ptr<Material> rainbowFlow_mat = make_shared<Material>(vs, RainbowFlowPS, magenta);
+	shared_ptr<Material> rainbow_mat = make_shared<Material>(vs, RainbowPS, white);
+	shared_ptr<Material> normal_mat = make_shared<Material>(MorphVS, NormalPS, cyan);
+	shared_ptr<Material> emoji_mat = make_shared<Material>(vs, ps, yellow);
+	emoji_mat->AddTextureSRV("Emoji_Body", textureSRV);
+	emoji_mat->AddSampler("Basic Sampler", baseSampler);
 
 	float scale = 1;
 

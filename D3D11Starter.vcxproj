@@ -273,9 +273,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Shaders\Header\DefaultParam.hlsli" />
-    <None Include="Shaders\Include\DefaultParam.hlsli">
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
