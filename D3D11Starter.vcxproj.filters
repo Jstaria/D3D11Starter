@@ -55,6 +55,9 @@
     <Filter Include="Header Files\Components">
       <UniqueIdentifier>{f07b9ea4-d2fb-4a0f-9e68-0af5a51b1b4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Headers">
+      <UniqueIdentifier>{aac9d92e-a6e1-454a-a551-24fefeb8ba71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui_demo.cpp">
@@ -130,6 +133,9 @@
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Helper\OBJLoader.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helper\GlobalVar.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -233,6 +239,9 @@
     <ClInclude Include="Helper\OBJLoader.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Helper\GlobalVar.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Changelog.txt">
@@ -246,14 +255,36 @@
     <FxCompile Include="Shaders\Pixel\PixelShader.hlsl">
       <Filter>Shaders\Pixel</Filter>
     </FxCompile>
-    <FxCompile Include="PSInit.hlsl">
-      <Filter>Shaders\Compute</Filter>
-    </FxCompile>
     <FxCompile Include="Shaders\Compute\PSEmit.hlsl">
       <Filter>Shaders\Compute</Filter>
     </FxCompile>
-    <FxCompile Include="PSSim.hlsl">
+    <FxCompile Include="Shaders\Pixel\NormalPS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Pixel\RainbowNoisePS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Pixel\RainbowPS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Compute\PSSim.hlsl">
       <Filter>Shaders\Compute</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\Compute\PSInit.hlsl">
+      <Filter>Shaders\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Vertex\MorphVS.hlsl">
+      <Filter>Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Pixel\TexturePS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Include\DefaultParam.hlsli" />
+    <None Include="Shaders\Header\DefaultParam.hlsli">
+      <Filter>Shaders\Headers</Filter>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

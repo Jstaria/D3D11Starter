@@ -51,6 +51,8 @@ namespace Renderer {
 			
 			Material* mat = gameObj->GetMaterial().get();
 
+			//Graphics::Context->PSSetShaderResources(0, 1, texture.GetAddressOf());
+
 			switch (gameObj->GetRenderType()) {
 			case IRenderable::RenderType::ParticleSys:
 				

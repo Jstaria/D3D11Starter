@@ -1,7 +1,7 @@
 // Shadertoy link
 // This was a pain to debug and convert, good learning experience
 // https://www.shadertoy.com/view/ldcyR4
-#include "../Include/DefaultParam.hlsli"
+#include "../Header/DefaultParam.hlsli"
 
 float4 tint;
 

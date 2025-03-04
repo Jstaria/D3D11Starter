@@ -151,25 +151,36 @@ void Game::CreateGeometry()
 	shared_ptr<SimpleVertexShader> vs = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
 	shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
 	shared_ptr<SimplePixelShader> RainbowFlowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowNoisePS.cso").c_str());
+	shared_ptr<SimplePixelShader> ps = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"PixelShader.cso").c_str());
 	shared_ptr<SimplePixelShader> RainbowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowPS.cso").c_str());
 	shared_ptr<SimplePixelShader> NormalPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"NormalPS.cso").c_str());
 	shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
 
-	meshesSize = 3;
+	meshesSize = 4;
 	meshes = new shared_ptr<Mesh>[meshesSize];
 	meshes[0] = make_shared<Mesh>("Cube", FixPath("../../Assets/Models/quad.obj").c_str());
 	meshes[1] = make_shared<Mesh>("Sphere", FixPath("../../Assets/Models/sphere.obj").c_str());
 	meshes[2] = make_shared<Mesh>("Helix", FixPath("../../Assets/Models/helix.obj").c_str());
-
-	gameObjsSize = 3;
-
-	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
+	meshes[3] = make_shared<Mesh>("Ugly Emoji", FixPath("../../Assets/Models/UGLY_EMOJI.obj").c_str());
 
 	shared_ptr<Material> rainbowFlow_mat = make_shared<Material>(vs, RainbowFlowPS, magenta);
 	shared_ptr<Material> rainbow_mat = make_shared<Material>(vs, RainbowPS, yellow);
 	shared_ptr<Material> normal_mat = make_shared<Material>(MorphVS, NormalPS, cyan);
+	shared_ptr<Material> emoji_mat = make_shared<Material>(vs, ps, yellow);
+
+	ComPtr<ID3D11ShaderResourceView> textureSRV;
+
+	CreateWICTextureFromFile(
+		Graphics::Device.Get().c_str(),
+		FixPath(L"../../Assets/emo_tex.png"),
+		0,
+		textureSRV.GetAddressOf());
 
 	float scale = 1;
+
+	gameObjsSize = 4;
+
+	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
 
 	gameObjs[0] = make_shared<GameObject>("Plane", meshes[0], nullptr, rainbowFlow_mat);
 	gameObjs[0]->GetTransform()->SetRotation(-90, 0, 0, Angle::DEGREES);
@@ -182,9 +193,10 @@ void Game::CreateGeometry()
 	gameObjs[2]->GetTransform()->SetPosition(3.0f, 0.0f, 0);
 	gameObjs[2]->GetTransform()->SetRotation(0, 135, 0, Angle::DEGREES);
 	gameObjs[2]->GetTransform()->SetScale(scale);
-	//gameObjs[3] = make_shared<GameObject>("BottomRight", meshes[1], gameObjs[0], mat);
-	//gameObjs[3]->GetTransform()->SetPosition(0.5f, -0.5f, 0);
-	//gameObjs[3]->GetTransform()->SetScale(scale);
+	gameObjs[3] = make_shared<GameObject>("Ugly Emoji", meshes[3], nullptr, emoji_mat);
+	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
+	gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
+	gameObjs[3]->GetTransform()->SetScale(scale * 8);
 	//gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr, mat);
 	//gameObjs[4]->GetTransform()->SetPosition(-1.0f, -1.0f, 0);
 	//gameObjs[4]->GetTransform()->SetRotation(0, 0, -90, Angle::DEGREES);

@@ -1,4 +1,4 @@
-#include "../Include/DefaultParam.hlsli"
+#include "../Header/DefaultParam.hlsli"
 
 struct VertexShaderInput
 {

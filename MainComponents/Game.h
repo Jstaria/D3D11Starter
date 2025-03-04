@@ -6,6 +6,7 @@
 #include <memory>
 #include <DirectXMath.h>
 #include "Renderer.h"
+#include "WICTextureLoader.h"
 
 #include "../Components/Mesh.h"
 #include "../Components/Camera.h"

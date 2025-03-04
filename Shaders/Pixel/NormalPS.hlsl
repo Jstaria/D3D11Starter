@@ -1,4 +1,4 @@
-#include "../Include/DefaultParam.hlsli"
+#include "../Header/DefaultParam.hlsli"
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
