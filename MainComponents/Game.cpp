@@ -155,14 +155,17 @@ void Game::CreateGeometry()
 	shared_ptr<SimplePixelShader> ps = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"PixelShader.cso").c_str());
 	shared_ptr<SimplePixelShader> RainbowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowPS.cso").c_str());
 	shared_ptr<SimplePixelShader> NormalPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"NormalPS.cso").c_str());
+	shared_ptr<SimplePixelShader> TexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"TexturePS.cso").c_str());
 	shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
+
+	string assetsPath = "../../Assets/Models/";
 
 	meshesSize = 4;
 	meshes = new shared_ptr<Mesh>[meshesSize];
-	meshes[0] = make_shared<Mesh>("Cube", FixPath("../../Assets/Models/quad.obj").c_str());
-	meshes[1] = make_shared<Mesh>("Sphere", FixPath("../../Assets/Models/sphere.obj").c_str());
-	meshes[2] = make_shared<Mesh>("Helix", FixPath("../../Assets/Models/helix.obj").c_str());
-	meshes[3] = make_shared<Mesh>("Ugly Emoji", FixPath("../../Assets/Models/UGLY_EMOJI.obj").c_str());
+	meshes[0] = make_shared<Mesh>("Cube", FixPath(assetsPath + "quad.obj").c_str());
+	meshes[1] = make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str());
+	meshes[2] = make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str());
+	meshes[3] = make_shared<Mesh>("Ugly Emoji", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str());
 
 	ComPtr<ID3D11SamplerState> baseSampler;
 
@@ -177,14 +180,14 @@ void Game::CreateGeometry()
 
 	ComPtr<ID3D11ShaderResourceView> textureSRV;
 
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../Assets/emo_tex.png").c_str(), 0, textureSRV.GetAddressOf());
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_albedo.jpg").c_str(), 0, textureSRV.GetAddressOf());
 
 	shared_ptr<Material> rainbowFlow_mat = make_shared<Material>(vs, RainbowFlowPS, magenta);
 	shared_ptr<Material> rainbow_mat = make_shared<Material>(vs, RainbowPS, white);
 	shared_ptr<Material> normal_mat = make_shared<Material>(MorphVS, NormalPS, cyan);
-	shared_ptr<Material> emoji_mat = make_shared<Material>(vs, ps, yellow);
-	emoji_mat->AddTextureSRV("Emoji_Body", textureSRV);
-	emoji_mat->AddSampler("Basic Sampler", baseSampler);
+	shared_ptr<Material> emoji_mat = make_shared<Material>(vs, TexturePS, yellow);
+	emoji_mat->AddTextureSRV("ColorTexture", textureSRV);
+	emoji_mat->AddSampler("BasicSampler", baseSampler);
 
 	float scale = 1;
 
@@ -205,8 +208,8 @@ void Game::CreateGeometry()
 	gameObjs[2]->GetTransform()->SetScale(scale);
 	gameObjs[3] = make_shared<GameObject>("Ugly Emoji", meshes[3], nullptr, emoji_mat);
 	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
-	gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
-	gameObjs[3]->GetTransform()->SetScale(scale * 8);
+	//gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
+	gameObjs[3]->GetTransform()->SetScale(scale * .05);
 	//gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr, mat);
 	//gameObjs[4]->GetTransform()->SetPosition(-1.0f, -1.0f, 0);
 	//gameObjs[4]->GetTransform()->SetRotation(0, 0, -90, Angle::DEGREES);
