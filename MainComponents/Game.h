@@ -4,6 +4,7 @@
 #include <wrl/client.h>
 #include <vector>
 #include <memory>
+#include <map>
 #include <DirectXMath.h>
 #include "Renderer.h"
 #include "WICTextureLoader.h"
@@ -69,13 +70,16 @@ private:
 	float curDT = 0;
 
 	// Arrays
-	std::shared_ptr<Mesh>* meshes;
-	std::shared_ptr<GameObject>* gameObjs;
-	std::shared_ptr<Camera>* cameras;
-	int currentCam;
-
 	int meshesSize;
 	int gameObjsSize;
 	int camerasSize;
+
+	std::shared_ptr<Mesh>* meshes;
+	std::shared_ptr<GameObject>* gameObjs;
+	std::shared_ptr<Camera>* cameras;
+	std::map<const char*, std::shared_ptr<Material>> materials;
+	std::vector<const char*> materialsKeys;
+	
+	int currentCam;
 };
 

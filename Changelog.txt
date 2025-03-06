@@ -4,13 +4,19 @@
 	### NEW ###
 	>   Added "Material" class
 	>   Added Particle and Particle System
-	    >   Compute Shaders "PSInit","PSEmit","PSSim"
+	    >   Compute Shaders "PSInit","PSEmit","PSSim" (Not Done)
 	>   Added IRenderable
+	>   Added IUpdateable
+	>   Added Texturing
+	>   Added .obj Loader
 
 	### CHANGES ###
 	>   Each GameObject now has its own material to draw with   
 	>   GameObject now inherits from IRenderable
 	>   Renderer now has a list of IRenderables
+	>   Materials now have a name
+	>   Can select material for GameObjects
+	
 
 - Assignment 06:
 	

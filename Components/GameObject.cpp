@@ -11,7 +11,7 @@ GameObject::GameObject(const char* name, std::shared_ptr<Mesh> mesh, std::shared
 	this->material = material;
 
 	this->transform = make_shared<Transform>();
-	
+
 	this->transform.get()->SetParentTransform(parentObj != nullptr ? parentObj.get()->GetTransform() : nullptr);
 
 	if (parentObj != nullptr) {
@@ -25,47 +25,18 @@ GameObject::~GameObject()
 {
 }
 
-std::shared_ptr<Transform> GameObject::GetTransform()
-{
-	return transform;
-}
+std::shared_ptr<Transform> GameObject::GetTransform() { return transform; }
+std::shared_ptr<Transform> GameObject::GetParentTransform() { return transform.get()->GetParentTransform(); }
+std::shared_ptr<Mesh> GameObject::GetMesh() { return mesh; }
+std::shared_ptr<Material> GameObject::GetMaterial() { return material; }
+const char* GameObject::GetName() { return name; }
+DirectX::XMFLOAT4 GameObject::GetTint() { return tint; }
 
-std::shared_ptr<Transform> GameObject::GetParentTransform()
-{
-	return transform.get()->GetParentTransform();
-}
+void GameObject::SetObjAsChild(GameObject* child) { childObjs.push_back(child); }
+void GameObject::SetTint(XMFLOAT4 tintColor) { tint = tintColor; }
+void GameObject::SetMaterial(std::shared_ptr<Material> material) { this->material = material; }
 
-std::shared_ptr<Mesh> GameObject::GetMesh()
-{
-	return mesh;
-}
-
-std::shared_ptr<Material> GameObject::GetMaterial()
-{
-	return material;
-}
-
-const char* GameObject::GetName()
-{
-	return name;
-}
-
-DirectX::XMFLOAT4 GameObject::GetTint()
-{
-	return tint;
-}
-
-void GameObject::SetObjAsChild(GameObject* child)
-{
-	childObjs.push_back(child);
-}
-
-void GameObject::SetTint(XMFLOAT4 tintColor)
-{
-	tint = tintColor;
-}
-
-void GameObject::DrawImGui()
+void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialsKeys)
 {
 	if (ImGui::TreeNode(name)) {
 
@@ -73,6 +44,16 @@ void GameObject::DrawImGui()
 			ImGui::Text("Parent GameObject: %s", parentObj->GetName());
 
 		ImGui::Text("Mesh: %s", mesh->GetName());
+		ImGui::Text("Material : %s", material->GetName());
+
+		int index = (int)material->GetMatIndex();
+
+		ImGui::Text("Material Select:");
+		ImGui::SameLine();
+
+		if (ImGui::Combo("##MapCombo", &index, materialsKeys.data(), materialsKeys.size())) {
+			material = materials[materialsKeys[index]];
+		}
 
 		{
 			XMFLOAT3 pos = transform->GetPosition();

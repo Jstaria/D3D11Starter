@@ -1,6 +1,11 @@
 #pragma once
 namespace GlobalVar
 {
+	namespace Material {
+		unsigned int getMaterialIndex();
+		void TickMaterialIndex();
+		unsigned int getIndexThenTick();
+	}
 	namespace Time {
 		
 		// -=| Getters |=-

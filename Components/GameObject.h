@@ -5,6 +5,7 @@
 #include "ImgUtil.h"
 #include <wrl/client.h>
 #include <memory>
+#include <map>
 
 #include "Mesh.h"
 #include "Transform.h"
@@ -36,8 +37,9 @@ public:
 
 	void SetObjAsChild(GameObject* GameObject);
 	void SetTint(DirectX::XMFLOAT4 tintColor);
+	void SetMaterial(std::shared_ptr<Material> material);
 
-	void DrawImGui();
+	void DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialsKeys);
 
 	// Inherited via IRenderable
 	IRenderable::RenderType GetRenderType() override;

@@ -3,9 +3,10 @@
 
 using namespace Microsoft::WRL;
 
-Material::Material(std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, DirectX::XMFLOAT4 color)
-	: vs(vs), ps(ps), color(color)
+Material::Material(const char* name, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, DirectX::XMFLOAT4 color)
+	: name(name), vs(vs), ps(ps), color(color)
 {
+	materialIndex = GlobalVar::Material::getIndexThenTick();
 }
 
 void Material::SetDefaultShaderParam(ExternalData data, Transform* transform, Transform* camTransform)
@@ -26,25 +27,17 @@ void Material::SetDefaultShaderParam(ExternalData data, Transform* transform, Tr
 	for (auto& samplers : samplers) { ps->SetSamplerState(samplers.first, samplers.second.Get()); }
 }
 
-std::shared_ptr<SimpleVertexShader> Material::GetVS()
-{
-	return vs;
-}
-
-std::shared_ptr<SimplePixelShader> Material::GetPS()
-{
-	return ps;
-}
-
-DirectX::XMFLOAT4 Material::GetColor()
-{
-	return color;
-}
+std::shared_ptr<SimpleVertexShader> Material::GetVS() { return vs; }
+std::shared_ptr<SimplePixelShader> Material::GetPS() { return ps; }
+DirectX::XMFLOAT4 Material::GetColor() { return color; }
+const char* Material::GetName() { return name; }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Material::GetTextureSRV(const char* name) { return textures[name]; }
 Microsoft::WRL::ComPtr<ID3D11SamplerState> Material::GetSampler(const char* name) { return samplers[name]; }
 std::unordered_map<const char*, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> Material::GetTextureSRVs() { return textures; }
 std::unordered_map<const char*, Microsoft::WRL::ComPtr<ID3D11SamplerState>> Material::GetSamplers() { return samplers; }
+
+unsigned int Material::GetMatIndex() { return materialIndex; }
 
 void Material::AddTextureSRV(const char* name, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV) { textures.insert({ name, textureSRV }); }
 void Material::AddSampler(const char* name, Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler) { samplers.insert({ name, sampler }); }

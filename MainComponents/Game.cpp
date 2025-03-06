@@ -100,7 +100,7 @@ void Game::Initialize()
 		Window::AspectRatio(),
 		0.01f,
 		1000.0f);
-	cameras[2]->GetTransform()->SetRotation(0, 45, 0,Angle::DEGREES);
+	cameras[2]->GetTransform()->SetRotation(0, 45, 0, Angle::DEGREES);
 	Renderer::SetCurrentCamera(cameras[0]);
 }
 
@@ -147,7 +147,7 @@ void Game::CreateGeometry()
 	XMFLOAT4 magenta(1.0f, 0.0f, 1.0f, 1.0f);
 	XMFLOAT4 yellow(1.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 cyan(0.0f, 1.0f, 1.0f, 1.0f);
-	XMFLOAT4 white(1,1,1,1);
+	XMFLOAT4 white(1, 1, 1, 1);
 
 	shared_ptr<SimpleVertexShader> vs = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
 	shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
@@ -165,7 +165,7 @@ void Game::CreateGeometry()
 	meshes[0] = make_shared<Mesh>("Cube", FixPath(assetsPath + "quad.obj").c_str());
 	meshes[1] = make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str());
 	meshes[2] = make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str());
-	meshes[3] = make_shared<Mesh>("Ugly Emoji", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str());
+	meshes[3] = make_shared<Mesh>("Wonder Fizz Machines", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str());
 
 	ComPtr<ID3D11SamplerState> baseSampler;
 
@@ -173,21 +173,24 @@ void Game::CreateGeometry()
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;	
+	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	samplerDesc.MaxAnisotropy = 16;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	Graphics::Device->CreateSamplerState(&samplerDesc, baseSampler.GetAddressOf());
 
 	ComPtr<ID3D11ShaderResourceView> textureSRV;
 
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_albedo.jpg").c_str(), 0, textureSRV.GetAddressOf());
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
+		FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_albedo.jpg").c_str(), 0, textureSRV.GetAddressOf());
 
-	shared_ptr<Material> rainbowFlow_mat = make_shared<Material>(vs, RainbowFlowPS, magenta);
-	shared_ptr<Material> rainbow_mat = make_shared<Material>(vs, RainbowPS, white);
-	shared_ptr<Material> normal_mat = make_shared<Material>(MorphVS, NormalPS, cyan);
-	shared_ptr<Material> emoji_mat = make_shared<Material>(vs, TexturePS, yellow);
-	emoji_mat->AddTextureSRV("ColorTexture", textureSRV);
-	emoji_mat->AddSampler("BasicSampler", baseSampler);
+	materials.emplace("rainbowFlow_mat", make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
+	materials.emplace("rainbow_mat", make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
+	materials.emplace("normal_mat", make_shared<Material>("normal_mat", MorphVS, NormalPS, cyan));
+	materials.emplace("fizz_mat", make_shared<Material>("fizz_mat",vs, TexturePS, yellow));
+	materials["fizz_mat"]->AddTextureSRV("ColorTexture", textureSRV);
+	materials["fizz_mat"]->AddSampler("BasicSampler", baseSampler);
+
+	for (auto& pair : materials) { materialsKeys.push_back(pair.first); }
 
 	float scale = 1;
 
@@ -195,18 +198,18 @@ void Game::CreateGeometry()
 
 	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
 
-	gameObjs[0] = make_shared<GameObject>("Plane", meshes[0], nullptr, rainbowFlow_mat);
+	gameObjs[0] = make_shared<GameObject>("Plane", meshes[0], nullptr, materials["rainbowFlow_mat"]);
 	gameObjs[0]->GetTransform()->SetRotation(-90, 0, 0, Angle::DEGREES);
 	gameObjs[0]->GetTransform()->SetScale(scale);
-	gameObjs[1] = make_shared<GameObject>("Sphere", meshes[1], nullptr, rainbow_mat);
+	gameObjs[1] = make_shared<GameObject>("Sphere", meshes[1], nullptr, materials["rainbow_mat"]);
 	gameObjs[1]->GetTransform()->SetPosition(-3, 0.0f, 0);
 	//gameObjs[1]->GetTransform()->SetRotation(0, 0, 180, Angle::DEGREES);
 	gameObjs[1]->GetTransform()->SetScale(scale);
-	gameObjs[2] = make_shared<GameObject>("Helix", meshes[2], nullptr, normal_mat);
+	gameObjs[2] = make_shared<GameObject>("Helix", meshes[2], nullptr, materials["normal_mat"]);
 	gameObjs[2]->GetTransform()->SetPosition(3.0f, 0.0f, 0);
 	gameObjs[2]->GetTransform()->SetRotation(0, 135, 0, Angle::DEGREES);
 	gameObjs[2]->GetTransform()->SetScale(scale);
-	gameObjs[3] = make_shared<GameObject>("Ugly Emoji", meshes[3], nullptr, emoji_mat);
+	gameObjs[3] = make_shared<GameObject>("Wonder Fizz", meshes[3], nullptr, materials["fizz_mat"]);
 	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
 	//gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
 	gameObjs[3]->GetTransform()->SetScale(scale * .05);
@@ -256,39 +259,6 @@ void Game::Update(float deltaTime, float totalTime)
 	// Determine new input capture
 	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
 	Input::SetMouseCapture(io.WantCaptureMouse);
-
-	//float primaryFrequency = 1.5f; 
-	//float secondaryFrequency = 1.0f; 
-	//float primaryAmplitude = 0.75f;
-	//float secondaryAmplitude = 0.5f;
-
-	//float beat = primaryAmplitude * sin(2 * 3.1415f * primaryFrequency * totalTime);
-	//beat += secondaryAmplitude * sin(2 * 3.1415f * secondaryFrequency * totalTime);
-
-	//float noise = 0.1f * ((float)rand() / RAND_MAX - 0.5f);
-	//beat += noise;
-	//beat = (beat + 1.0f) * 0.15f + 0.5f;
-
-	//int speed = 10;
-
-	//{
-	//	Transform* transform = gameObjs[0].get()->GetTransform().get();
-	//	XMFLOAT3 pyr = transform->GetPitchYawRoll();
-	//	XMFLOAT3 scale = transform->GetScale();
-	//	transform->SetRotation(pyr.x, pyr.y, totalTime + beat / 2, Angle::PI);
-	//	transform->SetScale(beat, beat, scale.z);
-	//}
-
-	//{
-	//	Transform* triTr1 = gameObjs[1].get()->GetTransform().get();
-	//	Transform* triTr2 = gameObjs[3].get()->GetTransform().get();
-
-	//	XMFLOAT3 scale = triTr1->GetScale();
-	//	float speed = 10;
-	//	triTr1->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
-	//	triTr2->SetScale((cos(totalTime * speed) + 2) / 2 * beat, (sin(totalTime * speed) + 2) / 2* beat, scale.z);
-	//}
-
 
 	// Build custom UI
 	BuildUI(deltaTime);
@@ -375,7 +345,7 @@ void Game::BuildUI(float deltaTime) {
 			}
 
 			if (getFrameTimer < 0) {
-				
+
 				if (currentFPS > maxFrameValue) {
 					maxFrameValue = currentFPS;
 					getResetTimer = 100;
@@ -430,7 +400,7 @@ void Game::BuildUI(float deltaTime) {
 		if (ImGui::CollapsingHeader("All Current GameObject Details")) {
 			for (int i = 0; i < gameObjsSize; i++)
 			{
-				gameObjs[i].get()->DrawImGui();
+				gameObjs[i].get()->DrawImGui(materials, materialsKeys);
 			}
 		}
 	}
@@ -459,22 +429,20 @@ void Game::BuildUI(float deltaTime) {
 			shared_ptr<Camera> cam = Renderer::GetCamera();
 			cam->UIDraw();
 
-			if (ImGui::TreeNode("Camera Select")) {
-				const char** items = new const char* [camerasSize];
+			const char** items = new const char* [camerasSize];
 
-				for (int i = 0; i < camerasSize; i++)
-				{
-					items[i] = cameras[i]->GetName();
-				}
-
-				ImGui::ListBox(" ", &currentCam, items, camerasSize);
-
-				Renderer::SetCurrentCamera(cameras[currentCam]);
-
-				delete[] items;
-
-				ImGui::TreePop();
+			for (int i = 0; i < camerasSize; i++)
+			{
+				items[i] = cameras[i]->GetName();
 			}
+
+			ImGui::Text("Camera Select: ");
+			ImGui::SameLine();
+			if (ImGui::Combo("##MapCombo", &currentCam, items, camerasSize)) {
+				Renderer::SetCurrentCamera(cameras[currentCam]);
+			}
+
+			delete[] items;
 		}
 	}
 

@@ -17,12 +17,15 @@ private:
 	std::shared_ptr<SimpleVertexShader> vs;
 	std::shared_ptr<SimplePixelShader> ps;
 	DirectX::XMFLOAT4 color;
+	const char* name;
+
+	unsigned int materialIndex;
 
 	std::unordered_map<const char*, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
 	std::unordered_map<const char*, Microsoft::WRL::ComPtr<ID3D11SamplerState>> samplers;
 
 public:
-	Material(std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, DirectX::XMFLOAT4 color);
+	Material(const char* name, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, DirectX::XMFLOAT4 color);
 
 	void SetDefaultShaderParam(ExternalData data, Transform* transform, Transform* camTransform);
 
@@ -30,10 +33,12 @@ public:
 	std::shared_ptr<SimpleVertexShader> GetVS();
 	std::shared_ptr<SimplePixelShader> GetPS();
 	DirectX::XMFLOAT4 GetColor();
+	const char* GetName();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureSRV(const char* name);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSampler(const char* name);
 	std::unordered_map<const char*, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> GetTextureSRVs();
 	std::unordered_map<const char*, Microsoft::WRL::ComPtr<ID3D11SamplerState>> GetSamplers();
+	unsigned int GetMatIndex();
 
 	// -=| Setters/Adders |=-
 	void AddTextureSRV(const char* name, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV);
