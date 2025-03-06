@@ -3,7 +3,7 @@
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
-    float4 color = ColorTexture.Sample(BasicSampler, input.uv);
+    float4 color = SurfaceColorTexture.Sample(BasicSampler, input.uv);
 
     return color;
 }

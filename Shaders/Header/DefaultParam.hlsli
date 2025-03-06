@@ -12,7 +12,7 @@ uniform float3 iEyeDirection;
 uniform float4 iTint;
 uniform float3 iPosition;
 
-Texture2D ColorTexture : register(t0);
+Texture2D SurfaceColorTexture : register(t0);
 SamplerState BasicSampler : register(s0);
 
 struct VertexToPixel

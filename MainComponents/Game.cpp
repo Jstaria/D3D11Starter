@@ -32,7 +32,7 @@ void Game::Initialize()
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
 	Debug::Initialize();
-	CreateGeometry();
+	CreateObjects();
 
 	// Set initial graphics API state
 	//  - These settings persist until we change them
@@ -140,7 +140,7 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 // Creates the geometry we're going to draw
 // --------------------------------------------------------
-void Game::CreateGeometry()
+void Game::CreateObjects()
 {
 	// Create some temporary variables to represent colors
 	// - Not necessary, just makes things more readable
@@ -160,12 +160,13 @@ void Game::CreateGeometry()
 
 	string assetsPath = "../../Assets/Models/";
 
-	meshesSize = 4;
+	meshesSize = 5;
 	meshes = new shared_ptr<Mesh>[meshesSize];
 	meshes[0] = make_shared<Mesh>("Cube", FixPath(assetsPath + "quad.obj").c_str());
 	meshes[1] = make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str());
 	meshes[2] = make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str());
 	meshes[3] = make_shared<Mesh>("Wonder Fizz Machines", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str());
+	meshes[4] = make_shared<Mesh>("Cube", FixPath(assetsPath + "cube.obj").c_str());
 
 	ComPtr<ID3D11SamplerState> baseSampler;
 
@@ -178,23 +179,28 @@ void Game::CreateGeometry()
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	Graphics::Device->CreateSamplerState(&samplerDesc, baseSampler.GetAddressOf());
 
-	ComPtr<ID3D11ShaderResourceView> textureSRV;
-
+	ComPtr<ID3D11ShaderResourceView> fizzTextureSRV;
 	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_albedo.jpg").c_str(), 0, textureSRV.GetAddressOf());
+		FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_albedo.jpg").c_str(), 0, fizzTextureSRV.GetAddressOf());
+	ComPtr<ID3D11ShaderResourceView> crateTextureSRV;
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
+		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_basecolor.jpg").c_str(), 0, crateTextureSRV.GetAddressOf());
 
 	materials.emplace("rainbowFlow_mat", make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
 	materials.emplace("rainbow_mat", make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
 	materials.emplace("normal_mat", make_shared<Material>("normal_mat", MorphVS, NormalPS, cyan));
 	materials.emplace("fizz_mat", make_shared<Material>("fizz_mat",vs, TexturePS, yellow));
-	materials["fizz_mat"]->AddTextureSRV("ColorTexture", textureSRV);
+	materials["fizz_mat"]->AddTextureSRV("SurfaceColorTexture", fizzTextureSRV);
 	materials["fizz_mat"]->AddSampler("BasicSampler", baseSampler);
+	materials.emplace("crate_mat", make_shared<Material>("crate_mat", vs, TexturePS, yellow));
+	materials["crate_mat"]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
+	materials["crate_mat"]->AddSampler("BasicSampler", baseSampler);
 
 	for (auto& pair : materials) { materialsKeys.push_back(pair.first); }
 
 	float scale = 1;
 
-	gameObjsSize = 4;
+	gameObjsSize = 5;
 
 	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
 
@@ -213,10 +219,10 @@ void Game::CreateGeometry()
 	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
 	//gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
 	gameObjs[3]->GetTransform()->SetScale(scale * .05);
-	//gameObjs[4] = make_shared<GameObject>("BottomLeft", meshes[2], nullptr, mat);
-	//gameObjs[4]->GetTransform()->SetPosition(-1.0f, -1.0f, 0);
+	gameObjs[4] = make_shared<GameObject>("Crate", meshes[4], nullptr, materials["crate_mat"]);
+	gameObjs[4]->GetTransform()->SetPosition(-2.0f, 0.0f, -5.0f);
 	//gameObjs[4]->GetTransform()->SetRotation(0, 0, -90, Angle::DEGREES);
-	//gameObjs[4]->GetTransform()->SetScale(scale);
+	gameObjs[4]->GetTransform()->SetScale(scale);
 
 	for (int i = 0; i < gameObjsSize; i++)
 	{

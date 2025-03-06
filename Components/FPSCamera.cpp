@@ -13,6 +13,8 @@ void FPSCamera::Update(float deltaTime)
 {
 	float speed = movementSpeed * deltaTime;
 
+	if (Input::KeyDown(VK_CONTROL)) speed *= 2;
+
 	if (Input::KeyDown('W')) transform->MoveRelative(0, 0, speed);
 	if (Input::KeyDown('S')) transform->MoveRelative(0, 0, -speed);
 	if (Input::KeyDown('A')) transform->MoveRelative(-speed, 0, 0);

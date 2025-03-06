@@ -47,5 +47,8 @@ float4 main(VertexToPixel input) : SV_TARGET
         color = color1 * .65;
     }
     
+    //if (color.r >= .85 && color.g >= .85 && color.b >= .85)
+    //    discard;
+    
         return float4(color, 1.0);
 }
