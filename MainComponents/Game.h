@@ -16,6 +16,7 @@
 
 #include "../Helper/SimpleShader.h"
 #include "../Helper/GlobalVar.h"
+#include "../Helper/Settings.h"
 
 #include "../Structures/BufType.h"
 
@@ -57,8 +58,6 @@ private:
 
 	// UI Data
 	bool isImGuiDemoOpen;
-	bool isInVsync;
-	bool inDebugMode;
 	std::vector<float> frameValues;
 	std::vector<float> deltaValues;
 	int frameValueCount = 100;

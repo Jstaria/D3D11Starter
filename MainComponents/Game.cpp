@@ -31,6 +31,7 @@ void Game::Initialize()
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
+	//Settings::InitializeSettings();
 	Debug::Initialize();
 	CreateObjects();
 
@@ -70,8 +71,8 @@ void Game::Initialize()
 
 	Renderer::Init();
 
-	isInVsync = true;
-	Graphics::SetVsyncState(isInVsync);
+	Settings::UsingVsync = true;
+	Graphics::SetVsyncState(Settings::UsingVsync);
 
 	camerasSize = 3;
 	cameras = new shared_ptr<Camera>[camerasSize];
@@ -335,9 +336,9 @@ void Game::BuildUI(float deltaTime) {
 				ImGui::ShowDemoWindow(&isImGuiDemoOpen);
 			}
 
-			ImGui::Checkbox("Toggle Vsync", &isInVsync);
+			ImGui::Checkbox("Toggle Vsync", &Settings::UsingVsync);
 
-			Graphics::SetVsyncState(isInVsync);
+			Graphics::SetVsyncState(Settings::UsingVsync);
 		}
 
 		// Current frame data

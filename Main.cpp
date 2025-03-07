@@ -7,6 +7,8 @@
 #include "MainComponents/Game.h"
 #include "MainComponents/Input.h"
 
+#include "Helper/Settings.h"
+
 // Annonymous namespace to hold variables
 // only accessible in this file
 namespace

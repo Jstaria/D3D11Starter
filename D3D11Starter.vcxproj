@@ -167,6 +167,7 @@
     <ClCompile Include="Helper\OBJLoader.cpp" />
     <ClCompile Include="Helper\PathHelpers.cpp" />
     <ClCompile Include="Helper\Physics.cpp" />
+    <ClCompile Include="Helper\Settings.cpp" />
     <ClCompile Include="Helper\SimpleShader.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Helper\OBJLoader.h" />
     <ClInclude Include="Helper\PathHelpers.h" />
     <ClInclude Include="Helper\Physics.h" />
+    <ClInclude Include="Helper\Settings.h" />
     <ClInclude Include="Helper\SimpleShader.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
