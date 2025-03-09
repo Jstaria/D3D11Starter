@@ -12,10 +12,11 @@
 #include "Material.h"
 
 #include "../Interfaces/IRenderable.h"
+#include "../Interfaces/IComponent.h"
 #include "../MainComponents/Window.h"
 #include "../ImGui/imgui.h"
 
-class GameObject : public IRenderable
+class GameObject : public IRenderable, public IComponent
 {
 private:
 	const char* name;

@@ -81,12 +81,13 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 	}
 }
 
-IRenderable::RenderType GameObject::GetRenderType()
-{
-	return rendererType;
-}
+IRenderable::RenderType GameObject::GetRenderType() { return rendererType; }
 
 void GameObject::Draw()
 {
 	mesh->Draw();
+}
+
+void GameObject::AddComponent(std::shared_ptr<Component>)
+{
 }

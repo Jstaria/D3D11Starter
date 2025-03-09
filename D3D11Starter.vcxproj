@@ -206,9 +206,11 @@
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
+    <ClInclude Include="Interfaces\IComponent.h" />
     <ClInclude Include="Interfaces\ICompute.h" />
     <ClInclude Include="Interfaces\IRenderable.h" />
     <ClInclude Include="Interfaces\IUpdatable.h" />
+    <ClInclude Include="Interfaces\IWriteable.h" />
     <ClInclude Include="MainComponents\Game.h" />
     <ClInclude Include="MainComponents\Graphics.h" />
     <ClInclude Include="MainComponents\Input.h" />
