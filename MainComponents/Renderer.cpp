@@ -47,12 +47,14 @@ namespace Renderer {
 			case IRenderable::RenderType::Object:
 
 				XMFLOAT4X4 worldmatrix = gameObj->GetTransform()->GetWorldMatrix();
-				XMFLOAT4X4 projMatrix = currentCamera->GetProjection();;
+				XMFLOAT4X4 projMatrix = currentCamera->GetProjection();
+				XMFLOAT4X4 invWorldMatrix = gameObj->GetTransform()->GetWorldInverseTransposeMatrix();
 
 				ExternalData data{};
 				data.worldMatrix = worldmatrix;
 				data.viewMatrix = viewMatrix;
 				data.projMatrix = projMatrix;
+				data.invWorldMatrix = invWorldMatrix;
 
 				mat->GetVS()->SetShader();
 				mat->GetPS()->SetShader();

@@ -163,7 +163,7 @@ void Game::CreateObjects()
 
 	meshesSize = 5;
 	meshes = new shared_ptr<Mesh>[meshesSize];
-	meshes[0] = make_shared<Mesh>("Cube", FixPath(assetsPath + "quad.obj").c_str());
+	meshes[0] = make_shared<Mesh>("Plane", FixPath(assetsPath + "quad.obj").c_str());
 	meshes[1] = make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str());
 	meshes[2] = make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str());
 	meshes[3] = make_shared<Mesh>("Wonder Fizz Machines", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str());

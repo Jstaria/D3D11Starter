@@ -38,6 +38,7 @@ struct ExternalData
     float4x4 viewMatrix;
     float4x4 projMatrix;
     float4x4 worldMatrix;
+    float4x4 invWorldMatrix;
 };
 
 // --------------------------------------------------------
@@ -84,7 +85,8 @@ VertexToPixel main(VertexShaderInput input)
 	
     output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
     output.uv = input.uv;
-    output.normal = input.normal;
-
+    output.normal = mul(input.normal, (float3x3)data.invWorldMatrix);
+    output.normal = normalize(output.normal);
+  
     return output;
 }

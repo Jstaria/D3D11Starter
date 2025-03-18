@@ -297,5 +297,8 @@
       <Filter>Shaders\Headers</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="Shaders\Header\Lighting.hlsli">
+      <Filter>Shaders\Headers</Filter>
+    </None>
   </ItemGroup>
 </Project>

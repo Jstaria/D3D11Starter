@@ -88,6 +88,6 @@ void GameObject::Draw()
 	mesh->Draw();
 }
 
-void GameObject::AddComponent(std::shared_ptr<Component>)
-{
-}
+//void GameObject::AddComponent(std::shared_ptr<Component>)
+//{
+//}
