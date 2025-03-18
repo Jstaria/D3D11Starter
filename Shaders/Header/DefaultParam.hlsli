@@ -11,6 +11,8 @@ uniform float3 iEyePosition;
 uniform float3 iEyeDirection;
 uniform float4 iTint;
 uniform float3 iPosition;
+uniform float2 uvScale;
+uniform float2 uvOffset;
 
 Texture2D SurfaceColorTexture : register(t0);
 SamplerState BasicSampler : register(s0);

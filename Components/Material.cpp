@@ -4,7 +4,7 @@
 using namespace Microsoft::WRL;
 
 Material::Material(const char* name, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, DirectX::XMFLOAT4 color)
-	: name(name), vs(vs), ps(ps), color(color)
+	: name(name), vs(vs), ps(ps), color(color), scale(1,1), offset(0,0)
 {
 	materialIndex = GlobalVar::Material::getIndexThenTick();
 }
@@ -22,6 +22,9 @@ void Material::SetDefaultShaderParam(ExternalData data, Transform* transform, Tr
 
 	vs->SetData("data", &data, sizeof(ExternalData));
 	ps->SetFloat4("iTint", color);
+
+	ps->SetData("uvOffset", &offset, sizeof(DirectX::XMFLOAT2));
+	ps->SetData("uvScale", &scale, sizeof(DirectX::XMFLOAT2));
 
 	for (auto& textures : textures) { ps->SetShaderResourceView(textures.first, textures.second.Get()); }
 	for (auto& samplers : samplers) { ps->SetSamplerState(samplers.first, samplers.second.Get()); }
@@ -60,4 +63,10 @@ Microsoft::WRL::ComPtr<ID3D11SamplerState> Material::RemoveSampler(const char* n
 	textures.erase(name);
 
 	return sampler;
+}
+
+void Material::ImGuiDraw()
+{
+	ImGui::DragFloat2("UV Offset", &offset.x, .1f, -1, 1);
+	ImGui::DragFloat2("UV Scale", &scale.x, .1f, 0, 5);
 }

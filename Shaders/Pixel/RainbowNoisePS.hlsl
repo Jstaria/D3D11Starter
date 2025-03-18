@@ -29,6 +29,8 @@ float4 field(float2 uv, float2 offset, float radius)
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
+    input.uv = (input.uv * uvScale) + uvOffset;
+    
     float snV = .5;
     
     float2 uv = input.uv;

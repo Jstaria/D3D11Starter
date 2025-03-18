@@ -2,6 +2,8 @@
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
+    input.uv = (input.uv * uvScale) + uvOffset;
+    
     float amplitude = .25;
     
     float wave = sin((input.uv.y) * 5 + iTime * 2) * amplitude;

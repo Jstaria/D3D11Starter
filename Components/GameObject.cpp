@@ -55,6 +55,8 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 			material = materials[materialsKeys[index]];
 		}
 
+		material->ImGuiDraw();
+
 		{
 			XMFLOAT3 pos = transform->GetPosition();
 			ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .01f);

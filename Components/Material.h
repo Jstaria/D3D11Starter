@@ -3,8 +3,9 @@
 #include <memory>
 #include <d3d11.h>
 #include <wrl/client.h>
-#include <unordered_map> // Yes I found this nice from the demo from when I was looking for why my "CreateWIC..." wasn't working
+#include <unordered_map> 
 
+#include "../ImGui/imgui.h"
 #include "../Helper/SimpleShader.h"
 #include "../Helper/GlobalVar.h"
 #include "../MainComponents/Window.h"
@@ -18,6 +19,9 @@ private:
 	std::shared_ptr<SimplePixelShader> ps;
 	DirectX::XMFLOAT4 color;
 	const char* name;
+
+	DirectX::XMFLOAT2 offset;
+	DirectX::XMFLOAT2 scale;
 
 	unsigned int materialIndex;
 
@@ -47,5 +51,8 @@ public:
 	// -=| Removers |=-
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RemoveTextureSRV(const char* name);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> RemoveSampler(const char* name);
+
+	// -=| Other |=-
+	void ImGuiDraw();
 };
 

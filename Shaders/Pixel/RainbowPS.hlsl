@@ -8,6 +8,8 @@ float3 smoothRainbow(float x, float spread, float speed)
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
+    input.uv = (input.uv * uvScale) + uvOffset;
+    
     float2 uv = input.uv;
     
     float3 color = smoothRainbow(uv.y - uv.x, 2, .3);
