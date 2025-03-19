@@ -17,7 +17,7 @@ class Material
 private:
 	std::shared_ptr<SimpleVertexShader> vs;
 	std::shared_ptr<SimplePixelShader> ps;
-	DirectX::XMFLOAT4 color;
+	DirectX::XMFLOAT4 colorTint;
 	const char* name;
 
 	DirectX::XMFLOAT2 offset;

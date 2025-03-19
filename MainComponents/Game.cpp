@@ -157,6 +157,7 @@ void Game::CreateObjects()
 	shared_ptr<SimplePixelShader> RainbowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowPS.cso").c_str());
 	shared_ptr<SimplePixelShader> NormalPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"NormalPS.cso").c_str());
 	shared_ptr<SimplePixelShader> TexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"TexturePS.cso").c_str());
+	shared_ptr<SimplePixelShader> DecaledTexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"DecaledTexturePS.cso").c_str());
 	shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
 
 	string assetsPath = "../../Assets/Models/";
@@ -186,44 +187,59 @@ void Game::CreateObjects()
 	ComPtr<ID3D11ShaderResourceView> crateTextureSRV;
 	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
 		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_basecolor.jpg").c_str(), 0, crateTextureSRV.GetAddressOf());
+	ComPtr<ID3D11ShaderResourceView> bloodTextureSRV;
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
+		FixPath(L"../../Assets/Images/blood.png").c_str(), 0, bloodTextureSRV.GetAddressOf());
 
-	materials.emplace("rainbowFlow_mat", make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
-	materials.emplace("rainbow_mat", make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
-	materials.emplace("normal_mat", make_shared<Material>("normal_mat", MorphVS, NormalPS, cyan));
-	materials.emplace("fizz_mat", make_shared<Material>("fizz_mat",vs, TexturePS, yellow));
-	materials["fizz_mat"]->AddTextureSRV("SurfaceColorTexture", fizzTextureSRV);
-	materials["fizz_mat"]->AddSampler("BasicSampler", baseSampler);
-	materials.emplace("crate_mat", make_shared<Material>("crate_mat", vs, TexturePS, yellow));
-	materials["crate_mat"]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
-	materials["crate_mat"]->AddSampler("BasicSampler", baseSampler);
-
-	for (auto& pair : materials) { materialsKeys.push_back(pair.first); }
+	materials.push_back(make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
+	materialKeys.emplace("rainbowFlow_mat", 0);
+	materials.push_back(make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
+	materialKeys.emplace("rainbow_mat", 1);
+	materials.push_back(make_shared<Material>("normal_mat", MorphVS, NormalPS, cyan));
+	materialKeys.emplace("normal_mat", 2);
+	materials.push_back(make_shared<Material>("fizz_mat",vs, TexturePS, yellow));
+	materialKeys.emplace("fizz_mat", 3);
+	materials[materialKeys["fizz_mat"]]->AddTextureSRV("SurfaceColorTexture", fizzTextureSRV);
+	materials[materialKeys["fizz_mat"]]->AddSampler("BasicSampler", baseSampler);
+	materials.push_back(make_shared<Material>("crate_mat", vs, TexturePS, yellow));
+	materialKeys.emplace("crate_mat", 4);
+	materials[materialKeys["crate_mat"]]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
+	materials[materialKeys["crate_mat"]]->AddSampler("BasicSampler", baseSampler);
+	materials.push_back(make_shared<Material>("decaled_crate_mat", vs, DecaledTexturePS, cyan));
+	materialKeys.emplace("decaled_crate_mat", 5);
+	materials[materialKeys["decaled_crate_mat"]]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
+	materials[materialKeys["decaled_crate_mat"]]->AddTextureSRV("DecalColorTexture", bloodTextureSRV);
+	materials[materialKeys["decaled_crate_mat"]]->AddSampler("BasicSampler", baseSampler);
 
 	float scale = 1;
 
-	gameObjsSize = 5;
+	gameObjsSize = 6;
 
 	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
 
-	gameObjs[0] = make_shared<GameObject>("Plane", meshes[0], nullptr, materials["rainbowFlow_mat"]);
+	gameObjs[0] = make_shared<GameObject>("Plane", meshes[0], nullptr, materials[materialKeys["rainbowFlow_mat"]]);
 	gameObjs[0]->GetTransform()->SetRotation(-90, 0, 0, Angle::DEGREES);
 	gameObjs[0]->GetTransform()->SetScale(scale);
-	gameObjs[1] = make_shared<GameObject>("Sphere", meshes[1], nullptr, materials["rainbow_mat"]);
+	gameObjs[1] = make_shared<GameObject>("Sphere", meshes[1], nullptr, materials[materialKeys["rainbow_mat"]]);
 	gameObjs[1]->GetTransform()->SetPosition(-3, 0.0f, 0);
 	//gameObjs[1]->GetTransform()->SetRotation(0, 0, 180, Angle::DEGREES);
 	gameObjs[1]->GetTransform()->SetScale(scale);
-	gameObjs[2] = make_shared<GameObject>("Helix", meshes[2], nullptr, materials["normal_mat"]);
+	gameObjs[2] = make_shared<GameObject>("Helix", meshes[2], nullptr, materials[materialKeys["normal_mat"]]);
 	gameObjs[2]->GetTransform()->SetPosition(3.0f, 0.0f, 0);
 	gameObjs[2]->GetTransform()->SetRotation(0, 135, 0, Angle::DEGREES);
 	gameObjs[2]->GetTransform()->SetScale(scale);
-	gameObjs[3] = make_shared<GameObject>("Wonder Fizz", meshes[3], nullptr, materials["fizz_mat"]);
+	gameObjs[3] = make_shared<GameObject>("Wonder Fizz", meshes[3], nullptr, materials[materialKeys["fizz_mat"]]);
 	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
 	//gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
 	gameObjs[3]->GetTransform()->SetScale(scale * .05);
-	gameObjs[4] = make_shared<GameObject>("Crate", meshes[4], nullptr, materials["crate_mat"]);
+	gameObjs[4] = make_shared<GameObject>("Crate", meshes[4], nullptr, materials[materialKeys["crate_mat"]]);
 	gameObjs[4]->GetTransform()->SetPosition(-2.0f, 0.0f, -5.0f);
-	//gameObjs[4]->GetTransform()->SetRotation(0, 0, -90, Angle::DEGREES);
+	gameObjs[4]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
 	gameObjs[4]->GetTransform()->SetScale(scale);
+	gameObjs[5] = make_shared<GameObject>("BloodyCrate", meshes[4], nullptr, materials[materialKeys["decaled_crate_mat"]]);
+	gameObjs[5]->GetTransform()->SetPosition(2.0f, 0.0f, -5.0f);
+	gameObjs[5]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
+	gameObjs[5]->GetTransform()->SetScale(scale);
 
 	for (int i = 0; i < gameObjsSize; i++)
 	{
@@ -407,7 +423,7 @@ void Game::BuildUI(float deltaTime) {
 		if (ImGui::CollapsingHeader("All Current GameObject Details")) {
 			for (int i = 0; i < gameObjsSize; i++)
 			{
-				gameObjs[i].get()->DrawImGui(materials, materialsKeys);
+				gameObjs[i].get()->DrawImGui(materialKeys, materials);
 			}
 		}
 	}

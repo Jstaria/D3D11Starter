@@ -3,11 +3,10 @@
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
-    input.uv = (input.uv * uvScale) + uvOffset;
-    
-    float4 color = SurfaceColorTexture.Sample(BasicSampler, input.uv);
+	input.normal = normalize(input.normal);
+	input.uv = (input.uv * uvScale) + uvOffset;
 
-    input.normal = normalize(input.normal);
-    
-    return color;
+	float4 color = SurfaceColorTexture.Sample(BasicSampler, input.uv) * iTint;
+
+	return color;
 }

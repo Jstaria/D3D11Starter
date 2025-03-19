@@ -36,7 +36,7 @@ void GameObject::SetObjAsChild(GameObject* child) { childObjs.push_back(child); 
 void GameObject::SetTint(XMFLOAT4 tintColor) { tint = tintColor; }
 void GameObject::SetMaterial(std::shared_ptr<Material> material) { this->material = material; }
 
-void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialsKeys)
+void GameObject::DrawImGui(std::map<const char*, int> materialsKeys, std::vector<std::shared_ptr<Material>> materials)
 {
 	if (ImGui::TreeNode(name)) {
 
@@ -46,13 +46,16 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 		ImGui::Text("Mesh: %s", mesh->GetName());
 		ImGui::Text("Material : %s", material->GetName());
 
-		int index = (int)material->GetMatIndex();
+		int index = (int)materialsKeys[material->GetName()];
 
 		ImGui::Text("Material Select:");
 		ImGui::SameLine();
 
-		if (ImGui::Combo("##MapCombo", &index, materialsKeys.data(), materialsKeys.size())) {
-			material = materials[materialsKeys[index]];
+		vector<const char*> names;
+		for (auto& name : materialsKeys) names.push_back(name.first);
+
+		if (ImGui::Combo("##MapCombo", &index, names.data(), materialsKeys.size())) {
+			material = materials[index];
 		}
 
 		material->ImGuiDraw();

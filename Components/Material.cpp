@@ -4,7 +4,7 @@
 using namespace Microsoft::WRL;
 
 Material::Material(const char* name, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, DirectX::XMFLOAT4 color)
-	: name(name), vs(vs), ps(ps), color(color), scale(1,1), offset(0,0)
+	: name(name), vs(vs), ps(ps), colorTint(color), scale(1,1), offset(0,0)
 {
 	materialIndex = GlobalVar::Material::getIndexThenTick();
 }
@@ -21,7 +21,7 @@ void Material::SetDefaultShaderParam(ExternalData data, Transform* transform, Tr
 	vs->SetFloat("iTime", GlobalVar::Time::getElapsedTime());
 
 	vs->SetData("data", &data, sizeof(ExternalData));
-	ps->SetFloat4("iTint", color);
+	ps->SetFloat4("iTint", colorTint);
 
 	ps->SetData("uvOffset", &offset, sizeof(DirectX::XMFLOAT2));
 	ps->SetData("uvScale", &scale, sizeof(DirectX::XMFLOAT2));
@@ -32,7 +32,7 @@ void Material::SetDefaultShaderParam(ExternalData data, Transform* transform, Tr
 
 std::shared_ptr<SimpleVertexShader> Material::GetVS() { return vs; }
 std::shared_ptr<SimplePixelShader> Material::GetPS() { return ps; }
-DirectX::XMFLOAT4 Material::GetColor() { return color; }
+DirectX::XMFLOAT4 Material::GetColor() { return colorTint; }
 const char* Material::GetName() { return name; }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Material::GetTextureSRV(const char* name) { return textures[name]; }
@@ -69,4 +69,7 @@ void Material::ImGuiDraw()
 {
 	ImGui::DragFloat2("UV Offset", &offset.x, .1f, -1, 1);
 	ImGui::DragFloat2("UV Scale", &scale.x, .1f, 0, 5);
+	ImGui::ColorEdit4("Tint Color", &colorTint.x);
+
+	for (auto& image : textures) { ImGui::Image(reinterpret_cast<ImTextureID>(image.second.Get()), { 100,100 }); }
 }

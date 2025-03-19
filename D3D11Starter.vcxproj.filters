@@ -291,6 +291,9 @@
     <FxCompile Include="Shaders\Pixel\TexturePS.hlsl">
       <Filter>Shaders\Pixel</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\Pixel\DecaledTexturePS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Header\DefaultParam.hlsli">

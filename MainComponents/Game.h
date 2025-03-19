@@ -76,8 +76,8 @@ private:
 	std::shared_ptr<Mesh>* meshes;
 	std::shared_ptr<GameObject>* gameObjs;
 	std::shared_ptr<Camera>* cameras;
-	std::map<const char*, std::shared_ptr<Material>> materials;
-	std::vector<const char*> materialsKeys;
+	std::map<const char*, int> materialKeys;
+	std::vector<std::shared_ptr<Material>> materials;
 	
 	int currentCam;
 };

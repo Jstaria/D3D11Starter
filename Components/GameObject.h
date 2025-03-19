@@ -40,7 +40,7 @@ public:
 	void SetTint(DirectX::XMFLOAT4 tintColor);
 	void SetMaterial(std::shared_ptr<Material> material);
 
-	void DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialsKeys);
+	void DrawImGui(std::map<const char*, int> materialsKeys, std::vector<std::shared_ptr<Material>> materials);
 
 	// Inherited via IRenderable
 	IRenderable::RenderType GetRenderType() override;
