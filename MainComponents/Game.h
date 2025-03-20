@@ -64,7 +64,7 @@ private:
 	float maxFrameValue = 0;
 	float getFrameTimer;
 	int getResetTimer;
-	float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
+	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float curFPS = 0;
 	float curDT = 0;
 

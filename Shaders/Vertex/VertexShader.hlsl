@@ -31,6 +31,7 @@ struct VertexToPixel
 	float4 screenPosition	: SV_POSITION;	// XYZW position (System Value Position)
     float2 uv               : TEXCOORD;
     float3 normal           : NORMAL;
+    float3 worldPosition    : POSITION;
 };
 
 struct ExternalData
@@ -83,9 +84,10 @@ VertexToPixel main(VertexShaderInput input)
 
     float4x4 wvp = mul(data.projMatrix, mul(data.viewMatrix, data.worldMatrix));
 	
+    output.worldPosition = mul(data.worldMatrix, float4(input.localPosition, 1.0f)).xyz;
     output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
     output.uv = input.uv;
-    output.normal = mul(input.normal, (float3x3)data.invWorldMatrix);
+    output.normal = mul((float3x3) data.invWorldMatrix, input.normal);
     output.normal = normalize(output.normal);
   
     return output;

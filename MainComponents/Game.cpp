@@ -197,7 +197,7 @@ void Game::CreateObjects()
 	materialKeys.emplace("rainbow_mat", 1);
 	materials.push_back(make_shared<Material>("normal_mat", MorphVS, NormalPS, cyan));
 	materialKeys.emplace("normal_mat", 2);
-	materials.push_back(make_shared<Material>("fizz_mat",vs, TexturePS, yellow));
+	materials.push_back(make_shared<Material>("fizz_mat",vs, TexturePS, white));
 	materialKeys.emplace("fizz_mat", 3);
 	materials[materialKeys["fizz_mat"]]->AddTextureSRV("SurfaceColorTexture", fizzTextureSRV);
 	materials[materialKeys["fizz_mat"]]->AddSampler("BasicSampler", baseSampler);
@@ -266,6 +266,8 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
+	gameObjs[1]->GetTransform()->Rotate(0, .5f, 0, DEGREES);
+
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::KeyDown(VK_ESCAPE))
 		Window::Quit();
