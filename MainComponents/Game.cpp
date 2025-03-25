@@ -184,9 +184,18 @@ void Game::CreateObjects()
 	ComPtr<ID3D11ShaderResourceView> fizzTextureSRV;
 	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
 		FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_albedo.jpg").c_str(), 0, fizzTextureSRV.GetAddressOf());
+	ComPtr<ID3D11ShaderResourceView> fizzRoughnessSRV;
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
+		FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_roughness.jpg").c_str(), 0, fizzRoughnessSRV.GetAddressOf());
 	ComPtr<ID3D11ShaderResourceView> crateTextureSRV;
 	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
 		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_basecolor.jpg").c_str(), 0, crateTextureSRV.GetAddressOf());
+	ComPtr<ID3D11ShaderResourceView> crateNormalSRV;
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
+		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_normal.jpg").c_str(), 0, crateNormalSRV.GetAddressOf());
+	ComPtr<ID3D11ShaderResourceView> crateSpecularSRV;
+	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
+		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_roughness.jpg").c_str(), 0, crateSpecularSRV.GetAddressOf());
 	ComPtr<ID3D11ShaderResourceView> bloodTextureSRV;
 	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
 		FixPath(L"../../Assets/Images/blood.png").c_str(), 0, bloodTextureSRV.GetAddressOf());
@@ -200,10 +209,13 @@ void Game::CreateObjects()
 	materials.push_back(make_shared<Material>("fizz_mat",vs, TexturePS, white));
 	materialKeys.emplace("fizz_mat", 3);
 	materials[materialKeys["fizz_mat"]]->AddTextureSRV("SurfaceColorTexture", fizzTextureSRV);
+	materials[materialKeys["fizz_mat"]]->AddTextureSRV("SurfaceSpecularMap", fizzRoughnessSRV);
 	materials[materialKeys["fizz_mat"]]->AddSampler("BasicSampler", baseSampler);
 	materials.push_back(make_shared<Material>("crate_mat", vs, TexturePS, yellow));
 	materialKeys.emplace("crate_mat", 4);
 	materials[materialKeys["crate_mat"]]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
+	materials[materialKeys["crate_mat"]]->AddTextureSRV("SurfaceNormalMap", crateNormalSRV);
+	materials[materialKeys["crate_mat"]]->AddTextureSRV("SurfaceSpecularMap", crateSpecularSRV);
 	materials[materialKeys["crate_mat"]]->AddSampler("BasicSampler", baseSampler);
 	materials.push_back(make_shared<Material>("decaled_crate_mat", vs, DecaledTexturePS, cyan));
 	materialKeys.emplace("decaled_crate_mat", 5);
@@ -266,7 +278,7 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
-	gameObjs[1]->GetTransform()->Rotate(0, .5f, 0, DEGREES);
+	gameObjs[4]->GetTransform()->Rotate(0, .1f, 0, DEGREES);
 
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::KeyDown(VK_ESCAPE))

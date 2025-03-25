@@ -17,7 +17,7 @@ struct ExternalData
 
 ExternalData data;
 
-VertexToPixel main(VertexShaderInput input)
+VertexToPixel main(VertexShaderInput input) 
 {
 	// Set up output struct
     VertexToPixel output;

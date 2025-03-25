@@ -15,18 +15,16 @@ uniform float2 uvScale;
 uniform float2 uvOffset;
 
 Texture2D SurfaceColorTexture : register(t0);
+Texture2D SurfaceNormalMap : register(t1);
+Texture2D SurfaceSpecularMap : register(t2);
 SamplerState BasicSampler : register(s0);
 
 struct VertexToPixel
 {
-	// Data type
-	//  |
-	//  |   Name          Semantic
-	//  |    |                |
-	//  v    v                v
     float4 screenPosition : SV_POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
+    float3 tangent : TANGENT;
     float3 worldPosition : POSITION;
 };
 

@@ -29,8 +29,9 @@ private:
 	// --- Mesh Creation ---
 	void InitializeMesh(MeshData meshData);
 	void CreateMesh(MeshData meshData);
-	MeshData LoadData(const char* filePath);
+	//MeshData LoadData(const char* filePath);
 	void FindCenterOfMesh(MeshData meshData);
+	void CalcTangents();
 
 public:
 	// --- Constructors ---

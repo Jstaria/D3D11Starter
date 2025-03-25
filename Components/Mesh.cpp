@@ -155,6 +155,10 @@ void Mesh::FindCenterOfMesh(MeshData meshData)
 	delete[] vertices; 
 }
 
+void Mesh::CalcTangents()
+{
+}
+
 ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer()
 {
 	return vertexBuffer;
