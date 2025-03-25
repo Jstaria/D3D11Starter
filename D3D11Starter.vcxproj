@@ -158,6 +158,7 @@
     <ClCompile Include="Components\Camera.cpp" />
     <ClCompile Include="Components\FPSCamera.cpp" />
     <ClCompile Include="Components\GameObject.cpp" />
+    <ClCompile Include="Components\Light.cpp" />
     <ClCompile Include="Components\Material.cpp" />
     <ClCompile Include="Components\Mesh.cpp" />
     <ClCompile Include="Components\ParticleSystem.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="Components\Camera.h" />
     <ClInclude Include="Components\FPSCamera.h" />
     <ClInclude Include="Components\GameObject.h" />
+    <ClInclude Include="Components\Light.h" />
     <ClInclude Include="Components\Material.h" />
     <ClInclude Include="Components\Mesh.h" />
     <ClInclude Include="Components\ParticleSystem.h" />
@@ -219,7 +221,7 @@
     <ClInclude Include="Shaders\Header\Rainbow.hlsli" />
     <ClInclude Include="Structures\BufType.h" />
     <ClInclude Include="Structures\ExternalData.h" />
-    <ClInclude Include="Structures\Light.h" />
+    <ClInclude Include="Structures\LightStruct.h" />
     <ClInclude Include="Structures\MeshData.h" />
     <ClInclude Include="Structures\Particle.h" />
     <ClInclude Include="Structures\Vertex.h" />

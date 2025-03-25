@@ -6,9 +6,9 @@
 
 #define MAX_LIGHTS 64
 
-#include <DirectXMath.h>
+#include "DirectXMath.h"
 
-struct Light
+struct LightStruct
 {
     int Type; 
     DirectX::XMFLOAT3 Direction; 

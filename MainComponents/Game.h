@@ -13,6 +13,7 @@
 #include "../Components/Camera.h"
 #include "../Components/FPSCamera.h"
 #include "../Components/Material.h"
+#include "../Components/Light.h"
 
 #include "../Helper/SimpleShader.h"
 #include "../Helper/GlobalVar.h"
@@ -76,8 +77,9 @@ private:
 	std::shared_ptr<Mesh>* meshes;
 	std::shared_ptr<GameObject>* gameObjs;
 	std::shared_ptr<Camera>* cameras;
-	std::map<const char*, int> materialKeys;
-	std::vector<std::shared_ptr<Material>> materials;
+	std::vector<std::shared_ptr<Light>> lights;
+	std::map<const char*, std::shared_ptr<Material>> materials;
+	std::vector<const char*> materialKeys;
 	
 	int currentCam;
 };

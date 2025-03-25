@@ -1,6 +1,10 @@
 #pragma once
 namespace GlobalVar
 {
+	namespace Lights {
+
+	}
+
 	namespace Material {
 		unsigned int getMaterialIndex();
 		void TickMaterialIndex();

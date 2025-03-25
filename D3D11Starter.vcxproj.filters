@@ -141,6 +141,9 @@
     <ClCompile Include="Helper\Settings.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="Components\Light.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -254,11 +257,14 @@
     <ClInclude Include="Interfaces\IComponent.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="Structures\Light.h">
+    <ClInclude Include="Structures\LightStruct.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\Header\Rainbow.hlsli">
       <Filter>Shaders\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Light.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

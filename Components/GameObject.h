@@ -18,7 +18,7 @@
 
 class GameObject : public IRenderable/*, public IComponent*/
 {
-private:
+protected:
 	const char* name;
 	std::shared_ptr<GameObject> parentObj;
 	std::vector<GameObject*> childObjs;
@@ -40,7 +40,7 @@ public:
 	void SetTint(DirectX::XMFLOAT4 tintColor);
 	void SetMaterial(std::shared_ptr<Material> material);
 
-	void DrawImGui(std::map<const char*, int> materialsKeys, std::vector<std::shared_ptr<Material>> materials);
+	void DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialKeys);
 
 	// Inherited via IRenderable
 	IRenderable::RenderType GetRenderType() override;

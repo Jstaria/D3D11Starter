@@ -9,6 +9,7 @@ namespace Renderer {
 		std::vector<std::shared_ptr<IRenderable>> sortedRenderables;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
 		std::shared_ptr<Camera> currentCamera;
+		std::vector<std::shared_ptr<Light>> lights;
 
 		// Sorting method(s)
 		#pragma region Sort
@@ -59,6 +60,15 @@ namespace Renderer {
 				mat->GetVS()->SetShader();
 				mat->GetPS()->SetShader();
 
+				LightStruct lightStructs[MAX_LIGHTS];
+
+				for (int i = 0; i < min(lights.size(), MAX_LIGHTS); i++)
+				{
+					lightStructs[i] = lights[0]->GetStruct();
+				}
+
+				mat->GetPS()->SetData("lights", &lightStructs[0], sizeof(LightStruct) * MAX_LIGHTS);
+
 				mat->SetDefaultShaderParam(data, gameObj->GetTransform().get(), currentCamera->GetTransform().get());
 
 				mat->GetVS()->CopyAllBufferData();
@@ -86,10 +96,8 @@ void Renderer::AddObjectToRender(std::shared_ptr<IRenderable> gameObj)
 	SortObjectsViaDistance();
 }
 
-void Renderer::SetCurrentCamera(std::shared_ptr<Camera> camera)
-{
-	currentCamera = camera;
-}
+void Renderer::SetCurrentCamera(std::shared_ptr<Camera> camera) { currentCamera = camera; }
+void Renderer::SetLights(std::vector<std::shared_ptr<Light>> lightList) { lights = lightList; }
 
 void Renderer::DrawRenderables()
 {

@@ -18,6 +18,7 @@ private:
 	std::shared_ptr<SimpleVertexShader> vs;
 	std::shared_ptr<SimplePixelShader> ps;
 	DirectX::XMFLOAT4 colorTint;
+	DirectX::XMFLOAT3 ambientTint;
 	const char* name;
 
 	DirectX::XMFLOAT2 offset;
@@ -36,7 +37,8 @@ public:
 	// -=| Getters |=-
 	std::shared_ptr<SimpleVertexShader> GetVS();
 	std::shared_ptr<SimplePixelShader> GetPS();
-	DirectX::XMFLOAT4 GetColor();
+	DirectX::XMFLOAT4 GetTintColor();
+	DirectX::XMFLOAT3 GetAmbientColor();
 	const char* GetName();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureSRV(const char* name);
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSampler(const char* name);
@@ -47,6 +49,8 @@ public:
 	// -=| Setters/Adders |=-
 	void AddTextureSRV(const char* name, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV);
 	void AddSampler(const char* name, Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler);
+	void SetAmbientTint(DirectX::XMFLOAT3 ambientTint);
+	void SetIndex();
 
 	// -=| Removers |=-
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RemoveTextureSRV(const char* name);
