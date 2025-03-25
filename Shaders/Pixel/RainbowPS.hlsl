@@ -1,4 +1,5 @@
 #include "../Header/DefaultParam.hlsli"
+#include "../Header/Rainbow.hlsli"
 
 float3 smoothRainbow(float x, float spread, float speed)
 {

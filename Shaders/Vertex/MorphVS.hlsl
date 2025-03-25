@@ -1,20 +1,5 @@
 #include "../Header/DefaultParam.hlsli"
 
-struct VertexShaderInput
-{
-    float3 localPosition : POSITION; // XYZ position
-    float2 uv : TEXCOORD;
-    float3 normal : NORMAL;
-};
-
-struct ExternalData
-{
-    float4x4 viewMatrix;
-    float4x4 projMatrix;
-    float4x4 worldMatrix;
-    float4x4 invWorldMatrix;
-};
-
 ExternalData data;
 
 VertexToPixel main(VertexShaderInput input) 

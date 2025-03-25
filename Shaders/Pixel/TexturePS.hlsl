@@ -32,8 +32,8 @@ float4 main(VertexToPixel input) : SV_TARGET
     
     totalLight += 
     ambientTerm + 
-    LambertDiffuse(lightDirection, lightColor, lightIntensity, color, input.normal) +
-    PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition, 1 - SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
+    (color * LambertDiffuse(lightDirection, lightColor, lightIntensity, input.normal) +
+    PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition, 1 - SurfaceSpecularMap.Sample(BasicSampler, input.uv).r));
 	
     return float4(totalLight, 1);
 }

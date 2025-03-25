@@ -216,8 +216,10 @@
     <ClInclude Include="MainComponents\Input.h" />
     <ClInclude Include="MainComponents\Renderer.h" />
     <ClInclude Include="MainComponents\Window.h" />
+    <ClInclude Include="Shaders\Header\Rainbow.hlsli" />
     <ClInclude Include="Structures\BufType.h" />
     <ClInclude Include="Structures\ExternalData.h" />
+    <ClInclude Include="Structures\Light.h" />
     <ClInclude Include="Structures\MeshData.h" />
     <ClInclude Include="Structures\Particle.h" />
     <ClInclude Include="Structures\Vertex.h" />

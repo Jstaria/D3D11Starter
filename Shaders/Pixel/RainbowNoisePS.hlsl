@@ -2,6 +2,7 @@
 // This was a pain to debug and convert, good learning experience
 // https://www.shadertoy.com/view/ldcyR4
 #include "../Header/DefaultParam.hlsli"
+#include "../Header/Rainbow.hlsli"
 
 float4 tint;
 
