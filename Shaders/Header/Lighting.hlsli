@@ -28,6 +28,13 @@ struct Light
 
 Light lights[MAX_LIGHTS];
 
+float Attenuate(Light light, float3 worldPos)
+{
+    float dist = distance(light.Position, worldPos);
+    float att = saturate(1.0f - (dist * dist / (light.Range * light.Range)));
+    return att * att;
+}
+
 float3 LambertDiffuse(float3 lightDirection, float3 lightColor, float lightIntensity, float3 normal)
 {
     // saturate(N*L)*C_surface*C_light*I_Light

@@ -84,7 +84,8 @@ void Game::Initialize()
 	cameras[2]->GetTransform()->SetRotation(0, 45, 0, Angle::DEGREES);
 	Renderer::SetCurrentCamera(cameras[0]);
 	
-	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), .1f));
+	//lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), .1f));
+	lights.push_back(make_shared<Light>("Lamp", XMFLOAT3(0,2,-5), XMFLOAT3(1,.5f,.75f), 1.0f, 10));
 	Renderer::SetLights(lights);
 }
 
@@ -309,7 +310,7 @@ void Game::Draw(float deltaTime, float totalTime)
 {
 
 	// Frame START
-	// - These things should happen ONCE PER FRAME
+	// - These things should happen ONCE PER FRAMEs
 	// - At the beginning of Game::Draw() before drawing *anything*
 	{
 		// Clear the back buffer (erase what's on screen) and depth buffer

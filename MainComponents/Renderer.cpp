@@ -64,7 +64,7 @@ namespace Renderer {
 
 				for (int i = 0; i < min(lights.size(), MAX_LIGHTS); i++)
 				{
-					lightStructs[i] = lights[0]->GetStruct();
+					lightStructs[i] = lights[i]->GetStruct();
 				}
 
 				mat->GetPS()->SetData("lights", &lightStructs[0], sizeof(LightStruct) * MAX_LIGHTS);
