@@ -84,9 +84,11 @@ void Game::Initialize()
 	cameras[2]->GetTransform()->SetRotation(0, 45, 0, Angle::DEGREES);
 	Renderer::SetCurrentCamera(cameras[0]);
 
-	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), 1.0f));
-	lights.push_back(make_shared<Light>("SpotLight", XMFLOAT3(0, 0.0f, 8.0f), XMFLOAT3(0, .5f, .75f), XMFLOAT3(0, 0, 1), 30, 3.0f, .4f, .41f));
-	lights.push_back(make_shared<Light>("Lamp", XMFLOAT3(0,2,-7), XMFLOAT3(.5f,0,1), 2.0f, 10));
+	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), 1.0f)); // 1
+	lights.push_back(make_shared<Light>("Red", XMFLOAT3(0, 0.0f, 8.0f), XMFLOAT3(1, 0, 0), XMFLOAT3(0, 0, 1), 30, 3.0f, .4f, .41f)); // 2
+	lights.push_back(make_shared<Light>("Green", XMFLOAT3(2, 0.0f, 8.0f), XMFLOAT3(0, 1, 0), XMFLOAT3(0, 0, -1), 30, 3.0f, 1.4f, 1.41f));  // 3
+	lights.push_back(make_shared<Light>("Blue", XMFLOAT3(0, 2, -7), XMFLOAT3(0, 0, 1), 4.0f, 10)); // 4
+	lights.push_back(make_shared<Light>("White", XMFLOAT3(-2, 2, -9), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
 	
 	for (auto& light : lights) { light->SetMesh(meshes[1]); light->SetMaterial(materials["light_mat"]);}
 
