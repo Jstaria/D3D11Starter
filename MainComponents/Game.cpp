@@ -88,7 +88,7 @@ void Game::Initialize()
 	lights.push_back(make_shared<Light>("SpotLight", XMFLOAT3(0, 0.0f, 8.0f), XMFLOAT3(0, .5f, .75f), XMFLOAT3(0, 0, 1), 30, 3.0f, .4f, .41f));
 	lights.push_back(make_shared<Light>("Lamp", XMFLOAT3(0,2,-7), XMFLOAT3(.5f,0,1), 2.0f, 10));
 	
-	for (auto& light : lights) { light->SetMesh(meshes[1]); light->SetMaterial(materials["light_mat"]); }
+	for (auto& light : lights) { light->SetMesh(meshes[1]); light->SetMaterial(materials["light_mat"]);}
 
 	Renderer::SetLights(lights);
 }

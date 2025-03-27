@@ -7,3 +7,8 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadHelper::LoadTexture(const s
 
 	return SRV;
 }
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadHelper::LoadCubeMap(const std::string address)
+{
+	return Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+}

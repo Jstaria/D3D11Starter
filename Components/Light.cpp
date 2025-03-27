@@ -41,14 +41,21 @@ Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 col
 	transform->SetPosition(position);
 }
 
+void Light::SetLightColor(DirectX::XMFLOAT3 color)
+{
+	material->SetTint(DirectX::XMFLOAT4(color.x, color.y, color.z, 1));
+	lightStruct.Color = color;
+}
+
+void Light::UpdateLightColor() { SetLightColor(lightStruct.Color); }
+
 void Light::SetActive(bool active) { isActive = active; }
 bool Light::GetActive() { return isActive; }
 
 void Light::Draw()
 {
 	if (!isActive || lightStruct.Type == LIGHT_TYPE_DIRECTIONAL) return;
-
-	material->SetTint(DirectX::XMFLOAT4(lightStruct.Color.x, lightStruct.Color.y, lightStruct.Color.z, 1));
+	UpdateLightColor();
 
 	mesh->Draw();
 }
@@ -86,6 +93,7 @@ void Light::DrawImGui()
 
 		ImGui::DragFloat(("Light Intensity##" + std::string(name)).c_str(), &lightStruct.Intensity, 0.1f, 0.1f, 5.0f);
 		ImGui::ColorEdit3(("Tint##" + std::string(name)).c_str(), &lightStruct.Color.x);
+		material->SetTint(DirectX::XMFLOAT4(lightStruct.Color.x, lightStruct.Color.y, lightStruct.Color.z, 1));
 
 		ImGui::TreePop();
 	}
