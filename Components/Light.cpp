@@ -9,6 +9,9 @@ Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 col
 	lightStruct.Position = position;
 	lightStruct.Intensity = intensity;
 	lightStruct.Range = range;
+
+	transform->SetPosition(position);
+	transform->SetScale(0.1f);
 }
 
 Light::Light(const char* name, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, float intensity)
@@ -21,7 +24,7 @@ Light::Light(const char* name, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direct
 	lightStruct.Direction = direction;
 }
 
-Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT2 padding, float range, float intensity, float innerAngle, float outerAngle)
+Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, float range, float intensity, float innerAngle, float outerAngle)
 	: GameObject(name, nullptr, nullptr, nullptr), isActive(true)
 {
 	lightStruct = {};
@@ -31,12 +34,61 @@ Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 col
 	lightStruct.Intensity = intensity;
 	lightStruct.Range = range;
 	lightStruct.Direction = direction;
-	lightStruct.Padding = padding;
 	lightStruct.SpotInnerAngle = innerAngle;
 	lightStruct.SpotOuterAngle = outerAngle;
+
+	transform->SetScale(0.1f);
+	transform->SetPosition(position);
 }
 
 void Light::SetActive(bool active) { isActive = active; }
 bool Light::GetActive() { return isActive; }
+
+void Light::Draw()
+{
+	if (!isActive || lightStruct.Type == LIGHT_TYPE_DIRECTIONAL) return;
+
+	material->SetTint(DirectX::XMFLOAT4(lightStruct.Color.x, lightStruct.Color.y, lightStruct.Color.z, 1));
+
+	mesh->Draw();
+}
+
+void Light::DrawImGui()
+{
+	if (ImGui::TreeNode(name)) {
+
+		if (parentObj != nullptr)
+			ImGui::Text("Parent GameObject: %s", parentObj->GetName());
+
+		const std::string type = lightStruct.Type == 0 ? "Directional" : lightStruct.Type == 1 ? "Point" : "Spot";
+
+		ImGui::Text(("Light Type: " + type).c_str());
+
+		if (lightStruct.Type != LIGHT_TYPE_DIRECTIONAL) {
+			DirectX::XMFLOAT3 pos = transform->GetPosition();
+			ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .01f);
+			lightStruct.Position = pos;
+			transform->SetPosition(pos);
+
+			ImGui::DragFloat(("Light Range##" + std::string(name)).c_str(), &lightStruct.Range, 0.01f, 100.0f);
+		}
+
+		if (lightStruct.Type != LIGHT_TYPE_POINT) {
+			DirectX::XMFLOAT3 dir = lightStruct.Direction;
+			ImGui::DragFloat3(("Direction##" + std::string(name)).c_str(), &dir.x, .01f);
+			lightStruct.Direction = dir;
+		}
+
+		if (lightStruct.Type == LIGHT_TYPE_SPOT) {
+			ImGui::DragFloat(("Inner Angle##" + std::string(name)).c_str(), &lightStruct.SpotInnerAngle, 0.1f, 0.01f, lightStruct.SpotOuterAngle - 0.01f);
+			ImGui::DragFloat(("Outer Angle##" + std::string(name)).c_str(), &lightStruct.SpotOuterAngle, 0.1f, lightStruct.SpotInnerAngle + 0.01f, 3.14159f);
+		}
+
+		ImGui::DragFloat(("Light Intensity##" + std::string(name)).c_str(), &lightStruct.Intensity, 0.1f, 0.1f, 5.0f);
+		ImGui::ColorEdit3(("Tint##" + std::string(name)).c_str(), &lightStruct.Color.x);
+
+		ImGui::TreePop();
+	}
+}
 
 LightStruct Light::GetStruct() { return lightStruct; }

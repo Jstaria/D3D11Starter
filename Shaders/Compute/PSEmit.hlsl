@@ -67,7 +67,7 @@ void main(uint3 id : SV_DispatchThreadID)
     ParticleUpdate p_UpdateParticle = ParticleUpdatePool.Load(emitIndex);
 
     p_UpdateParticle.p_Mass = p_Emitter.e_Mass;
-    p_UpdateParticle.p_TrVelocity = p_Emitter.e_EmitterVelocity;
+    p_UpdateParticle.p_TrVelocity = p_Emitter.e_EmitterVelocity.xyz;
     p_UpdateParticle.p_LifeSpan = p_Emitter.e_ParticleLifeSpan;
     p_UpdateParticle.p_Age = p_UpdateParticle.p_LifeSpan;
 

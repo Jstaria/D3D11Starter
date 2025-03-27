@@ -2,52 +2,6 @@
 #include "../Header/DefaultParam.hlsli"
 #include "../Header/Lighting.hlsli"
 
-float3 DirectionalLight(Light light, float3 color, SamplerState BasicSampler, Texture2D SurfaceSpecularMap, VertexToPixel input)
-{
-    float3 lightDirection = normalize(light.Direction);
-    float lightIntensity = light.Intensity;
-    float3 lightColor = light.Color;
-
-    float3 diffuse = color * LambertDiffuse(lightDirection, lightColor, lightIntensity, input.normal);
-
-    float3 spec = PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition,
-        SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
-
-    return diffuse + spec;
-}
-
-float3 PointLight(Light light, float3 color, SamplerState BasicSampler, Texture2D SurfaceSpecularMap, VertexToPixel input)
-{
-    float3 lightDirection = normalize(input.worldPosition - light.Position);
-    float lightIntensity = light.Intensity;
-    float3 lightColor = light.Color;
-
-    float attenuation = Attenuate(light, input.worldPosition);
-    
-    float3 diffuse = color * LambertDiffuse(lightDirection, lightColor, lightIntensity, input.normal);
-
-    float3 spec = PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition,
-        1 - SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
-
-    return (diffuse + spec) * attenuation;
-}
-
-float3 SpotLight(Light light, float3 color, SamplerState BasicSampler, Texture2D SurfaceSpecularMap, VertexToPixel input)
-{
-    float3 lightDirection = normalize(light.Direction);
-    float3 lightToPixel = normalize(input.worldPosition - light.Position);
-
-    float pixelAngle = saturate(dot(lightToPixel, lightDirection));
-
-    float cosOuter = cos(light.SpotOuterAngle);
-    float cosInner = cos(light.SpotInnerAngle);
-    float falloffRange = cosOuter - cosInner;
-
-    float spotTerm = saturate((cosOuter - pixelAngle) / falloffRange);
-
-    return PointLight(light, color, BasicSampler, SurfaceSpecularMap, input) * spotTerm;
-}
-
 float4 main(VertexToPixel input) : SV_TARGET
 {
     input.normal = normalize(input.normal);
@@ -93,9 +47,6 @@ float4 main(VertexToPixel input) : SV_TARGET
                 totalLight += SpotLight(lights[i], color, BasicSampler, SurfaceSpecularMap, input);
                 break;
         }
-        
-        
-        
     }
 	
     return float4(totalLight, 1);

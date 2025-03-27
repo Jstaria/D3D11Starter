@@ -18,6 +18,7 @@
 #include "../Helper/SimpleShader.h"
 #include "../Helper/GlobalVar.h"
 #include "../Helper/Settings.h"
+#include "../Helper/LoadHelper.h"
 
 #include "../Structures/BufType.h"
 

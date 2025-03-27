@@ -39,6 +39,7 @@ public:
 	void SetObjAsChild(GameObject* GameObject);
 	void SetTint(DirectX::XMFLOAT4 tintColor);
 	void SetMaterial(std::shared_ptr<Material> material);
+	void SetMesh(std::shared_ptr<Mesh> mesh);
 
 	void DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialKeys);
 

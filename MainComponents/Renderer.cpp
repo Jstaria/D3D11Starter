@@ -97,7 +97,10 @@ void Renderer::AddObjectToRender(std::shared_ptr<IRenderable> gameObj)
 }
 
 void Renderer::SetCurrentCamera(std::shared_ptr<Camera> camera) { currentCamera = camera; }
-void Renderer::SetLights(std::vector<std::shared_ptr<Light>> lightList) { lights = lightList; }
+void Renderer::SetLights(std::vector<std::shared_ptr<Light>> lightList) { 
+	for (auto& light : lightList) sortedRenderables.push_back(light);
+	lights = lightList;  
+}
 
 void Renderer::DrawRenderables()
 {

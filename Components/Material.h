@@ -50,6 +50,7 @@ public:
 	void AddTextureSRV(const char* name, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV);
 	void AddSampler(const char* name, Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler);
 	void SetAmbientTint(DirectX::XMFLOAT3 ambientTint);
+	void SetTint(DirectX::XMFLOAT4 tint);
 	void SetIndex();
 
 	// -=| Removers |=-

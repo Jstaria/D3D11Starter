@@ -15,7 +15,7 @@ float4 tint;
 // --------------------------------------------------------
 float4 main(VertexToPixel input) : SV_TARGET
 {
-    float4 color = float4((input.uv + 1) / 2, 0, 1);
+    float4 color = iTint;
 	
 	return color;
 }

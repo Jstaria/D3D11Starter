@@ -83,9 +83,13 @@ void Game::Initialize()
 	cameras[2] = make_shared<Camera>("StationaryCamera02", XMFLOAT3(-5, 0, -5.0f), 20, Window::AspectRatio(), 0.01f, 1000.0f);
 	cameras[2]->GetTransform()->SetRotation(0, 45, 0, Angle::DEGREES);
 	Renderer::SetCurrentCamera(cameras[0]);
+
+	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), 1.0f));
+	lights.push_back(make_shared<Light>("SpotLight", XMFLOAT3(0, 0.0f, 8.0f), XMFLOAT3(0, .5f, .75f), XMFLOAT3(0, 0, 1), 30, 3.0f, .4f, .41f));
+	lights.push_back(make_shared<Light>("Lamp", XMFLOAT3(0,2,-7), XMFLOAT3(.5f,0,1), 2.0f, 10));
 	
-	//lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), .1f));
-	lights.push_back(make_shared<Light>("Lamp", XMFLOAT3(0,2,-5), XMFLOAT3(1,.5f,.75f), 1.0f, 10));
+	for (auto& light : lights) { light->SetMesh(meshes[1]); light->SetMaterial(materials["light_mat"]); }
+
 	Renderer::SetLights(lights);
 }
 
@@ -165,33 +169,17 @@ void Game::CreateObjects()
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	Graphics::Device->CreateSamplerState(&samplerDesc, baseSampler.GetAddressOf());
 
-	ComPtr<ID3D11ShaderResourceView> fizzTextureSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_albedo.jpg").c_str(), 0, fizzTextureSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> fizzRoughnessSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Models/wonder_fizz/textures/DefaultMaterial_roughness.jpg").c_str(), 0, fizzRoughnessSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> crateTextureSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_basecolor.jpg").c_str(), 0, crateTextureSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> crateNormalSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_normal.jpg").c_str(), 0, crateNormalSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> crateSpecularSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Images/Crate/Wood_Crate_001_roughness.jpg").c_str(), 0, crateSpecularSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> rockTextureSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Images/Rock/rock.png").c_str(), 0, rockTextureSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> rockNormalSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Images/Rock/rock-normal.png").c_str(), 0, rockNormalSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> rockSpecularSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Images/Rock/rock-specular.png").c_str(), 0, rockSpecularSRV.GetAddressOf());
-	ComPtr<ID3D11ShaderResourceView> bloodTextureSRV;
-	CreateWICTextureFromFile(Graphics::Device.Get(), Graphics::Context.Get(),
-		FixPath(L"../../Assets/Images/blood.png").c_str(), 0, bloodTextureSRV.GetAddressOf());
+	string path = "../../Assets/Models/wonder_fizz/";
+	ComPtr<ID3D11ShaderResourceView> fizzTextureSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_albedo.jpg");
+	ComPtr<ID3D11ShaderResourceView> fizzRoughnessSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_roughness.jpg");
+	path = "../../Assets/Images/";
+	ComPtr<ID3D11ShaderResourceView> crateTextureSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_basecolor.jpg");
+	ComPtr<ID3D11ShaderResourceView> crateNormalSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_normal.jpg");
+	ComPtr<ID3D11ShaderResourceView> crateSpecularSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_roughness.jpg");
+	ComPtr<ID3D11ShaderResourceView> rockTextureSRV = LoadHelper::LoadTexture(path + "Rock/rock.png");
+	ComPtr<ID3D11ShaderResourceView> rockNormalSRV = LoadHelper::LoadTexture(path + "Rock/rock-normal.png");
+	ComPtr<ID3D11ShaderResourceView> rockSpecularSRV = LoadHelper::LoadTexture(path + "Rock/rock-specular.png");
+	ComPtr<ID3D11ShaderResourceView> bloodTextureSRV = LoadHelper::LoadTexture(path + "blood.png");
 
 	materials.emplace("rainbowFlow_mat", make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
 	materials.emplace("rainbow_mat", make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
@@ -214,6 +202,7 @@ void Game::CreateObjects()
 	materials["decaled_crate_mat"]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
 	materials["decaled_crate_mat"]->AddTextureSRV("DecalColorTexture", bloodTextureSRV);
 	materials["decaled_crate_mat"]->AddSampler("BasicSampler", baseSampler);
+	materials.emplace("light_mat", make_shared<Material>("light_mat", vs, ps, white));
 
 	for (auto& material : materials) {
 		material.second->SetIndex();
@@ -240,7 +229,7 @@ void Game::CreateObjects()
 	gameObjs[3] = make_shared<GameObject>("Wonder Fizz", meshes[3], nullptr, materials["fizz_mat"]);
 	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
 	//gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
-	gameObjs[3]->GetTransform()->SetScale(scale * .05);
+	gameObjs[3]->GetTransform()->SetScale(scale * .05f);
 	gameObjs[4] = make_shared<GameObject>("Rock", meshes[4], nullptr, materials["rock_mat"]);
 	gameObjs[4]->GetTransform()->SetPosition(-2.0f, 0.0f, -5.0f);
 	gameObjs[4]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
@@ -429,6 +418,11 @@ void Game::BuildUI(float deltaTime) {
 		}
 	}
 
+	// Light Obj Data
+	{
+		for (auto& light : lights) light->DrawImGui();
+	}
+
 	// Game Object Data
 	{
 		if (ImGui::CollapsingHeader("All Current GameObject Details")) {
@@ -479,7 +473,6 @@ void Game::BuildUI(float deltaTime) {
 			delete[] items;
 		}
 	}
-
 
 	ImGui::End();
 }

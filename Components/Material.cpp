@@ -47,6 +47,7 @@ unsigned int Material::GetMatIndex() { return materialIndex; }
 void Material::AddTextureSRV(const char* name, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV) { textures.insert({ name, textureSRV }); }
 void Material::AddSampler(const char* name, Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler) { samplers.insert({ name, sampler }); }
 void Material::SetAmbientTint(DirectX::XMFLOAT3 ambient) { this->ambientTint = ambient; }
+void Material::SetTint(DirectX::XMFLOAT4 tint) { this->colorTint = tint; }
 void Material::SetIndex() { materialIndex = GlobalVar::Material::getIndexThenTick(); }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Material::RemoveTextureSRV(const char* name)

@@ -1,12 +1,14 @@
 #ifndef __LIGHTING_INCLUDES__ 
 #define __LIGHTING_INCLUDES__
 
-#define MAX_SPECULAR_EXPONENT 32.0f
+#define MAX_SPECULAR_EXPONENT 256.0f
 #define MAX_LIGHTS 64
 
 #define LIGHT_TYPE_DIRECTIONAL 0
 #define LIGHT_TYPE_POINT 1
 #define LIGHT_TYPE_SPOT 2
+
+#include "../Header/DefaultParam.hlsli"
 
 // RenderDoc for debugging
 
@@ -40,24 +42,68 @@ float3 LambertDiffuse(float3 lightDirection, float3 lightColor, float lightInten
     // saturate(N*L)*C_surface*C_light*I_Light
 
     float3 diffuseTerm =
-        max(dot(normal, -lightDirection), 0) *
+        max(dot(normal, normalize(lightDirection)), 0) *
         lightIntensity * lightColor;
     
     return diffuseTerm;
 
 }
 
-// TODO: Add specular map
 float3 PhongSpecular(float3 lightDirection, float3 lightColor, float lightIntensity, float3 normal, float3 worldPosition, float3 cameraPosition, float roughness)
 {
-    float3 refl = reflect(lightDirection, normal);
+    float3 refl = reflect(normalize(lightDirection), normal);
     
-    float3 viewVector = normalize(cameraPosition - worldPosition);
+    float3 viewVector = normalize(worldPosition - cameraPosition);
     
     float specExponent = (1.0f - roughness) * MAX_SPECULAR_EXPONENT;
     
     float3 specTerm = pow(max(dot(refl, viewVector), 0.0f), specExponent) * lightIntensity * lightColor;
     
     return specTerm;
+}
+
+float3 DirectionalLight(Light light, float3 color, SamplerState BasicSampler, Texture2D SurfaceSpecularMap, VertexToPixel input)
+{
+    float3 lightDirection = -normalize(light.Direction);
+    float lightIntensity = light.Intensity;
+    float3 lightColor = light.Color;
+
+    float3 diffuse = color * LambertDiffuse(lightDirection, lightColor, lightIntensity, input.normal);
+
+    float3 spec = PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition,
+        SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
+
+    return diffuse + spec;
+}
+
+float3 PointLight(Light light, float3 color, SamplerState BasicSampler, Texture2D SurfaceSpecularMap, VertexToPixel input)
+{
+    float3 lightDirection = normalize(light.Position - input.worldPosition);
+    float lightIntensity = light.Intensity;
+    float3 lightColor = light.Color;
+
+    float attenuation = Attenuate(light, input.worldPosition);
+    
+    float3 diffuse = color * LambertDiffuse(lightDirection, lightColor, lightIntensity, input.normal);
+
+    float3 spec = PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition,
+        SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
+
+    return (diffuse + spec) * attenuation;
+}
+
+float3 SpotLight(Light light, float3 color, SamplerState BasicSampler, Texture2D SurfaceSpecularMap, VertexToPixel input)
+{
+    float3 lightDirection = -normalize(light.Direction);
+    float3 lightToPixel = normalize(light.Position - input.worldPosition);
+
+    float pixelAngle = saturate(dot(lightToPixel, lightDirection));
+
+    float cosOuter = cos(light.SpotOuterAngle);
+    float cosInner = cos(light.SpotInnerAngle);
+
+    float spotTerm = saturate((cosOuter - pixelAngle) / (cosOuter - cosInner));
+
+    return PointLight(light, color, BasicSampler, SurfaceSpecularMap, input) * spotTerm;
 }
 #endif

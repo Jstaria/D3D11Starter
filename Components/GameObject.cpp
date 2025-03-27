@@ -35,6 +35,7 @@ DirectX::XMFLOAT4 GameObject::GetTint() { return tint; }
 void GameObject::SetObjAsChild(GameObject* child) { childObjs.push_back(child); }
 void GameObject::SetTint(XMFLOAT4 tintColor) { tint = tintColor; }
 void GameObject::SetMaterial(std::shared_ptr<Material> material) { this->material = material; }
+void GameObject::SetMesh(std::shared_ptr<Mesh> mesh) { this->mesh = mesh; }
 
 void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialKeys)
 {
@@ -51,7 +52,7 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 		ImGui::Text("Material Select:");
 		ImGui::SameLine();
 
-		if (ImGui::Combo("##MapCombo", &index, materialKeys.data(), materialKeys.size())) {
+		if (ImGui::Combo("##MapCombo", &index, materialKeys.data(), (int)materialKeys.size())) {
 			material = materials[materialKeys[index]];
 		}
 
@@ -76,7 +77,7 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 		}
 
 		{
-			ImGui::ColorEdit4(("Tint##" + std::string(name)).c_str(), &tint.x, .01f);
+			ImGui::ColorEdit4(("Tint##" + std::string(name)).c_str(), &tint.x);
 		}
 
 		ImGui::TreePop();
