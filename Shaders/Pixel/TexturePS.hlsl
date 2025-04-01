@@ -11,6 +11,7 @@ float4 main(VertexToPixel input) : SV_TARGET
     float3 totalLight = float3(0, 0, 0);
 	
     float3 color = SurfaceColorTexture.Sample(BasicSampler, input.uv).xyz * iTint.xyz;
+    color = pow(color, 2.2f);
     
     float3 ambientTerm = iAmbientColor * color;
 	
@@ -22,9 +23,7 @@ float4 main(VertexToPixel input) : SV_TARGET
     float3 B = cross(T, N);
     
     float3x3 TBN = float3x3(T, B, N);
-    //input.normal = mul(normalFromMap, TBN);
-    
-    //return float4(normalFromMap, 1);
+    input.normal = mul(normalFromMap, TBN);
     
     totalLight += ambientTerm;
     
@@ -49,5 +48,7 @@ float4 main(VertexToPixel input) : SV_TARGET
         }
     }
 	
-    return float4(totalLight, 1);
+    float3 gammaAdjustedColor = pow(totalLight, 1.0f / 2.2f);
+    
+    return float4(gammaAdjustedColor, 1);
 }

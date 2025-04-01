@@ -53,12 +53,13 @@ Mesh::~Mesh()
 /// <param name="indices"></param>
 /// <param name="vertSize"></param>
 /// <param name="indexSize"></param>
-void Mesh::InitializeMesh(MeshData meshData)
+void Mesh::InitializeMesh(MeshData meshD)
 {
 	// Will set name and generate buffers for the mesh
-	this->name = meshData.name;
-	this->meshData = meshData;
-	
+	name = meshD.name;
+	meshData = meshD;
+
+	CalculateTangents(meshData);
 	CreateMesh(meshData);
 	FindCenterOfMesh(meshData);
 
@@ -69,7 +70,7 @@ void Mesh::InitializeMesh(MeshData meshData)
 	wireFrameToggle = true;
 }
 
-void Mesh::CreateMesh(MeshData meshData)
+void Mesh::CreateMesh(MeshData& meshData)
 {
 	// --- Create Vertex Buffer ---
 	{
@@ -108,7 +109,7 @@ void Mesh::CreateMesh(MeshData meshData)
 	}
 }
 
-void Mesh::FindCenterOfMesh(MeshData meshData)
+void Mesh::FindCenterOfMesh(MeshData& meshData)
 {
 	int triangleCount = (int)meshData.indices.size() / 3;
 	Vertex* vertices = new Vertex[triangleCount]();
@@ -152,11 +153,97 @@ void Mesh::FindCenterOfMesh(MeshData meshData)
 
 	center = c;
 
-	delete[] vertices; 
+	delete[] vertices;
 }
 
-void Mesh::CalcTangents()
+// --------------------------------------------------------
+// Author: Chris Cascioli
+// Purpose: Calculates the tangents of the vertices in a mesh
+// 
+// - You are allowed to directly copy/paste this into your code base
+//   for assignments, given that you clearly cite that this is not
+//   code of your own design.
+//
+// - Code originally adapted from: http://www.terathon.com/code/tangent.html
+//   - Updated version now found here: http://foundationsofgameenginedev.com/FGED2-sample.pdf
+//   - See listing 7.4 in section 7.5 (page 9 of the PDF)
+//
+// - Note: For this code to work, your Vertex format must
+//         contain an XMFLOAT3 called Tangent
+//
+// - Be sure to call this BEFORE creating your D3D vertex/index buffers
+// --------------------------------------------------------
+void Mesh::CalculateTangents(MeshData& meshData)
 {
+	// Reset tangents
+	for (int i = 0; i < meshData.vertices.size(); i++)
+	{
+		meshData.vertices[i].Tangent = XMFLOAT3(0, 0, 0);
+	}
+
+	// Calculate tangents one whole triangle at a time
+	for (int i = 0; i < meshData.indices.size();)
+	{
+		// Grab indices and vertices of first triangle
+		unsigned int i1 = meshData.indices[i++];
+		unsigned int i2 = meshData.indices[i++];
+		unsigned int i3 = meshData.indices[i++];
+		Vertex* v1 = &meshData.vertices[i1];
+		Vertex* v2 = &meshData.vertices[i2];
+		Vertex* v3 = &meshData.vertices[i3];
+
+		// Calculate vectors relative to triangle positions
+		float x1 = v2->Position.x - v1->Position.x;
+		float y1 = v2->Position.y - v1->Position.y;
+		float z1 = v2->Position.z - v1->Position.z;
+
+		float x2 = v3->Position.x - v1->Position.x;
+		float y2 = v3->Position.y - v1->Position.y;
+		float z2 = v3->Position.z - v1->Position.z;
+
+		// Do the same for vectors relative to triangle uv's
+		float s1 = v2->UV.x - v1->UV.x;
+		float t1 = v2->UV.y - v1->UV.y;
+
+		float s2 = v3->UV.x - v1->UV.x;
+		float t2 = v3->UV.y - v1->UV.y;
+
+		// Create vectors for tangent calculation
+		float r = 1.0f / (s1 * t2 - s2 * t1);
+
+		float tx = (t2 * x1 - t1 * x2) * r;
+		float ty = (t2 * y1 - t1 * y2) * r;
+		float tz = (t2 * z1 - t1 * z2) * r;
+
+		// Adjust tangents of each vert of the triangle
+		v1->Tangent.x += tx;
+		v1->Tangent.y += ty;
+		v1->Tangent.z += tz;
+
+		v2->Tangent.x += tx;
+		v2->Tangent.y += ty;
+		v2->Tangent.z += tz;
+
+		v3->Tangent.x += tx;
+		v3->Tangent.y += ty;
+		v3->Tangent.z += tz;
+	}
+
+	// Ensure all of the tangents are orthogonal to the normals
+	for (int i = 0; i < meshData.vertices.size(); i++)
+	{
+		// Grab the two vectors
+		XMVECTOR normal = XMLoadFloat3(&meshData.vertices[i].Normal);
+		XMVECTOR tangent = XMLoadFloat3(&meshData.vertices[i].Tangent);
+
+		// Use Gram-Schmidt orthonormalize to ensure
+		// the normal and tangent are exactly 90 degrees apart
+		tangent = XMVector3Normalize(
+			tangent - normal * XMVector3Dot(normal, tangent));
+
+		// Store the tangent
+		XMStoreFloat3(&meshData.vertices[i].Tangent, tangent);
+	}
 }
 
 ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer()

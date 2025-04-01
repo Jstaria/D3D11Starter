@@ -174,6 +174,7 @@ void Game::CreateObjects()
 	string path = "../../Assets/Models/wonder_fizz/";
 	ComPtr<ID3D11ShaderResourceView> fizzTextureSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_albedo.jpg");
 	ComPtr<ID3D11ShaderResourceView> fizzRoughnessSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_roughness.jpg");
+	ComPtr<ID3D11ShaderResourceView> fizzNormalSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_normal.jpg");
 	path = "../../Assets/Images/";
 	ComPtr<ID3D11ShaderResourceView> crateTextureSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_basecolor.jpg");
 	ComPtr<ID3D11ShaderResourceView> crateNormalSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_normal.jpg");
@@ -182,12 +183,19 @@ void Game::CreateObjects()
 	ComPtr<ID3D11ShaderResourceView> rockNormalSRV = LoadHelper::LoadTexture(path + "Rock/rock-normal.png");
 	ComPtr<ID3D11ShaderResourceView> rockSpecularSRV = LoadHelper::LoadTexture(path + "Rock/rock-specular.png");
 	ComPtr<ID3D11ShaderResourceView> bloodTextureSRV = LoadHelper::LoadTexture(path + "blood.png");
+	path = "../../Assets/Textures with Normal Maps/";
+	ComPtr<ID3D11ShaderResourceView> cushionTextureSRV = LoadHelper::LoadTexture(path + "cushion.png");
+	ComPtr<ID3D11ShaderResourceView> cushionNormalSRV = LoadHelper::LoadTexture(path + "cushion_normals.png");
+	ComPtr<ID3D11ShaderResourceView> cobblestoneTextureSRV = LoadHelper::LoadTexture(path + "cobblestone.png");
+	ComPtr<ID3D11ShaderResourceView> cobblestoneNormalSRV = LoadHelper::LoadTexture(path + "cobblestone_normals.png");
+	ComPtr<ID3D11ShaderResourceView> cobblestoneSpecularSRV = LoadHelper::LoadTexture(path + "cobblestone_specular.png");
 
 	materials.emplace("rainbowFlow_mat", make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
 	materials.emplace("rainbow_mat", make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
 	materials.emplace("normal_mat", make_shared<Material>("normal_mat", MorphVS, NormalPS, cyan));
 	materials.emplace("fizz_mat", make_shared<Material>("fizz_mat",vs, TexturePS, white));
 	materials["fizz_mat"]->AddTextureSRV("SurfaceColorTexture", fizzTextureSRV);
+	materials["fizz_mat"]->AddTextureSRV("SurfaceNormalMap", fizzNormalSRV);
 	materials["fizz_mat"]->AddTextureSRV("SurfaceSpecularMap", fizzRoughnessSRV);
 	materials["fizz_mat"]->AddSampler("BasicSampler", baseSampler);
 	materials.emplace("crate_mat", make_shared<Material>("crate_mat", vs, TexturePS, yellow));
@@ -205,6 +213,15 @@ void Game::CreateObjects()
 	materials["decaled_crate_mat"]->AddTextureSRV("DecalColorTexture", bloodTextureSRV);
 	materials["decaled_crate_mat"]->AddSampler("BasicSampler", baseSampler);
 	materials.emplace("light_mat", make_shared<Material>("light_mat", vs, ps, white));
+	materials.emplace("cushion_mat", make_shared<Material>("cushion_mat", vs, TexturePS, white));
+	materials["cushion_mat"]->AddTextureSRV("SurfaceColorTexture", cushionTextureSRV);
+	materials["cushion_mat"]->AddTextureSRV("SurfaceNormalMap", cushionNormalSRV);
+	materials["cushion_mat"]->AddSampler("BasicSampler", baseSampler);
+	materials.emplace("cobblestone_mat", make_shared<Material>("cobblestone_mat", vs, TexturePS, white));
+	materials["cobblestone_mat"]->AddTextureSRV("SurfaceColorTexture", cobblestoneTextureSRV);
+	materials["cobblestone_mat"]->AddTextureSRV("SurfaceNormalMap", cobblestoneNormalSRV);
+	materials["cobblestone_mat"]->AddTextureSRV("SurfaceSpecularMap", cobblestoneSpecularSRV);
+	materials["cobblestone_mat"]->AddSampler("BasicSampler", baseSampler);
 
 	for (auto& material : materials) {
 		material.second->SetIndex();
@@ -232,7 +249,7 @@ void Game::CreateObjects()
 	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
 	//gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
 	gameObjs[3]->GetTransform()->SetScale(scale * .05f);
-	gameObjs[4] = make_shared<GameObject>("Rock", meshes[4], nullptr, materials["rock_mat"]);
+	gameObjs[4] = make_shared<GameObject>("Box", meshes[4], nullptr, materials["cobblestone_mat"]);
 	gameObjs[4]->GetTransform()->SetPosition(-2.0f, 0.0f, -5.0f);
 	gameObjs[4]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
 	gameObjs[4]->GetTransform()->SetScale(scale);
