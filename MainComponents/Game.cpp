@@ -152,13 +152,14 @@ void Game::CreateObjects()
 
 	string assetsPath = "../../Assets/Models/";
 
-	meshesSize = 5;
+	meshesSize = 6;
 	meshes = new shared_ptr<Mesh>[meshesSize];
 	meshes[0] = make_shared<Mesh>("Plane", FixPath(assetsPath + "quad.obj").c_str());
 	meshes[1] = make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str());
 	meshes[2] = make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str());
 	meshes[3] = make_shared<Mesh>("Wonder Fizz Machines", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str());
 	meshes[4] = make_shared<Mesh>("Cube", FixPath(assetsPath + "cube.obj").c_str());
+	meshes[5] = make_shared<Mesh>("Socrates", FixPath(assetsPath + "socrates/source/Socrates.obj").c_str());
 
 	ComPtr<ID3D11SamplerState> baseSampler;
 
@@ -171,10 +172,10 @@ void Game::CreateObjects()
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	Graphics::Device->CreateSamplerState(&samplerDesc, baseSampler.GetAddressOf());
 
-	string path = "../../Assets/Models/wonder_fizz/";
-	ComPtr<ID3D11ShaderResourceView> fizzTextureSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_albedo.jpg");
-	ComPtr<ID3D11ShaderResourceView> fizzRoughnessSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_roughness.jpg");
-	ComPtr<ID3D11ShaderResourceView> fizzNormalSRV = LoadHelper::LoadTexture(path + "textures/DefaultMaterial_normal.jpg");
+	string path = "../../Assets/Models/wonder_fizz/textures/";
+	ComPtr<ID3D11ShaderResourceView> fizzTextureSRV = LoadHelper::LoadTexture(path + "DefaultMaterial_albedo.jpg");
+	ComPtr<ID3D11ShaderResourceView> fizzRoughnessSRV = LoadHelper::LoadTexture(path + "DefaultMaterial_roughness.jpg");
+	ComPtr<ID3D11ShaderResourceView> fizzNormalSRV = LoadHelper::LoadTexture(path + "DefaultMaterial_normal.jpg");
 	path = "../../Assets/Images/";
 	ComPtr<ID3D11ShaderResourceView> crateTextureSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_basecolor.jpg");
 	ComPtr<ID3D11ShaderResourceView> crateNormalSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_normal.jpg");
@@ -189,6 +190,10 @@ void Game::CreateObjects()
 	ComPtr<ID3D11ShaderResourceView> cobblestoneTextureSRV = LoadHelper::LoadTexture(path + "cobblestone.png");
 	ComPtr<ID3D11ShaderResourceView> cobblestoneNormalSRV = LoadHelper::LoadTexture(path + "cobblestone_normals.png");
 	ComPtr<ID3D11ShaderResourceView> cobblestoneSpecularSRV = LoadHelper::LoadTexture(path + "cobblestone_specular.png");
+	path = "../../Assets/Models/socrates/textures/";
+	ComPtr<ID3D11ShaderResourceView> socratesTextureSRV = LoadHelper::LoadTexture(path + "1001_Base_Color.png");
+	ComPtr<ID3D11ShaderResourceView> socratesSpecularSRV = LoadHelper::LoadTexture(path + "1001_Roughness.png");
+	ComPtr<ID3D11ShaderResourceView> socratesNormalSRV = LoadHelper::LoadTexture(path + "1001_Normal_OpenGL.png");
 
 	materials.emplace("rainbowFlow_mat", make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
 	materials.emplace("rainbow_mat", make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
@@ -208,10 +213,6 @@ void Game::CreateObjects()
 	materials["rock_mat"]->AddTextureSRV("SurfaceNormalMap", rockNormalSRV);
 	materials["rock_mat"]->AddTextureSRV("SurfaceSpecularMap", rockSpecularSRV);
 	materials["rock_mat"]->AddSampler("BasicSampler", baseSampler);
-	materials.emplace("decaled_crate_mat", make_shared<Material>("decaled_crate_mat", vs, DecaledTexturePS, cyan));
-	materials["decaled_crate_mat"]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
-	materials["decaled_crate_mat"]->AddTextureSRV("DecalColorTexture", bloodTextureSRV);
-	materials["decaled_crate_mat"]->AddSampler("BasicSampler", baseSampler);
 	materials.emplace("light_mat", make_shared<Material>("light_mat", vs, ps, white));
 	materials.emplace("cushion_mat", make_shared<Material>("cushion_mat", vs, TexturePS, white));
 	materials["cushion_mat"]->AddTextureSRV("SurfaceColorTexture", cushionTextureSRV);
@@ -222,6 +223,11 @@ void Game::CreateObjects()
 	materials["cobblestone_mat"]->AddTextureSRV("SurfaceNormalMap", cobblestoneNormalSRV);
 	materials["cobblestone_mat"]->AddTextureSRV("SurfaceSpecularMap", cobblestoneSpecularSRV);
 	materials["cobblestone_mat"]->AddSampler("BasicSampler", baseSampler);
+	materials.emplace("socrates_mat", make_shared<Material>("socrates_mat", vs, TexturePS, white));
+	materials["socrates_mat"]->AddTextureSRV("SurfaceColorTexture", socratesTextureSRV);
+	materials["socrates_mat"]->AddTextureSRV("SurfaceNormalMap", socratesNormalSRV);
+	materials["socrates_mat"]->AddTextureSRV("SurfaceSpecularMap", socratesSpecularSRV);
+	materials["socrates_mat"]->AddSampler("BasicSampler", baseSampler);
 
 	for (auto& material : materials) {
 		material.second->SetIndex();
@@ -253,10 +259,10 @@ void Game::CreateObjects()
 	gameObjs[4]->GetTransform()->SetPosition(-2.0f, 0.0f, -5.0f);
 	gameObjs[4]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
 	gameObjs[4]->GetTransform()->SetScale(scale);
-	gameObjs[5] = make_shared<GameObject>("BloodyCrate", meshes[4], nullptr, materials["decaled_crate_mat"]);
-	gameObjs[5]->GetTransform()->SetPosition(2.0f, 0.0f, -5.0f);
+	gameObjs[5] = make_shared<GameObject>("Socrates", meshes[5], nullptr, materials["socrates_mat"]);
+	gameObjs[5]->GetTransform()->SetPosition(2.0f, -1.0f, -5.0f);
 	gameObjs[5]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
-	gameObjs[5]->GetTransform()->SetScale(scale);
+	gameObjs[5]->GetTransform()->SetScale(scale * .015f);
 
 	for (int i = 0; i < gameObjsSize; i++)
 	{
