@@ -73,6 +73,8 @@ float3 DirectionalLight(Light light, float3 color, SamplerState BasicSampler, Te
     float3 spec = PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition,
         SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
 
+    spec *= any(diffuse);
+    
     return diffuse + spec;
 }
 
@@ -89,6 +91,8 @@ float3 PointLight(Light light, float3 color, SamplerState BasicSampler, Texture2
     float3 spec = PhongSpecular(lightDirection, lightColor, lightIntensity, input.normal, input.worldPosition, iEyePosition,
         SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
 
+    spec *= any(diffuse);
+    
     return (diffuse + spec) * attenuation;
 }
 
@@ -103,7 +107,7 @@ float3 SpotLight(Light light, float3 color, SamplerState BasicSampler, Texture2D
     float cosInner = cos(light.SpotInnerAngle);
 
     float spotTerm = saturate((cosOuter - pixelAngle) / (cosOuter - cosInner));
-
+    
     return PointLight(light, color, BasicSampler, SurfaceSpecularMap, input) * spotTerm;
 }
 #endif

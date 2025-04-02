@@ -229,6 +229,16 @@ void Game::CreateObjects()
 	materials["socrates_mat"]->AddTextureSRV("SurfaceSpecularMap", socratesSpecularSRV);
 	materials["socrates_mat"]->AddSampler("BasicSampler", baseSampler);
 
+	// Cube Maps
+	path = "../../Assets/Images/Skyboxes/";
+	ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(path + "Clouds Pink/");
+	materials.emplace("cm_PinkClouds", make_shared<Material>("sm_PinkClouds", vs, ps, white));
+	materials["cm_PinkClouds"]->AddTextureSRV("SurfaceColorTexture", cm_PinkCloudsSRV);
+
+	ComPtr<ID3D11ShaderResourceView> cm_PlanetSRV = LoadHelper::CreateCubemap(path + "Planet/");
+	materials.emplace("cm_Planet", make_shared<Material>("cm_Planet", vs, ps, white));
+	materials["cm_Planet"]->AddTextureSRV("SurfaceColorTexture", cm_PlanetSRV);
+
 	for (auto& material : materials) {
 		material.second->SetIndex();
 		materialKeys.push_back(material.first);

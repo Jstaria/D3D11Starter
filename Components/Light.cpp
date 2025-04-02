@@ -55,8 +55,7 @@ bool Light::GetActive() { return isActive; }
 void Light::Draw()
 {
 	if (!isActive || lightStruct.Type == LIGHT_TYPE_DIRECTIONAL) return;
-	UpdateLightColor();
-
+	
 	mesh->Draw();
 }
 

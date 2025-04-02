@@ -12,5 +12,7 @@
 namespace LoadHelper {
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadTexture(const std::string address);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadCubeMap(const std::string address);
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateCubemap(const std::string path);
+
 }

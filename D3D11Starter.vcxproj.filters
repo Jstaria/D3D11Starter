@@ -312,6 +312,9 @@
     <FxCompile Include="Shaders\Pixel\DecaledTexturePS.hlsl">
       <Filter>Shaders\Pixel</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\Vertex\SkyVS.hlsl">
+      <Filter>Shaders\Vertex</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Header\DefaultParam.hlsli">
