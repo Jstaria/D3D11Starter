@@ -29,22 +29,19 @@ public:
 	~GameObject();
 
 	// -=| Getters and Setters |=-
-	std::shared_ptr<Transform> GetTransform();
+	std::shared_ptr<Transform> GetTransform() override;
 	std::shared_ptr<Transform> GetParentTransform();
-	std::shared_ptr<Mesh> GetMesh();
-	std::shared_ptr<Material> GetMaterial();
+	std::shared_ptr<Mesh> GetMesh() override;
+	std::shared_ptr<Material> GetMaterial() override;
 	const char* GetName();
 	DirectX::XMFLOAT4 GetTint();
 
 	void SetObjAsChild(GameObject* GameObject);
 	void SetTint(DirectX::XMFLOAT4 tintColor);
-	void SetMaterial(std::shared_ptr<Material> material);
-	void SetMesh(std::shared_ptr<Mesh> mesh);
+	void SetMaterial(std::shared_ptr<Material> material) override;
+	void SetMesh(std::shared_ptr<Mesh> mesh) override;
 
 	void DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialKeys);
-
-	// Inherited via IRenderable
-	IRenderable::RenderType GetRenderType() override;
 
 	// Inherited via IRenderable
 	void Draw() override;

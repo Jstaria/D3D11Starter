@@ -229,6 +229,11 @@ void Game::CreateObjects()
 	materials["socrates_mat"]->AddTextureSRV("SurfaceSpecularMap", socratesSpecularSRV);
 	materials["socrates_mat"]->AddSampler("BasicSampler", baseSampler);
 
+	for (auto& material : materials) {
+		material.second->SetIndex();
+		materialKeys.push_back(material.first);
+	}
+
 	// Cube Maps
 	path = "../../Assets/Images/Skyboxes/";
 	ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(path + "Clouds Pink/");
@@ -239,10 +244,7 @@ void Game::CreateObjects()
 	materials.emplace("cm_Planet", make_shared<Material>("cm_Planet", vs, ps, white));
 	materials["cm_Planet"]->AddTextureSRV("SurfaceColorTexture", cm_PlanetSRV);
 
-	for (auto& material : materials) {
-		material.second->SetIndex();
-		materialKeys.push_back(material.first);
-	}
+	skies.push_back(make_shared<Sky>(baseSampler, cm_PinkCloudsSRV));
 
 	float scale = 1;
 
@@ -278,6 +280,8 @@ void Game::CreateObjects()
 	{
 		Renderer::AddObjectToRender(gameObjs[i]);
 	}
+
+	Renderer::AddObjectToRender(skies[0]);
 }
 
 
@@ -446,6 +450,7 @@ void Game::BuildUI(float deltaTime) {
 			ImGui::SetWindowFontScale(1.0f);
 			ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
 			ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
+			ImGui::Checkbox("Show Light Meshes", &Debug::ShowLightsMesh);
 
 			if (ImGui::Button("Change Window Size: 720x720")) {
 				Window::AdjustWindowSize(720, 720);
@@ -455,7 +460,9 @@ void Game::BuildUI(float deltaTime) {
 
 	// Light Obj Data
 	{
-		for (auto& light : lights) light->DrawImGui();
+		if (ImGui::CollapsingHeader("All Current Lights")) {
+			for (auto& light : lights) light->DrawImGui();
+		}
 	}
 
 	// Game Object Data

@@ -54,7 +54,7 @@ bool Light::GetActive() { return isActive; }
 
 void Light::Draw()
 {
-	if (!isActive || lightStruct.Type == LIGHT_TYPE_DIRECTIONAL) return;
+	if (!isActive || lightStruct.Type == LIGHT_TYPE_DIRECTIONAL || !Debug::ShowLightsMesh) return;
 	
 	mesh->Draw();
 }

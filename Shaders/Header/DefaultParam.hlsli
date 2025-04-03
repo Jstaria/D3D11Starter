@@ -17,9 +17,9 @@ uniform float3 iEyeDirection;
 uniform float3 iPosition;
 uniform float2 iResolution;
 
-Texture2D SurfaceColorTexture : register(t0);
-Texture2D SurfaceNormalMap : register(t1);
-Texture2D SurfaceSpecularMap : register(t2);
+Texture2D SurfaceColorTexture : register(t1);
+Texture2D SurfaceNormalMap : register(t2);
+Texture2D SurfaceSpecularMap : register(t3);
 SamplerState BasicSampler : register(s0);
 
 struct VertexShaderInput

@@ -6,7 +6,6 @@ using namespace DirectX;
 GameObject::GameObject(const char* name, std::shared_ptr<Mesh> mesh, std::shared_ptr<GameObject> parentObj, std::shared_ptr<Material> material)
 	: name(name), parentObj(parentObj)
 {
-	this->rendererType = IRenderable::RenderType::Object;
 	this->mesh = mesh;
 	this->material = material;
 
@@ -83,8 +82,6 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 		ImGui::TreePop();
 	}
 }
-
-IRenderable::RenderType GameObject::GetRenderType() { return rendererType; }
 
 void GameObject::Draw()
 {

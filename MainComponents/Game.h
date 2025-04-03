@@ -82,6 +82,8 @@ private:
 	std::map<const char*, std::shared_ptr<Material>> materials;
 	std::vector<const char*> materialKeys;
 	
+	std::vector<std::shared_ptr<Sky>> skies;
+
 	int currentCam;
 };
 

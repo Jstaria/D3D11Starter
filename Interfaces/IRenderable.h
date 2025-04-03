@@ -14,15 +14,19 @@ public:
 	};
 
 protected:
-	RenderType rendererType;
+
 	std::shared_ptr<Material> material;
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Transform> transform;
 
 public:
-	virtual RenderType GetRenderType() = 0;
+
 	virtual std::shared_ptr<Mesh> GetMesh() = 0;
 	virtual std::shared_ptr<Material> GetMaterial() = 0;
 	virtual std::shared_ptr<Transform> GetTransform() = 0;
+
+	virtual void SetMaterial(std::shared_ptr<Material> material) = 0;
+	virtual void SetMesh(std::shared_ptr<Mesh> mesh) = 0;
+
 	virtual void Draw() = 0;
 };

@@ -2,13 +2,13 @@
 
 struct VertexToPixelSky
 {
-    float4 position;
-    float3 sampleDir;
+    float4 position : POSITION;
+    float3 sampleDir : DIRECTION;
 };
 
 ExternalData data;
 
-float4 main(VertexShaderInput input)
+VertexToPixelSky main(VertexShaderInput input)
 {
     VertexToPixelSky output;
     
@@ -20,7 +20,7 @@ float4 main(VertexShaderInput input)
     viewNoTranslation._34 = 0;
     
     output.position = mul(vp, float4(input.localPosition, 1)).xyzz;
-    output.sampleDir = output.position;
+    output.sampleDir = normalize(output.position.xyz);
     
 	return output;
 }

@@ -17,8 +17,6 @@ private:
 public:
 	ParticleSystem(DirectX::XMFLOAT3 position, std::shared_ptr<Transform> parentTransform, float particleSpeed, float emitterSpeed);
 
-	// Inherited via IRenderable
-	IRenderable::RenderType GetRenderType() override;
 	std::shared_ptr<Mesh> GetMesh() override;
 	std::shared_ptr<Material> GetMaterial() override;
 	std::shared_ptr<Transform> GetTransform() override;

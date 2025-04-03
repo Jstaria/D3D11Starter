@@ -1,7 +1,7 @@
 
 #include "../Header/DefaultParam.hlsli"
 
-Texture2D DecalColorTexture : register(t1);
+Texture2D DecalColorTexture : register(t99);
 
 float4 main(VertexToPixel input) : SV_TARGET
 {

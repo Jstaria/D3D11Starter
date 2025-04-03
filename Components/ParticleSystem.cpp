@@ -8,7 +8,6 @@ ParticleSystem::ParticleSystem(DirectX::XMFLOAT3 position, std::shared_ptr<Trans
 	transform->SetParentTransform(parentTransform);
 }
 
-IRenderable::RenderType ParticleSystem::GetRenderType() { return rendererType; }
 std::shared_ptr<Mesh> ParticleSystem::GetMesh() { return mesh; }
 std::shared_ptr<Material> ParticleSystem::GetMaterial() { return material; }
 std::shared_ptr<Transform> ParticleSystem::GetTransform() { return transform; }

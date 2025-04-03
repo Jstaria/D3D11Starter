@@ -7,6 +7,7 @@
 #include "../Structures/ExternalData.h"
 #include "../Components/Camera.h"
 #include "../Components/Light.h"
+#include "../Components/Sky.h"
 
 namespace Renderer
 {

@@ -56,17 +56,19 @@ namespace Renderer {
 			if (light != nullptr)
 				light->UpdateLightColor();
 
+			//Sky* sky = dynamic_cast<Sky*>(gameObj);
+			//if (sky != nullptr)
+			//	sky->();
+
+
 			// ==============================================
 
 			mat->GetVS()->SetShader();
 			mat->GetPS()->SetShader();
 
 			LightStruct lightStructs[MAX_LIGHTS];
-
 			for (int i = 0; i < min(lights.size(), MAX_LIGHTS); i++)
-			{
 				lightStructs[i] = lights[i]->GetStruct();
-			}
 
 			mat->GetPS()->SetData("lights", &lightStructs[0], sizeof(LightStruct) * MAX_LIGHTS);
 
