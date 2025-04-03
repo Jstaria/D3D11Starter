@@ -291,29 +291,31 @@ void Mesh::Draw()
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
-	// Will show mesh based on debug mesh toggle
-	if (meshToggle) {
+	//// Will show mesh based on debug mesh toggle
+	//if (meshToggle) {
 
-		// Will show mesh based on this mesh's toggle
-		if (Debug::ShowMesh) {
-			Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
-			Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-			Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//	// Will show mesh based on this mesh's toggle
+	//	if (Debug::ShowMesh) {
+	//		Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
 
-			Graphics::Context->DrawIndexed((int)meshData.vertices.size(), 0, 0);
-		}
-	}
+	//	}
+	//}
 
-	// Will show WF based on debug mesh toggle
-	if (wireFrameToggle)
-	{
-		// Will show WF based on this WF's toggle
-		if (Debug::ShowWireFrame) {
-			Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
-			Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-			Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//// Will show WF based on debug mesh toggle
+	//if (wireFrameToggle)
+	//{
+	//	// Will show WF based on this WF's toggle
+	//	if (Debug::ShowWireFrame) {
+	//		Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
+	//		Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	//		Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-			Graphics::Context->DrawIndexed((int)meshData.indices.size(), 0, 0);
-		}
-	}
+	//		Graphics::Context->DrawIndexed((int)meshData.indices.size(), 0, 0);
+	//	}
+	//}
+
+	Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	Graphics::Context->DrawIndexed((int)meshData.vertices.size(), 0, 0);
 }

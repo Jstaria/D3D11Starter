@@ -14,6 +14,7 @@ namespace Renderer
 	void Init();
 	void AddObjectToRender(std::shared_ptr<IRenderable> gameObj);
 	void SetCurrentCamera(std::shared_ptr<Camera> camera);
+	void SetCurrentSky(std::shared_ptr<Sky> sky);
 	void SetLights(std::vector<std::shared_ptr<Light>> lightList);
 	void DrawRenderables();
 	void UpdateRenderableList();

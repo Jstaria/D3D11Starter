@@ -9,6 +9,7 @@ namespace Renderer {
 		std::vector<std::shared_ptr<IRenderable>> sortedRenderables;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
 		std::shared_ptr<Camera> currentCamera;
+		std::shared_ptr<Sky> currentSky;
 		std::vector<std::shared_ptr<Light>> lights;
 
 		// Sorting method(s)
@@ -76,6 +77,20 @@ namespace Renderer {
 
 			mat->GetVS()->CopyAllBufferData();
 			mat->GetPS()->CopyAllBufferData();
+
+			printf("Drawing"); printf(gameObj->GetMesh()->GetName()); printf("\n");
+		}
+
+		void BindAndDrawSkyData() {
+
+			XMFLOAT4X4 viewMatrix = currentCamera->GetView();
+			XMFLOAT4X4 projMatrix = currentCamera->GetProjection();
+			
+			ExternalData data{};
+			data.viewMatrix = viewMatrix;
+			data.projMatrix = projMatrix;
+
+			currentSky->Draw(data);
 		}
 #pragma endregion
 
@@ -95,6 +110,7 @@ void Renderer::AddObjectToRender(std::shared_ptr<IRenderable> gameObj)
 }
 
 void Renderer::SetCurrentCamera(std::shared_ptr<Camera> camera) { currentCamera = camera; }
+void Renderer::SetCurrentSky(std::shared_ptr<Sky> sky) { currentSky = sky; }
 void Renderer::SetLights(std::vector<std::shared_ptr<Light>> lightList) {
 	for (auto& light : lightList) sortedRenderables.push_back(light);
 	lights = lightList;
@@ -109,6 +125,8 @@ void Renderer::DrawRenderables()
 		BindDataToDraw(gameObj);
 		gameObj->Draw();
 	}
+
+	BindAndDrawSkyData();
 }
 
 void Renderer::UpdateRenderableList()

@@ -6,14 +6,13 @@ using namespace Microsoft::WRL;
 
 void Sky::CreateStates()
 {
-	transform = make_shared<Transform>();
-
 	{
 		D3D11_RASTERIZER_DESC desc{};
 
 		desc.FillMode = D3D11_FILL_SOLID;
 		desc.CullMode = D3D11_CULL_FRONT;
-		Graphics::Device->CreateRasterizerState(&desc, &rasterizerState);
+		desc.DepthClipEnable = true;
+		Graphics::Device->CreateRasterizerState(&desc, rasterizerState.GetAddressOf());
 	}
 
 	{
@@ -21,7 +20,9 @@ void Sky::CreateStates()
 
 		desc.DepthEnable = true;
 		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-		Graphics::Device->CreateDepthStencilState(&desc, &depthState);
+		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+
+		Graphics::Device->CreateDepthStencilState(&desc, depthState.GetAddressOf());
 	}
 }
 
@@ -43,18 +44,33 @@ Sky::Sky()
 {
 }
 
-std::shared_ptr<Mesh> Sky::GetMesh() { return mesh; }
-std::shared_ptr<Material> Sky::GetMaterial() { return material; }
-std::shared_ptr<Transform> Sky::GetTransform() { return transform; }
+void Sky::SetShadersAndMesh(std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<Mesh> mesh)
+{
+	this->vs = vs;
+	this->ps = ps;
+	this->mesh = mesh;
+}
 
-void Sky::Draw()
+void Sky::Draw(ExternalData data)
 {
 	Graphics::Context->RSSetState(rasterizerState.Get());
 	Graphics::Context->OMSetDepthStencilState(depthState.Get(), 0);
 
+	vs->SetShader();
+	ps->SetShader();
+
+	vs->SetMatrix4x4("view", data.viewMatrix);
+	vs->SetMatrix4x4("projection", data.projMatrix);
+
+	ps->SetShaderResourceView("CubeMap", cubeMapSRV);
+	ps->SetSamplerState("BasicSampler", sampler);
+
+	vs->CopyAllBufferData();
+	ps->CopyAllBufferData();
+
 	mesh->Draw();
 
-	Graphics::Context->RSSetState(nullptr);
-	Graphics::Context->OMSetDepthStencilState(nullptr, 0);
+	Graphics::Context->RSSetState(0);
+	Graphics::Context->OMSetDepthStencilState(0, 0);
 }
 

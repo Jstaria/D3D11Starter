@@ -6,14 +6,18 @@ struct VertexToPixelSky
     float3 sampleDir : DIRECTION;
 };
 
-ExternalData data;
+cbuffer ExternalData : register(b0)
+{
+    matrix viewMatrix;
+    matrix projMatrix;
+}
 
 VertexToPixelSky main(VertexShaderInput input)
 {
     VertexToPixelSky output;
     
-    float4x4 viewNoTranslation = data.viewMatrix;
-    float4x4 vp = mul(data.projMatrix, data.viewMatrix);
+    float4x4 viewNoTranslation = viewMatrix;
+    float4x4 vp = mul(projMatrix, viewMatrix);
     
     viewNoTranslation._14 = 0;
     viewNoTranslation._24 = 0;

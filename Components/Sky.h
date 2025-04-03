@@ -9,13 +9,17 @@
 #include "../Helper/LoadHelper.h"
 #include "../Interfaces/IRenderable.h"
 
-class Sky : public IRenderable
+class Sky
 {
 private:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cubeMapSRV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthState;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState;
+
+	std::shared_ptr<Mesh> mesh;
+	std::shared_ptr<SimpleVertexShader> vs;
+	std::shared_ptr<SimplePixelShader> ps;
 
 	void CreateStates();
 
@@ -24,11 +28,9 @@ public:
 	Sky(Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState, ComPtr<ID3D11ShaderResourceView> cubeMap);
 	Sky();
 
-	std::shared_ptr<Mesh> GetMesh() override;
-	std::shared_ptr<Material> GetMaterial() override;
-	std::shared_ptr<Transform> GetTransform() override;
+	void SetShadersAndMesh(std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<Mesh> mesh);
 
-	void Draw() override;
+	void Draw(ExternalData data);
 
 };
 

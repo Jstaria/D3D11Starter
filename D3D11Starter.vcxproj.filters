@@ -147,6 +147,9 @@
     <ClCompile Include="Helper\LoadHelpers.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="Components\Sky.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -272,6 +275,9 @@
     <ClInclude Include="Helper\LoadHelper.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Components\Sky.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Changelog.txt">
@@ -314,6 +320,9 @@
     </FxCompile>
     <FxCompile Include="Shaders\Vertex\SkyVS.hlsl">
       <Filter>Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Pixel\SkyPS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

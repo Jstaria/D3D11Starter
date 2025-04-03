@@ -149,6 +149,8 @@ void Game::CreateObjects()
 	shared_ptr<SimplePixelShader> TexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"TexturePS.cso").c_str());
 	shared_ptr<SimplePixelShader> DecaledTexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"DecaledTexturePS.cso").c_str());
 	shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
+	shared_ptr<SimpleVertexShader> skyVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
+	shared_ptr<SimplePixelShader> skyPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyPS.cso").c_str());
 
 	string assetsPath = "../../Assets/Models/";
 
@@ -237,14 +239,12 @@ void Game::CreateObjects()
 	// Cube Maps
 	path = "../../Assets/Images/Skyboxes/";
 	ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(path + "Clouds Pink/");
-	materials.emplace("cm_PinkClouds", make_shared<Material>("sm_PinkClouds", vs, ps, white));
-	materials["cm_PinkClouds"]->AddTextureSRV("SurfaceColorTexture", cm_PinkCloudsSRV);
-
 	ComPtr<ID3D11ShaderResourceView> cm_PlanetSRV = LoadHelper::CreateCubemap(path + "Planet/");
-	materials.emplace("cm_Planet", make_shared<Material>("cm_Planet", vs, ps, white));
-	materials["cm_Planet"]->AddTextureSRV("SurfaceColorTexture", cm_PlanetSRV);
 
 	skies.push_back(make_shared<Sky>(baseSampler, cm_PinkCloudsSRV));
+	skies[0]->SetShadersAndMesh(skyVS, skyPS, meshes[4]);
+
+	Renderer::SetCurrentSky(skies[0]);
 
 	float scale = 1;
 
@@ -280,8 +280,6 @@ void Game::CreateObjects()
 	{
 		Renderer::AddObjectToRender(gameObjs[i]);
 	}
-
-	Renderer::AddObjectToRender(skies[0]);
 }
 
 
