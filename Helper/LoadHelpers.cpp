@@ -28,19 +28,19 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadHelper::LoadTexture(const s
 // another face.  Afterwards, creates a shader resource view for
 // the cube map and cleans up all of the temporary resources.
 // --------------------------------------------------------
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadHelper::CreateCubemap(const std::string path)
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadHelper::CreateCubemap(const std::wstring path)
 {
 	// Load the 6 textures into an array.
 	// - We need references to the TEXTURES, not SHADER RESOURCE VIEWS!
 	// - Explicitly NOT generating mipmaps, as we don't need them for the sky!
 	// - Order matters here!  +X, -X, +Y, -Y, +Z, -Z
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> textures[6] = {};
-	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(NarrowToWide(path + "right.png")).c_str(), (ID3D11Resource**)textures[0].GetAddressOf(), 0);
-	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(NarrowToWide(path + "left.png")).c_str(), (ID3D11Resource**)textures[1].GetAddressOf(), 0);
-	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(NarrowToWide(path + "up.png")).c_str(), (ID3D11Resource**)textures[2].GetAddressOf(), 0);
-	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(NarrowToWide(path + "down.png")).c_str(), (ID3D11Resource**)textures[3].GetAddressOf(), 0);
-	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(NarrowToWide(path + "front.png")).c_str(), (ID3D11Resource**)textures[4].GetAddressOf(), 0);
-	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(NarrowToWide(path + "back.png")).c_str(), (ID3D11Resource**)textures[5].GetAddressOf(), 0);
+	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(path + L"right.png").c_str(), (ID3D11Resource**)textures[0].GetAddressOf(), 0);
+	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(path + L"left.png").c_str(), (ID3D11Resource**)textures[1].GetAddressOf(), 0);
+	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(path + L"up.png").c_str(), (ID3D11Resource**)textures[2].GetAddressOf(), 0);
+	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(path + L"down.png").c_str(), (ID3D11Resource**)textures[3].GetAddressOf(), 0);
+	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(path + L"front.png").c_str(), (ID3D11Resource**)textures[4].GetAddressOf(), 0);
+	DirectX::CreateWICTextureFromFile(Graphics::Device.Get(), FixPath(path + L"back.png").c_str(), (ID3D11Resource**)textures[5].GetAddressOf(), 0);
 
 	// We'll assume all of the textures are the same color format and resolution,
 	// so get the description of the first texture

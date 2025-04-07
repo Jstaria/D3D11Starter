@@ -238,12 +238,15 @@ void Game::CreateObjects()
 
 	// Cube Maps
 	path = "../../Assets/Images/Skyboxes/";
-	ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(path + "Clouds Pink/");
-	ComPtr<ID3D11ShaderResourceView> cm_PlanetSRV = LoadHelper::CreateCubemap(path + "Planet/");
 
-	skies.push_back(make_shared<Sky>(baseSampler, cm_PinkCloudsSRV));
-	skies[0]->SetShadersAndMesh(skyVS, skyPS, meshes[4]);
+	// Pass in path to create srvs
+	ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Clouds Pink/");
+	ComPtr<ID3D11ShaderResourceView> cm_PlanetSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Planet/");
 
+	// Add the (for now) one sky to a vector
+	skies.push_back(make_shared<Sky>(baseSampler, cm_PlanetSRV, skyVS, skyPS, meshes[4]));
+
+	// Set that as my current sky to then bind data and draw after objects
 	Renderer::SetCurrentSky(skies[0]);
 
 	float scale = 1;

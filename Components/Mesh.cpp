@@ -298,6 +298,10 @@ void Mesh::Draw()
 	//	if (Debug::ShowMesh) {
 	//		Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
 
+			Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+			Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+			Graphics::Context->DrawIndexed((int)meshData.vertices.size(), 0, 0);
 	//	}
 	//}
 
@@ -314,8 +318,5 @@ void Mesh::Draw()
 	//	}
 	//}
 
-	Graphics::Context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	Graphics::Context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-	Graphics::Context->DrawIndexed((int)meshData.vertices.size(), 0, 0);
+	
 }

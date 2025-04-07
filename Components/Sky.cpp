@@ -26,29 +26,22 @@ void Sky::CreateStates()
 	}
 }
 
-Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, const char* path)
-	: sampler(samplerState)
+Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, const wchar_t* path, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<Mesh> mesh)
+	: sampler(samplerState), mesh(mesh), vs(vs), ps(ps)
 {
 	cubeMapSRV = LoadHelper::CreateCubemap(path);
 	
 	CreateStates();
 }
 
-Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, ComPtr<ID3D11ShaderResourceView> cubeMap)
-	: sampler(samplerState), cubeMapSRV(cubeMap)
+Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, ComPtr<ID3D11ShaderResourceView> cubeMap, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<Mesh> mesh)
+	: sampler(samplerState), cubeMapSRV(cubeMap), mesh(mesh), vs(vs), ps(ps)
 {
 	CreateStates();
 }
 
 Sky::Sky()
 {
-}
-
-void Sky::SetShadersAndMesh(std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<Mesh> mesh)
-{
-	this->vs = vs;
-	this->ps = ps;
-	this->mesh = mesh;
 }
 
 void Sky::Draw(ExternalData data)
@@ -59,14 +52,12 @@ void Sky::Draw(ExternalData data)
 	vs->SetShader();
 	ps->SetShader();
 
-	vs->SetMatrix4x4("view", data.viewMatrix);
-	vs->SetMatrix4x4("projection", data.projMatrix);
+	vs->SetMatrix4x4("viewMatrix", data.viewMatrix);
+	vs->SetMatrix4x4("projMatrix", data.projMatrix);
+	vs->CopyAllBufferData();
 
 	ps->SetShaderResourceView("CubeMap", cubeMapSRV);
-	ps->SetSamplerState("BasicSampler", sampler);
-
-	vs->CopyAllBufferData();
-	ps->CopyAllBufferData();
+	ps->SetSamplerState("SkySampler", sampler);
 
 	mesh->Draw();
 

@@ -51,7 +51,7 @@ float PhongSpecular(float3 lightDirection, float3 normal, float3 worldPosition, 
     
     float specExponent = (1.0f - roughness) * MAX_SPECULAR_EXPONENT;
     
-    float3 specTerm = pow(max(dot(viewVector, refl), 0.0f), specExponent);
+    float specTerm = pow(max(dot(viewVector, refl), 0.0f), specExponent);
     
     return roughness == 1 ? 0 : specTerm;
 }
@@ -83,7 +83,7 @@ float3 PointLight(Light light, float3 surfaceColor, SamplerState BasicSampler, T
     float3 diffuse = light.Color * LambertDiffuse(lightDirection, input.normal);
 
     float3 spec = PhongSpecular(lightDirection, input.normal, input.worldPosition, iEyePosition,
-        1 - SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
+        SurfaceSpecularMap.Sample(BasicSampler, input.uv).r);
 
     spec *= any(diffuse);
     

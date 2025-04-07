@@ -3,6 +3,8 @@
 void Debug::Initialize()
 {
 	CreateRasterizerStates();
+
+	ShowLightsMesh = true;
 }
 
 void Debug::CreateRasterizerStates()

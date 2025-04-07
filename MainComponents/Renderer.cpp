@@ -67,18 +67,19 @@ namespace Renderer {
 			mat->GetVS()->SetShader();
 			mat->GetPS()->SetShader();
 
-			LightStruct lightStructs[MAX_LIGHTS];
-			for (int i = 0; i < min(lights.size(), MAX_LIGHTS); i++)
-				lightStructs[i] = lights[i]->GetStruct();
+			if (light == nullptr)
+			{
+				LightStruct lightStructs[MAX_LIGHTS];
+				for (int i = 0; i < min(lights.size(), MAX_LIGHTS); i++)
+					lightStructs[i] = lights[i]->GetStruct();
 
-			mat->GetPS()->SetData("lights", &lightStructs[0], sizeof(LightStruct) * MAX_LIGHTS);
+				mat->GetPS()->SetData("lights", &lightStructs[0], sizeof(LightStruct) * MAX_LIGHTS);
+			}
 
 			mat->SetDefaultShaderParam(data, gameObj->GetTransform().get(), currentCamera->GetTransform().get());
 
 			mat->GetVS()->CopyAllBufferData();
 			mat->GetPS()->CopyAllBufferData();
-
-			printf("Drawing"); printf(gameObj->GetMesh()->GetName()); printf("\n");
 		}
 
 		void BindAndDrawSkyData() {
