@@ -487,8 +487,7 @@ void Game::BuildUI(float deltaTime) {
 					ImGui::Text("Indices: %d", meshes[i]->GetIndexCount());
 
 					// Adding unique identifiers to each checkbox because ImGUI yelled at me
-					ImGui::Checkbox(("Show Wireframe##" + to_string(i)).c_str(), meshes[i]->GetToggleWireFrame());
-					ImGui::Checkbox(("Show Mesh##" + to_string(i)).c_str(), meshes[i]->GetToggleMesh());
+					meshes[i]->DrawImGui(i);
 					ImGui::TreePop();
 				}
 			}

@@ -123,6 +123,13 @@ void Renderer::DrawRenderables()
 	{
 		IRenderable* gameObj = sortedRenderables[i].get();
 
+		if (gameObj->GetMesh()->GetToggleMesh())
+			if (Debug::ShowMesh)
+				Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
+		if (gameObj->GetMesh()->GetToggleWireFrame())
+			if (Debug::ShowWireFrame)
+				Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
+
 		BindDataToDraw(gameObj);
 		gameObj->Draw();
 	}
@@ -140,3 +147,39 @@ std::shared_ptr<Camera> Renderer::GetCamera()
 {
 	return currentCamera;
 }
+
+//void Setup() {
+//
+//	D3D11_DEPTH_STENCIL_VIEW_DESC shadowDesc{};
+//	ID3D11DepthStencilView shadowOptions;
+//
+//	Graphics::Context->ClearDepthStencilView(shadowOptions.ShadowDSV.Get(), D3D11_DEPTH_STENCIL_VIEW_DESC);
+//	Graphics::Context->OMSetRenderTargets(0, 0, shadowOptions.ShadowDSV.Get());
+//
+//	D3D11_VIEWPORT vp{};
+//	vp.TopLeftX = 0.0f;
+//	vp.TopLeftY = 0.0f;
+//	vp.Width = shadowOptions.ShadowMapResolution;
+//	vp.Height = shadowOptions.ShadowMapResolution;
+//	vp.MinDepth = 0.0f;
+//	vp.MaxDepth = 1.0f;
+//	Graphics::Context->RSSetViewports(1, &vp);
+//
+//	shadowVS->SetShader();
+//	Graphics::Context->PSSetShader(0,0,0);
+// 
+//	shadowVS->SetMatrix4x4("view",shadowOptions.LightViewMatrix);
+//	shadowVS->SetMatrix4x4("projection",shadowOptions.LightProjectionMatrix);
+// 
+//	for (auto& e : entities) 
+//	{
+//		shadowVS->SetWorldMatrix4x4("world", e->GetTransform()->GetWorldMatrix());
+//		shadowVS->CopyAllBufferData();
+// 
+//		e->GetMesh()->Draw();
+//  }
+// 
+//	Graphics::Context->OMSetRenderTargets(1, Graphics::BackBufferRTV.GetAddressOf(), Graphics);
+//
+//	// Reset viewport data
+// }

@@ -246,44 +246,19 @@ void Mesh::CalculateTangents(MeshData& meshData)
 	}
 }
 
-ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer()
-{
-	return vertexBuffer;
-}
+ComPtr<ID3D11Buffer> Mesh::GetVertexBuffer() { return vertexBuffer; }
+ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer() { return indexBuffer; }
+int Mesh::GetVertexCount() { return (int)meshData.vertices.size(); }
+int Mesh::GetIndexCount() { return (int)meshData.indices.size(); }
+const char* Mesh::GetName() { return name; }
+Vertex Mesh::GetCenter() { return center; }
+bool Mesh::GetToggleMesh() { return meshToggle; }
+bool Mesh::GetToggleWireFrame() { return wireFrameToggle; }
 
-ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer()
+void Mesh::DrawImGui(int i)
 {
-	return indexBuffer;
-}
-
-int Mesh::GetVertexCount()
-{
-	return (int)meshData.vertices.size();
-}
-
-int Mesh::GetIndexCount()
-{
-	return (int)meshData.indices.size();
-}
-
-const char* Mesh::GetName()
-{
-	return name;
-}
-
-Vertex Mesh::GetCenter()
-{
-	return center;
-}
-
-bool* Mesh::GetToggleMesh()
-{
-	return &meshToggle;
-}
-
-bool* Mesh::GetToggleWireFrame()
-{
-	return &wireFrameToggle;
+	ImGui::Checkbox(("Show Wireframe##" + to_string(i)).c_str(), &wireFrameToggle);
+	ImGui::Checkbox(("Show Mesh##" + to_string(i)).c_str(), &meshToggle);
 }
 
 void Mesh::Draw()
