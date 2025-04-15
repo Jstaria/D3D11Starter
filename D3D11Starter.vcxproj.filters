@@ -312,9 +312,6 @@
     <FxCompile Include="Shaders\Vertex\MorphVS.hlsl">
       <Filter>Shaders\Vertex</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\Pixel\TexturePS.hlsl">
-      <Filter>Shaders\Pixel</Filter>
-    </FxCompile>
     <FxCompile Include="Shaders\Pixel\DecaledTexturePS.hlsl">
       <Filter>Shaders\Pixel</Filter>
     </FxCompile>
@@ -322,6 +319,12 @@
       <Filter>Shaders\Vertex</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\Pixel\SkyPS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Pixel\PBRTexturePS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Pixel\TexturePS.hlsl">
       <Filter>Shaders\Pixel</Filter>
     </FxCompile>
   </ItemGroup>
