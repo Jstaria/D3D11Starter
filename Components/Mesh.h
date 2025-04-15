@@ -10,6 +10,7 @@
 #include "../Helper/OBJLoader.h"
 #include "../Structures/Vertex.h"
 #include "../Structures/MeshData.h"
+#include "../ImGui/imgui.h"
 
 class Mesh
 {
@@ -50,10 +51,11 @@ public:
 
 	Vertex GetCenter();
 
-	bool* GetToggleMesh();
-	bool* GetToggleWireFrame();
+	bool GetToggleMesh();
+	bool GetToggleWireFrame();
 
 	// --- General ---
+	void DrawImGui(int i);
 	void Draw();
 };
 
