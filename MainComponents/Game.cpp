@@ -69,8 +69,6 @@ void Game::Initialize()
 		//tint = XMFLOAT4(1, 1, 1, 1);
 	}
 
-	Renderer::Init();
-
 	Settings::UsingVsync = true;
 	Graphics::SetVsyncState(Settings::UsingVsync);
 
@@ -85,7 +83,7 @@ void Game::Initialize()
 	Renderer::SetCurrentCamera(cameras[0]);
 
 	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), 1.0f)); // 1
-	lights.push_back(make_shared<Light>("Red", XMFLOAT3(0, 0.0f, 8.0f), XMFLOAT3(1, 0, 0), XMFLOAT3(0, 0, 1), 30, 3.0f, .4f, .41f)); // 2
+	lights.push_back(make_shared<Light>("Red", XMFLOAT3(0, -2.0f, 6.0f), XMFLOAT3(1, 0, 0), XMFLOAT3(0, .5, 1), 30, 3.0f, 1.4f, 1.41f)); // 2
 	lights.push_back(make_shared<Light>("Green", XMFLOAT3(2, 0.0f, 8.0f), XMFLOAT3(0, 1, 0), XMFLOAT3(0, 0, -1), 30, 3.0f, 1.4f, 1.41f));  // 3
 	lights.push_back(make_shared<Light>("Blue", XMFLOAT3(0, 2, -7), XMFLOAT3(0, 0, 1), 4.0f, 10)); // 4
 	lights.push_back(make_shared<Light>("White", XMFLOAT3(-2, 2, -9), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
@@ -93,6 +91,7 @@ void Game::Initialize()
 	for (auto& light : lights) { light->SetMesh(meshes[1]); light->SetMaterial(materials["light_mat"]);}
 
 	Renderer::SetLights(lights);
+	Renderer::Init();
 }
 
 
@@ -152,7 +151,7 @@ void Game::CreateObjects()
 	shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
 	shared_ptr<SimpleVertexShader> skyVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
 	shared_ptr<SimplePixelShader> skyPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyPS.cso").c_str());
-
+	shared_ptr<SimpleVertexShader> shadowVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"ShadowVS.cso").c_str());
 	string assetsPath = "../../Assets/Models/";
 
 	meshesSize = 6;
@@ -188,16 +187,18 @@ void Game::CreateObjects()
 	//ComPtr<ID3D11ShaderResourceView> rockSpecularSRV = LoadHelper::LoadTexture(path + "Rock/rock-specular.png");
 	//ComPtr<ID3D11ShaderResourceView> bloodTextureSRV = LoadHelper::LoadTexture(path + "blood.png");
 	//path = "../../Assets/Textures with Normal Maps/";
+	path = "../../Assets/PBR/";
 	//ComPtr<ID3D11ShaderResourceView> cushionTextureSRV = LoadHelper::LoadTexture(path + "cushion.png");
 	//ComPtr<ID3D11ShaderResourceView> cushionNormalSRV = LoadHelper::LoadTexture(path + "cushion_normals.png");
-	//ComPtr<ID3D11ShaderResourceView> cobblestoneTextureSRV = LoadHelper::LoadTexture(path + "cobblestone.png");
-	//ComPtr<ID3D11ShaderResourceView> cobblestoneNormalSRV = LoadHelper::LoadTexture(path + "cobblestone_normals.png");
-	//ComPtr<ID3D11ShaderResourceView> cobblestoneSpecularSRV = LoadHelper::LoadTexture(path + "cobblestone_specular.png");
+	ComPtr<ID3D11ShaderResourceView> cobblestoneTextureSRV = LoadHelper::LoadTexture(path + "cobblestone_albedo.png");
+	ComPtr<ID3D11ShaderResourceView> cobblestoneNormalSRV = LoadHelper::LoadTexture(path + "cobblestone_normals.png");
+	ComPtr<ID3D11ShaderResourceView> cobblestoneRoughnessSRV = LoadHelper::LoadTexture(path + "cobblestone_roughness.png");
+	ComPtr<ID3D11ShaderResourceView> cobblestoneMetalnessSRV = LoadHelper::LoadTexture(path + "cobblestone_metal.png");
 	//path = "../../Assets/Models/socrates/textures/";
 	//ComPtr<ID3D11ShaderResourceView> socratesTextureSRV = LoadHelper::LoadTexture(path + "1001_Base_Color.png");
 	//ComPtr<ID3D11ShaderResourceView> socratesSpecularSRV = LoadHelper::LoadTexture(path + "1001_Roughness.png");
 	//ComPtr<ID3D11ShaderResourceView> socratesNormalSRV = LoadHelper::LoadTexture(path + "1001_Normal_OpenGL.png");
-	path = "../../Assets/PBR/";
+	
 	ComPtr<ID3D11ShaderResourceView> bronzeAlbedoSRV = LoadHelper::LoadTexture(path + "bronze_albedo.png");
 	ComPtr<ID3D11ShaderResourceView> bronzeMetalSRV = LoadHelper::LoadTexture(path + "bronze_metal.png");
 	ComPtr<ID3D11ShaderResourceView> bronzeNormalSRV = LoadHelper::LoadTexture(path + "bronze_normals.png");
@@ -236,11 +237,12 @@ void Game::CreateObjects()
 	//materials["cushion_mat"]->AddTextureSRV("SurfaceColorTexture", cushionTextureSRV);
 	//materials["cushion_mat"]->AddTextureSRV("SurfaceNormalMap", cushionNormalSRV);
 	//materials["cushion_mat"]->AddSampler("BasicSampler", baseSampler);
-	//materials.emplace("cobblestone_mat", make_shared<Material>("cobblestone_mat", vs, TexturePS, white));
-	//materials["cobblestone_mat"]->AddTextureSRV("SurfaceColorTexture", cobblestoneTextureSRV);
-	//materials["cobblestone_mat"]->AddTextureSRV("SurfaceNormalMap", cobblestoneNormalSRV);
-	//materials["cobblestone_mat"]->AddTextureSRV("SurfaceSpecularMap", cobblestoneSpecularSRV);
-	//materials["cobblestone_mat"]->AddSampler("BasicSampler", baseSampler);
+	materials.emplace("cobblestone_mat", make_shared<Material>("cobblestone_mat", vs, PBRTexturePS, white));
+	materials["cobblestone_mat"]->AddTextureSRV("Albedo", cobblestoneTextureSRV);
+	materials["cobblestone_mat"]->AddTextureSRV("NormalMap", cobblestoneNormalSRV);
+	materials["cobblestone_mat"]->AddTextureSRV("RoughnessMap", cobblestoneRoughnessSRV);
+	materials["cobblestone_mat"]->AddTextureSRV("MetalnessMap", cobblestoneMetalnessSRV);
+	materials["cobblestone_mat"]->AddSampler("BasicSampler", baseSampler);
 	//materials.emplace("socrates_mat", make_shared<Material>("socrates_mat", vs, TexturePS, white));
 	//materials["socrates_mat"]->AddTextureSRV("SurfaceColorTexture", socratesTextureSRV);
 	//materials["socrates_mat"]->AddTextureSRV("SurfaceNormalMap", socratesNormalSRV);
@@ -286,7 +288,7 @@ void Game::CreateObjects()
 
 	float scale = 1;
 
-	gameObjsSize = 6;
+	gameObjsSize = 7;
 
 	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
 
@@ -301,10 +303,10 @@ void Game::CreateObjects()
 	gameObjs[2]->GetTransform()->SetPosition(3.0f, 0.0f, 0);
 	gameObjs[2]->GetTransform()->SetRotation(0, 135, 0, Angle::DEGREES);
 	gameObjs[2]->GetTransform()->SetScale(scale);
-	gameObjs[3] = make_shared<GameObject>("Wonder Fizz", meshes[3], nullptr, materials["rough_mat"]);
+	gameObjs[3] = make_shared<GameObject>("Wonder Fizz", meshes[5], nullptr, materials["rough_mat"]);
 	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
-	//gameObjs[3]->GetTransform()->SetRotation(90, 0, 0, Angle::DEGREES);
-	gameObjs[3]->GetTransform()->SetScale(scale * .05f);
+	gameObjs[3]->GetTransform()->SetRotation(0, -90, 0, Angle::DEGREES);
+	gameObjs[3]->GetTransform()->SetScale(scale * .05);
 	gameObjs[4] = make_shared<GameObject>("Box", meshes[4], nullptr, materials["rough_mat"]);
 	gameObjs[4]->GetTransform()->SetPosition(-2.0f, 0.0f, -5.0f);
 	gameObjs[4]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
@@ -313,7 +315,12 @@ void Game::CreateObjects()
 	gameObjs[5]->GetTransform()->SetPosition(2.0f, -1.0f, -5.0f);
 	gameObjs[5]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
 	gameObjs[5]->GetTransform()->SetScale(scale * .015f);
+	gameObjs[6] = make_shared<GameObject>("Floor", meshes[0], nullptr, materials["cobblestone_mat"]);
+	gameObjs[6]->GetTransform()->SetPosition(0, -3.0f, 0);
+	gameObjs[6]->GetTransform()->SetScale(20, 1, 20);
+	gameObjs[6]->GetMaterial()->SetUVScale({ 5,5 });
 
+	Renderer::SetShadowVS(shadowVS);
 	for (int i = 0; i < gameObjsSize; i++)
 	{
 		Renderer::AddObjectToRender(gameObjs[i]);
@@ -550,6 +557,9 @@ void Game::BuildUI(float deltaTime) {
 			delete[] items;
 		}
 	}
-
+	if (ImGui::CollapsingHeader("Renderer Details")) {
+		ImGui::Text("ShadowMap Depth Texture");
+		Renderer::DrawImGui();
+	}
 	ImGui::End();
 }

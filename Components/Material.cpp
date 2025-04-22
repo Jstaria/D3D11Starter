@@ -49,6 +49,7 @@ void Material::AddSampler(const char* name, Microsoft::WRL::ComPtr<ID3D11Sampler
 void Material::SetAmbientTint(DirectX::XMFLOAT3 ambient) { this->ambientTint = ambient; }
 void Material::SetTint(DirectX::XMFLOAT4 tint) { this->colorTint = tint; }
 void Material::SetIndex() { materialIndex = GlobalVar::Material::getIndexThenTick(); }
+void Material::SetUVScale(DirectX::XMFLOAT2 scale) { this->scale = scale; }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Material::RemoveTextureSRV(const char* name)
 {

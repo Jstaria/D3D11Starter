@@ -52,6 +52,7 @@ public:
 	void SetAmbientTint(DirectX::XMFLOAT3 ambientTint);
 	void SetTint(DirectX::XMFLOAT4 tint);
 	void SetIndex();
+	void SetUVScale(DirectX::XMFLOAT2 scale);
 
 	// -=| Removers |=-
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RemoveTextureSRV(const char* name);

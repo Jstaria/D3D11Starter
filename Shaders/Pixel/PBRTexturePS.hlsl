@@ -3,12 +3,14 @@
 #include "../Header/Lighting.hlsli"
 
 Texture2D Albedo : register(t7);
-Texture2D NormalMap : register(t4);
-Texture2D RoughnessMap : register(t5);
-Texture2D MetalnessMap : register(t6);
+Texture2D NormalMap : register(t8);
+Texture2D RoughnessMap : register(t9);
+Texture2D MetalnessMap : register(t10);
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
+    float shadowAmount = ShadowAmount(input);
+    
     input.normal = normalize(input.normal);
     input.tangent = normalize(input.tangent);
     input.uv = (input.uv * uvScale) + uvOffset;
@@ -43,7 +45,7 @@ float4 main(VertexToPixel input) : SV_TARGET
         case LIGHT_TYPE_DIRECTIONAL:
             totalLight += DirectionalLightPBR(
                 lights[i], input, 
-                color, roughness, metalness, iEyePosition);
+                color, roughness, metalness, iEyePosition) * (i == 0 ? shadowAmount : 1);
             break;
             
         case LIGHT_TYPE_POINT:

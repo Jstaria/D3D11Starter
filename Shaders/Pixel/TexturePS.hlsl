@@ -4,6 +4,8 @@
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
+    float shadowAmount = ShadowAmount(input);
+
     input.normal = normalize(input.normal);
     input.tangent = normalize(input.tangent);
     input.uv = (input.uv * uvScale) + uvOffset;
@@ -35,7 +37,7 @@ float4 main(VertexToPixel input) : SV_TARGET
         switch (lights[i].Type)
         {
             case LIGHT_TYPE_DIRECTIONAL:
-                totalLight += DirectionalLight(lights[i], color, BasicSampler, SurfaceSpecularMap, input);
+                totalLight += DirectionalLight(lights[i], color, BasicSampler, SurfaceSpecularMap, input) * (i == 0 ? shadowAmount : 1);
                 break;
             
             case LIGHT_TYPE_POINT:

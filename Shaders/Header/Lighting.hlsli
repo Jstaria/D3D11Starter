@@ -3,7 +3,6 @@
 
 #define MAX_SPECULAR_EXPONENT 256.0f
 #define MAX_LIGHTS 64
-#define MIN_ROUGHNESS 0.001f
 
 #define LIGHT_TYPE_DIRECTIONAL 0
 #define LIGHT_TYPE_POINT 1
@@ -164,55 +163,6 @@ struct Light
 
 Light lights[MAX_LIGHTS];
 
-float D_GGX(float3 n, float3 h, float roughness)
-{
-// Pre-calculations
-    float NdotH = saturate(dot(n, h));
-    float NdotH2 = NdotH * NdotH;
-    float a = roughness * roughness; // Remap roughness (Unreal & Disney)
-    float a2 = max(a * a, MIN_ROUGHNESS); // MIN_ROUGHNESS is 0.0000001
-    float denomToSquare = NdotH2 * (a2 - 1) + 1;
-// Final value
-    return a2 / (PI * denomToSquare * denomToSquare);
-}
-
-// Gets called twice, once for light and view vectors
-// Roughness remapped to (r+1)/2 before
-// squaring, then k remapped to a/2
-float G_SchlickGGX(float3 n, float3 v, float roughness)
-{
-// End result of remapping
-    float k = pow(roughness + 1, 2) / 8.0f;
-    // Got rid of NdotV so that there is no divide by 0 in final spec function
-// Final value
-    return 1 / ((1 - k) + k);
-}
-// Note: This is called twice and combined: G(n,v,r) * G(n,l,r)
-
-// f0 ranges from 0.04 for non-metals to
-// a specific specular color for metals
-float3 F_Schlick(float3 v, float3 h, float3 f0)
-{
-// Pre-calculations
-    float VdotH = saturate(dot(v, h));
-// Final value – Schlick’s approximation
-    return f0 + (1 - f0) * pow(1 - VdotH, 5);
-}
-
-float3 MicrofacetBRDF(float3 n, float3 v, float3 l, float3 h, float roughness, float3 specColor)
-{
-    // Grab various functions
-    float D = D_GGX(n, h, roughness);
-    float3 F = F_Schlick(v, h, specColor);
-    float G =
-    G_SchlickGGX(n, v, roughness) *
-    G_SchlickGGX(n, l, roughness);
-    // Final formula
-    // Note: This should be optimized to avoid division by zero!
-    return (D * F * G) / (4);
-
-}
-
 float Attenuate(Light light, float3 worldPos)
 {
     float dist = distance(light.Position, worldPos);
@@ -335,5 +285,22 @@ float3 SpotLightPBR(VertexToPixel input, Light light, float3 albedo, float rough
     float spotTerm = saturate((cosOuter - pixelAngle) / (cosOuter - cosInner));
     
     return PointLightPBR(input, light, albedo, roughness, metalness) * spotTerm;
+}
+
+float ShadowAmount(VertexToPixel input)
+{
+        // Perform the perspective divide (divide by W) ourselves
+    input.shadowMapPos /= input.shadowMapPos.w;
+// Convert the normalized device coordinates to UVs for sampling
+    float2 shadowUV = input.shadowMapPos.xy * 0.5f + 0.5f;
+    shadowUV.y = 1 - shadowUV.y; // Flip the Y
+// Grab the distances we need: light-to-pixel and closest-surface
+    float distToLight = input.shadowMapPos.z;
+    float shadowAmount = ShadowMap.SampleCmpLevelZero(
+        ShadowSampler,
+        shadowUV,
+        distToLight).r;
+    
+    return shadowAmount;
 }
 #endif

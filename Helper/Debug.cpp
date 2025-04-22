@@ -5,6 +5,8 @@ void Debug::Initialize()
 	CreateRasterizerStates();
 
 	ShowLightsMesh = true;
+
+	ShadowMapResolution = 2048;
 }
 
 void Debug::CreateRasterizerStates()

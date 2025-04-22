@@ -20,7 +20,10 @@ uniform float2 iResolution;
 Texture2D SurfaceColorTexture : register(t1);
 Texture2D SurfaceNormalMap : register(t2);
 Texture2D SurfaceSpecularMap : register(t3);
+Texture2D ShadowMap : register(t4);
+
 SamplerState BasicSampler : register(s0);
+SamplerComparisonState ShadowSampler : register(s1);
 
 struct VertexShaderInput
 {
@@ -45,6 +48,7 @@ struct VertexToPixel
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
     float3 worldPosition : POSITION;
+    float4 shadowMapPos : SHADOW_POSITION;
 };
 // ===============================================================================================================
 #endif // DEFAULT_PARAM

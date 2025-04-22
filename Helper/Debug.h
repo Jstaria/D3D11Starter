@@ -16,6 +16,7 @@ namespace Debug {
 	inline bool ShowWireFrame;
 	inline bool ShowMesh;
 	inline bool ShowLightsMesh;
+	inline int ShadowMapResolution;
 
 	inline ComPtr<ID3D11RasterizerState> RasterizerFillState;
 	inline ComPtr<ID3D11RasterizerState> RasterizerWFState;
