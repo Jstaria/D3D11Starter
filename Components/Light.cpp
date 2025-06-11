@@ -47,6 +47,8 @@ void Light::SetLightColor(DirectX::XMFLOAT3 color)
 	lightStruct.Color = color;
 }
 
+void Light::SetRange(float range) { lightStruct.Range = range; }
+
 void Light::UpdateLightColor() { SetLightColor(lightStruct.Color); }
 
 void Light::SetActive(bool active) { isActive = active; }
@@ -56,7 +58,7 @@ void Light::Draw()
 {
 	if (!isActive || lightStruct.Type == LIGHT_TYPE_DIRECTIONAL || !Debug::ShowLightsMesh) return;
 	
-	mesh->Draw();
+	drawable->Draw();
 }
 
 void Light::DrawImGui()
@@ -69,6 +71,8 @@ void Light::DrawImGui()
 		const std::string type = lightStruct.Type == 0 ? "Directional" : lightStruct.Type == 1 ? "Point" : "Spot";
 
 		ImGui::Text(("Light Type: " + type).c_str());
+
+		ImGui::Checkbox("Is Active", &isActive);
 
 		if (lightStruct.Type != LIGHT_TYPE_DIRECTIONAL) {
 			DirectX::XMFLOAT3 pos = transform->GetPosition();

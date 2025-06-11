@@ -31,16 +31,12 @@ void FPSCamera::Update(float deltaTime)
 		//printf("{%.5f,%.5f}\n", xRot, yRot);
 		//printf("{%d,%d}\n", Input::GetMouseXDelta(), Input::GetMouseYDelta());
 
-		transform->Rotate(yRot, xRot, 0, Angle::PI);
+		transform->Rotate(yRot, xRot, 0, Angle::RADIANS);
 
 		XMFLOAT3 rot = transform->GetPitchYawRoll();
 		if (rot.x > XM_PIDIV2) rot.x = XM_PIDIV2 - 0.0000001f;
 		if (rot.x < -XM_PIDIV2) rot.x = -XM_PIDIV2 + 0.0000001f;
-		transform->SetRotation(rot, Angle::PI);
-	}
-
-	if (Input::MouseLeftDown()) {
-		transform->SetRotation(0, 0, 0, Angle::PI);
+		transform->SetRotation(rot, Angle::RADIANS);
 	}
 
 	Camera::Update(deltaTime);

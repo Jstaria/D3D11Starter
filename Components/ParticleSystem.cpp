@@ -8,7 +8,7 @@ ParticleSystem::ParticleSystem(DirectX::XMFLOAT3 position, std::shared_ptr<Trans
 	transform->SetParentTransform(parentTransform);
 }
 
-std::shared_ptr<Mesh> ParticleSystem::GetMesh() { return mesh; }
+std::shared_ptr<IDrawable> ParticleSystem::GetDrawable() { return drawable; }
 std::shared_ptr<Material> ParticleSystem::GetMaterial() { return material; }
 std::shared_ptr<Transform> ParticleSystem::GetTransform() { return transform; }
 std::shared_ptr<SimpleComputeShader> ParticleSystem::GetCS() { return cs; }

@@ -82,13 +82,23 @@ void Game::Initialize()
 	cameras[2]->GetTransform()->SetRotation(0, 45, 0, Angle::DEGREES);
 	Renderer::SetCurrentCamera(cameras[0]);
 
-	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1,1,.8f), XMFLOAT3(1,-.5f,-.5f), 1.0f)); // 1
+	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1, 1, .8f), XMFLOAT3(1, -.5f, -.5f), 1.0f)); // 1
 	lights.push_back(make_shared<Light>("Red", XMFLOAT3(0, -2.0f, 6.0f), XMFLOAT3(1, 0, 0), XMFLOAT3(0, .5, 1), 30, 3.0f, 1.4f, 1.41f)); // 2
 	lights.push_back(make_shared<Light>("Green", XMFLOAT3(2, 0.0f, 8.0f), XMFLOAT3(0, 1, 0), XMFLOAT3(0, 0, -1), 30, 3.0f, 1.4f, 1.41f));  // 3
 	lights.push_back(make_shared<Light>("Blue", XMFLOAT3(0, 2, -7), XMFLOAT3(0, 0, 1), 4.0f, 10)); // 4
-	lights.push_back(make_shared<Light>("White", XMFLOAT3(-2, 2, -9), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
-	
-	for (auto& light : lights) { light->SetMesh(meshes[1]); light->SetMaterial(materials["light_mat"]);}
+	lights.push_back(make_shared<Light>("White1", XMFLOAT3(0, 2, -5), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("White2", XMFLOAT3(0, 2, 5), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("White3", XMFLOAT3(-5, 2, 0), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("White4", XMFLOAT3(5, 2, 0), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("red", XMFLOAT3(2, 1, 0), XMFLOAT3(1, 0, 0), 2.0f, 10)); // 5
+
+	for (auto& light : lights) 
+	{ 
+		light->SetDrawable(drawables[2]); 
+		light->SetMaterial(materials["light_mat"]); 
+		light->GetTransform()->SetScale(.25f); 
+		light->SetActive(true);
+	}
 
 	Renderer::SetLights(lights);
 	Renderer::Init();
@@ -108,8 +118,6 @@ Game::~Game()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	delete[] meshes;
-	delete[] gameObjs;
 	delete[] cameras;
 }
 
@@ -139,29 +147,49 @@ void Game::CreateObjects()
 	XMFLOAT4 cyan(0.0f, 1.0f, 1.0f, 1.0f);
 	XMFLOAT4 white(1, 1, 1, 1);
 
+	vector<D3D11_INPUT_ELEMENT_DESC> billboardLayout = {
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UNITID", 0, DXGI_FORMAT_R32_UINT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
+	D3DReadFileToBlob(FixPath(L"BillBoardVS.cso").c_str(), shaderBlob.GetAddressOf());
+
+	ComPtr<ID3D11InputLayout> bbLayout;
+
+	Graphics::Device->CreateInputLayout(
+		billboardLayout.data(),
+		(unsigned int)billboardLayout.size(),
+		shaderBlob->GetBufferPointer(),
+		shaderBlob->GetBufferSize(),
+		bbLayout.GetAddressOf());
+
 	shared_ptr<SimpleVertexShader> vs = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
-	shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
-	shared_ptr<SimplePixelShader> RainbowFlowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowNoisePS.cso").c_str());
+	//shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
+	//shared_ptr<SimplePixelShader> RainbowFlowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowNoisePS.cso").c_str());
 	shared_ptr<SimplePixelShader> ps = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"PixelShader.cso").c_str());
-	shared_ptr<SimplePixelShader> RainbowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowPS.cso").c_str());
-	shared_ptr<SimplePixelShader> NormalPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"NormalPS.cso").c_str());
+	//shared_ptr<SimplePixelShader> RainbowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowPS.cso").c_str());
+	//shared_ptr<SimplePixelShader> NormalPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"NormalPS.cso").c_str());
 	shared_ptr<SimplePixelShader> PBRTexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"PBRTexturePS.cso").c_str());
-	shared_ptr<SimplePixelShader> TexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"TexturePS.cso").c_str());
-	shared_ptr<SimplePixelShader> DecaledTexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"DecaledTexturePS.cso").c_str());
-	shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
+	//shared_ptr<SimplePixelShader> TexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"TexturePS.cso").c_str());
+	//shared_ptr<SimplePixelShader> DecaledTexturePS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"DecaledTexturePS.cso").c_str());
+	//shared_ptr<SimpleComputeShader> cs = make_shared<SimpleComputeShader>(Graphics::Device, Graphics::Context, FixPath(L"ComputeShader.cso").c_str());
 	shared_ptr<SimpleVertexShader> skyVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
 	shared_ptr<SimplePixelShader> skyPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyPS.cso").c_str());
 	shared_ptr<SimpleVertexShader> shadowVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"ShadowVS.cso").c_str());
+	shared_ptr<SimpleVertexShader> billboardVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"BillBoardVS.cso").c_str(), bbLayout, false);
+
 	string assetsPath = "../../Assets/Models/";
 
-	meshesSize = 6;
-	meshes = new shared_ptr<Mesh>[meshesSize];
-	meshes[0] = make_shared<Mesh>("Plane", FixPath(assetsPath + "quad.obj").c_str());
-	meshes[1] = make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str());
-	meshes[2] = make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str());
-	meshes[3] = make_shared<Mesh>("Wonder Fizz Machines", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str());
-	meshes[4] = make_shared<Mesh>("Cube", FixPath(assetsPath + "cube.obj").c_str());
-	meshes[5] = make_shared<Mesh>("Socrates", FixPath(assetsPath + "socrates/source/Socrates.obj").c_str());
+	drawables.push_back(make_shared<Mesh>("Plane", FixPath(assetsPath + "quad.obj").c_str()));
+	
+	//drawables.push_back(make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str()));
+	//drawables.push_back(make_shared<Mesh>("Wonder Fizz Machines", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str()));
+	drawables.push_back(make_shared<Mesh>("Cube", FixPath(assetsPath + "cube.obj").c_str()));
+	//drawables.push_back(make_shared<Mesh>("Socrates", FixPath(assetsPath + "socrates/source/Socrates.obj").c_str()));
+	drawables.push_back(make_shared<BillBoard>("Billboard", bbLayout));
+	drawables.push_back(make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str()));
 
 	ComPtr<ID3D11SamplerState> baseSampler;
 
@@ -174,99 +202,65 @@ void Game::CreateObjects()
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	Graphics::Device->CreateSamplerState(&samplerDesc, baseSampler.GetAddressOf());
 
-	string path = "../../Assets/Models/wonder_fizz/textures/";
-	//ComPtr<ID3D11ShaderResourceView> fizzTextureSRV = LoadHelper::LoadTexture(path + "DefaultMaterial_albedo.jpg");
-	//ComPtr<ID3D11ShaderResourceView> fizzRoughnessSRV = LoadHelper::LoadTexture(path + "DefaultMaterial_roughness.jpg");
-	//ComPtr<ID3D11ShaderResourceView> fizzNormalSRV = LoadHelper::LoadTexture(path + "DefaultMaterial_normal.jpg");
-	//path = "../../Assets/Images/";
-	//ComPtr<ID3D11ShaderResourceView> crateTextureSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_basecolor.jpg");
-	//ComPtr<ID3D11ShaderResourceView> crateNormalSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_normal.jpg");
-	//ComPtr<ID3D11ShaderResourceView> crateSpecularSRV = LoadHelper::LoadTexture(path + "Crate/Wood_Crate_001_roughness.jpg");
-	//ComPtr<ID3D11ShaderResourceView> rockTextureSRV = LoadHelper::LoadTexture(path + "Rock/rock.png");
-	//ComPtr<ID3D11ShaderResourceView> rockNormalSRV = LoadHelper::LoadTexture(path + "Rock/rock-normal.png");
-	//ComPtr<ID3D11ShaderResourceView> rockSpecularSRV = LoadHelper::LoadTexture(path + "Rock/rock-specular.png");
-	//ComPtr<ID3D11ShaderResourceView> bloodTextureSRV = LoadHelper::LoadTexture(path + "blood.png");
-	//path = "../../Assets/Textures with Normal Maps/";
-	path = "../../Assets/PBR/";
-	//ComPtr<ID3D11ShaderResourceView> cushionTextureSRV = LoadHelper::LoadTexture(path + "cushion.png");
-	//ComPtr<ID3D11ShaderResourceView> cushionNormalSRV = LoadHelper::LoadTexture(path + "cushion_normals.png");
+	ComPtr<ID3D11SamplerState> pixelSampler;
+
+	D3D11_SAMPLER_DESC pixelDesc = {};
+	pixelDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	pixelDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	pixelDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	pixelDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	pixelDesc.MaxAnisotropy = 1;
+	pixelDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	Graphics::Device->CreateSamplerState(&pixelDesc, pixelSampler.GetAddressOf());
+
+	string path = "../../Assets/PBR/";
 	ComPtr<ID3D11ShaderResourceView> cobblestoneTextureSRV = LoadHelper::LoadTexture(path + "cobblestone_albedo.png");
 	ComPtr<ID3D11ShaderResourceView> cobblestoneNormalSRV = LoadHelper::LoadTexture(path + "cobblestone_normals.png");
 	ComPtr<ID3D11ShaderResourceView> cobblestoneRoughnessSRV = LoadHelper::LoadTexture(path + "cobblestone_roughness.png");
 	ComPtr<ID3D11ShaderResourceView> cobblestoneMetalnessSRV = LoadHelper::LoadTexture(path + "cobblestone_metal.png");
-	//path = "../../Assets/Models/socrates/textures/";
-	//ComPtr<ID3D11ShaderResourceView> socratesTextureSRV = LoadHelper::LoadTexture(path + "1001_Base_Color.png");
-	//ComPtr<ID3D11ShaderResourceView> socratesSpecularSRV = LoadHelper::LoadTexture(path + "1001_Roughness.png");
-	//ComPtr<ID3D11ShaderResourceView> socratesNormalSRV = LoadHelper::LoadTexture(path + "1001_Normal_OpenGL.png");
-	
-	ComPtr<ID3D11ShaderResourceView> bronzeAlbedoSRV = LoadHelper::LoadTexture(path + "bronze_albedo.png");
-	ComPtr<ID3D11ShaderResourceView> bronzeMetalSRV = LoadHelper::LoadTexture(path + "bronze_metal.png");
-	ComPtr<ID3D11ShaderResourceView> bronzeNormalSRV = LoadHelper::LoadTexture(path + "bronze_normals.png");
-	ComPtr<ID3D11ShaderResourceView> bronzeRoughnessSRV = LoadHelper::LoadTexture(path + "bronze_roughness.png");
+	ComPtr<ID3D11ShaderResourceView> lightAlbedoSRV = LoadHelper::LoadTexture("../../Assets/Images/light.png");
+	ComPtr<ID3D11ShaderResourceView> emojiAlbedoSRV = LoadHelper::LoadTexture(path + "emoji_albedo.png");
+	ComPtr<ID3D11ShaderResourceView> skullAlbedoSRV = LoadHelper::LoadTexture("../../Assets/Images/skull-sheet.png");
+	ComPtr<ID3D11ShaderResourceView> skullNormalSRV = LoadHelper::LoadTexture("../../Assets/Images/skull-normals-sheet.png");
+	ComPtr<ID3D11ShaderResourceView> skullRoughSRV = LoadHelper::LoadTexture("../../Assets/Images/skull-rough-sheet.png");
+	ComPtr<ID3D11ShaderResourceView> blankSRV = LoadHelper::LoadTexture(path + "cobblestone_metal.png");
+	ComPtr<ID3D11ShaderResourceView> roughSRV = LoadHelper::LoadTexture(path + "bronze_metal.png");
 
-	ComPtr<ID3D11ShaderResourceView> scratchedAlbedoSRV = LoadHelper::LoadTexture(path + "scratched_albedo.png");
-	ComPtr<ID3D11ShaderResourceView> scratchedMetalSRV = LoadHelper::LoadTexture(path + "scratched_metal.png");
-	ComPtr<ID3D11ShaderResourceView> scratchedNormalSRV = LoadHelper::LoadTexture(path + "scratched_normals.png");
-	ComPtr<ID3D11ShaderResourceView> scratchedRoughnessSRV = LoadHelper::LoadTexture(path + "scratched_roughness.png");
+	materials.emplace("light_mat", make_shared<Material>("light_mat", billboardVS, ps, white));
+	materials["light_mat"]->AddTextureSRV("SurfaceColorTexture", lightAlbedoSRV);
+	materials["light_mat"]->AddSampler("BasicSampler", baseSampler);
 
-	ComPtr<ID3D11ShaderResourceView> roughAlbedoSRV = LoadHelper::LoadTexture(path + "rough_albedo.png");
-	ComPtr<ID3D11ShaderResourceView> roughMetalSRV = LoadHelper::LoadTexture(path + "rough_metal.png");
-	ComPtr<ID3D11ShaderResourceView> roughNormalSRV = LoadHelper::LoadTexture(path + "rough_normals.png");
-	ComPtr<ID3D11ShaderResourceView> roughRoughnessSRV = LoadHelper::LoadTexture(path + "rough_roughness.png");
-
-	//materials.emplace("rainbowFlow_mat", make_shared<Material>("rainbowFlow_mat", vs, RainbowFlowPS, magenta));
-	//materials.emplace("rainbow_mat", make_shared<Material>("rainbow_mat", vs, RainbowPS, white));
-	//materials.emplace("normal_mat", make_shared<Material>("normal_mat", MorphVS, NormalPS, cyan));
-	//materials.emplace("fizz_mat", make_shared<Material>("fizz_mat",vs, TexturePS, white));
-	//materials["fizz_mat"]->AddTextureSRV("SurfaceColorTexture", fizzTextureSRV);
-	//materials["fizz_mat"]->AddTextureSRV("SurfaceNormalMap", fizzNormalSRV);
-	//materials["fizz_mat"]->AddTextureSRV("SurfaceSpecularMap", fizzRoughnessSRV);
-	//materials["fizz_mat"]->AddSampler("BasicSampler", baseSampler);
-	//materials.emplace("crate_mat", make_shared<Material>("crate_mat", vs, TexturePS, yellow));
-	//materials["crate_mat"]->AddTextureSRV("SurfaceColorTexture", crateTextureSRV);
-	//materials["crate_mat"]->AddTextureSRV("SurfaceNormalMap", crateNormalSRV);
-	//materials["crate_mat"]->AddTextureSRV("SurfaceSpecularMap", crateSpecularSRV);
-	//materials["crate_mat"]->AddSampler("BasicSampler", baseSampler);
-	//materials.emplace("rock_mat", make_shared<Material>("rock_mat", vs, TexturePS, white));
-	//materials["rock_mat"]->AddTextureSRV("SurfaceColorTexture", rockTextureSRV);
-	//materials["rock_mat"]->AddTextureSRV("SurfaceNormalMap", rockNormalSRV);
-	//materials["rock_mat"]->AddTextureSRV("SurfaceSpecularMap", rockSpecularSRV);
-	//materials["rock_mat"]->AddSampler("BasicSampler", baseSampler);
-	materials.emplace("light_mat", make_shared<Material>("light_mat", vs, ps, white));
-	//materials.emplace("cushion_mat", make_shared<Material>("cushion_mat", vs, TexturePS, white));
-	//materials["cushion_mat"]->AddTextureSRV("SurfaceColorTexture", cushionTextureSRV);
-	//materials["cushion_mat"]->AddTextureSRV("SurfaceNormalMap", cushionNormalSRV);
-	//materials["cushion_mat"]->AddSampler("BasicSampler", baseSampler);
 	materials.emplace("cobblestone_mat", make_shared<Material>("cobblestone_mat", vs, PBRTexturePS, white));
 	materials["cobblestone_mat"]->AddTextureSRV("Albedo", cobblestoneTextureSRV);
 	materials["cobblestone_mat"]->AddTextureSRV("NormalMap", cobblestoneNormalSRV);
 	materials["cobblestone_mat"]->AddTextureSRV("RoughnessMap", cobblestoneRoughnessSRV);
 	materials["cobblestone_mat"]->AddTextureSRV("MetalnessMap", cobblestoneMetalnessSRV);
 	materials["cobblestone_mat"]->AddSampler("BasicSampler", baseSampler);
-	//materials.emplace("socrates_mat", make_shared<Material>("socrates_mat", vs, TexturePS, white));
-	//materials["socrates_mat"]->AddTextureSRV("SurfaceColorTexture", socratesTextureSRV);
-	//materials["socrates_mat"]->AddTextureSRV("SurfaceNormalMap", socratesNormalSRV);
-	//materials["socrates_mat"]->AddTextureSRV("SurfaceSpecularMap", socratesSpecularSRV);
-	//materials["socrates_mat"]->AddSampler("BasicSampler", baseSampler);
-	materials.emplace("bronze_mat", make_shared<Material>("bronze_mat", vs, PBRTexturePS, white));
-	materials["bronze_mat"]->AddTextureSRV("Albedo", bronzeAlbedoSRV);
-	materials["bronze_mat"]->AddTextureSRV("NormalMap", bronzeNormalSRV);
-	materials["bronze_mat"]->AddTextureSRV("RoughnessMap", bronzeRoughnessSRV);
-	materials["bronze_mat"]->AddTextureSRV("MetalnessMap", bronzeMetalSRV);
-	materials["bronze_mat"]->AddSampler("BasicSampler", baseSampler);
-	materials.emplace("scratched_mat", make_shared<Material>("scratched_mat", vs, PBRTexturePS, white));
-	materials["scratched_mat"]->AddTextureSRV("Albedo", scratchedAlbedoSRV);
-	materials["scratched_mat"]->AddTextureSRV("NormalMap", scratchedNormalSRV);
-	materials["scratched_mat"]->AddTextureSRV("RoughnessMap", scratchedRoughnessSRV);
-	materials["scratched_mat"]->AddTextureSRV("MetalnessMap", scratchedMetalSRV);
-	materials["scratched_mat"]->AddSampler("BasicSampler", baseSampler);
-	materials.emplace("rough_mat", make_shared<Material>("rough_mat", vs, PBRTexturePS, white));
-	materials["rough_mat"]->AddTextureSRV("Albedo", roughAlbedoSRV);
-	materials["rough_mat"]->AddTextureSRV("NormalMap", roughNormalSRV);
-	materials["rough_mat"]->AddTextureSRV("RoughnessMap", roughRoughnessSRV);
-	materials["rough_mat"]->AddTextureSRV("MetalnessMap", roughMetalSRV);
-	materials["rough_mat"]->AddSampler("BasicSampler", baseSampler);
 
+	materials.emplace("emoji_mat", make_shared<Material>("emoji_mat", billboardVS, PBRTexturePS, white));
+	materials["emoji_mat"]->AddTextureSRV("Albedo", emojiAlbedoSRV);
+	materials["emoji_mat"]->AddTextureSRV("NormalMap", blankSRV);
+	materials["emoji_mat"]->AddTextureSRV("RoughnessMap", blankSRV);
+	materials["emoji_mat"]->AddTextureSRV("MetalnessMap", blankSRV);
+	materials["emoji_mat"]->AddSampler("BasicSampler", baseSampler);
+
+	materials.emplace("coin_mat", make_shared<Material>("coin_mat", billboardVS, PBRTexturePS, white));
+	materials["coin_mat"]->AddTextureSRV("Albedo", skullAlbedoSRV);
+	materials["coin_mat"]->AddTextureSRV("NormalMap", skullNormalSRV);
+	materials["coin_mat"]->AddTextureSRV("RoughnessMap", skullRoughSRV);
+	materials["coin_mat"]->AddTextureSRV("MetalnessMap", blankSRV);
+	materials["coin_mat"]->AddSampler("BasicSampler", pixelSampler);
+
+	materials.emplace("lamp_mat", make_shared<Material>("lamp_mat", vs, PBRTexturePS, white));
+	materials["lamp_mat"]->AddTextureSRV("Albedo", emojiAlbedoSRV);
+	materials["lamp_mat"]->AddTextureSRV("NormalMap", blankSRV);
+	materials["lamp_mat"]->AddTextureSRV("RoughnessMap", roughSRV);
+	materials["lamp_mat"]->AddTextureSRV("MetalnessMap", blankSRV);
+	materials["lamp_mat"]->AddSampler("BasicSampler", baseSampler);
+
+	materials.emplace("tint_mat", make_shared<Material>("tint_mat", vs, ps, white));
+	materials["tint_mat"]->AddTextureSRV("SurfaceColorTexture", roughSRV);
+	materials["tint_mat"]->AddSampler("BasicSampler", baseSampler);
 
 	for (auto& material : materials) {
 		material.second->SetIndex();
@@ -277,51 +271,65 @@ void Game::CreateObjects()
 	path = "../../Assets/Images/Skyboxes/";
 
 	// Pass in path to create srvs
-	ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Clouds Pink/");
-	ComPtr<ID3D11ShaderResourceView> cm_PlanetSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Planet/");
+	//ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Clouds Pink/");
+	//ComPtr<ID3D11ShaderResourceView> cm_PlanetSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Planet/");
+	ComPtr<ID3D11ShaderResourceView> cm_DarkSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Dark/");
 
 	// Add the (for now) one sky to a vector
-	skies.push_back(make_shared<Sky>(baseSampler, cm_PlanetSRV, skyVS, skyPS, meshes[4]));
+	skies.push_back(make_shared<Sky>(baseSampler, cm_DarkSRV, skyVS, skyPS, drawables[1]));
 
 	// Set that as my current sky to then bind data and draw after objects
 	Renderer::SetCurrentSky(skies[0]);
 
 	float scale = 1;
 
-	gameObjsSize = 7;
+	gameObjs.push_back(make_shared<BillBoard360>
+		("Billboard360", drawables[2], nullptr, materials["coin_mat"], 250, 250, 1));
+	gameObjs[0]->GetTransform()->SetScale(2);
 
-	gameObjs = new shared_ptr<GameObject>[gameObjsSize];
+	Agent agent(1.0f, 0.5f, 0.2f, gameObjs[0]->GetTransform());
+	entity = make_shared<Entity>(gameObjs[0], agent);
 
-	gameObjs[0] = make_shared<GameObject>("Plane", meshes[0], nullptr, materials["bronze_mat"]);
-	gameObjs[0]->GetTransform()->SetRotation(-90, 0, 0, Angle::DEGREES);
-	gameObjs[0]->GetTransform()->SetScale(scale);
-	gameObjs[1] = make_shared<GameObject>("Sphere", meshes[1], nullptr, materials["scratched_mat"]);
-	gameObjs[1]->GetTransform()->SetPosition(-3, 0.0f, 0);
-	//gameObjs[1]->GetTransform()->SetRotation(0, 0, 180, Angle::DEGREES);
-	gameObjs[1]->GetTransform()->SetScale(scale);
-	gameObjs[2] = make_shared<GameObject>("Helix", meshes[2], nullptr, materials["scratched_mat"]);
-	gameObjs[2]->GetTransform()->SetPosition(3.0f, 0.0f, 0);
-	gameObjs[2]->GetTransform()->SetRotation(0, 135, 0, Angle::DEGREES);
-	gameObjs[2]->GetTransform()->SetScale(scale);
-	gameObjs[3] = make_shared<GameObject>("Wonder Fizz", meshes[5], nullptr, materials["rough_mat"]);
-	gameObjs[3]->GetTransform()->SetPosition(0, -2, 10);
-	gameObjs[3]->GetTransform()->SetRotation(0, -90, 0, Angle::DEGREES);
-	gameObjs[3]->GetTransform()->SetScale(scale * .05);
-	gameObjs[4] = make_shared<GameObject>("Box", meshes[4], nullptr, materials["rough_mat"]);
-	gameObjs[4]->GetTransform()->SetPosition(-2.0f, 0.0f, -5.0f);
-	gameObjs[4]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
-	gameObjs[4]->GetTransform()->SetScale(scale);
-	gameObjs[5] = make_shared<GameObject>("Socrates", meshes[5], nullptr, materials["bronze_mat"]);
-	gameObjs[5]->GetTransform()->SetPosition(2.0f, -1.0f, -5.0f);
-	gameObjs[5]->GetTransform()->SetRotation(0, -45, 0, Angle::DEGREES);
-	gameObjs[5]->GetTransform()->SetScale(scale * .015f);
-	gameObjs[6] = make_shared<GameObject>("Floor", meshes[0], nullptr, materials["cobblestone_mat"]);
-	gameObjs[6]->GetTransform()->SetPosition(0, -3.0f, 0);
-	gameObjs[6]->GetTransform()->SetScale(20, 1, 20);
-	gameObjs[6]->GetMaterial()->SetUVScale({ 5,5 });
+	gameObjs.push_back(make_shared<GameObject>("Floor", drawables[0], nullptr, materials["cobblestone_mat"]));
+	gameObjs[1]->GetTransform()->SetPosition(0, -3.0f, 0);
+	gameObjs[1]->GetTransform()->SetScale(40, 1, 40);
+	gameObjs[1]->GetMaterial()->SetUVScale({ 10,10 });
+
+	gameObjs.push_back(make_shared<GameObject>("Indicator", drawables[3], gameObjs[0], materials["tint_mat"]));
+	gameObjs[2]->GetTransform()->SetScale(.01f, .01f, .1f);
+	gameObjs[2]->GetTransform()->SetPosition({ 0,0, -1 });
+
+	gameObjs.push_back(make_shared<GameObject>("Position", drawables[3], nullptr, materials["tint_mat"]));
+	gameObjs[3]->GetTransform()->SetScale(.1f, .1f, .1f);
+	gameObjs[3]->GetTransform()->SetPosition({ 0,0, -1 });
+
+	//{
+	//	std::random_device rd;
+	//	std::mt19937 gen(rd());
+	//	std::uniform_real_distribution<float> angleDist(0, DirectX::XM_2PI);
+	//	std::uniform_real_distribution<float> radiusDist(15, 40);
+
+	//	DirectX::XMFLOAT3 center{ 0, 0, -5 };
+
+	//	for (int i = 0; i < 50; ++i)
+	//	{
+	//		float angle = angleDist(gen);
+	//		float r = radiusDist(gen);
+
+	//		DirectX::XMFLOAT3 pos{
+	//			center.x + r * cosf(angle),
+	//			center.y,
+	//			center.z + r * sinf(angle)
+	//		};
+
+	//		gameObjs.push_back(make_shared<GameObject>("Billboard", drawables[2], nullptr, materials["emoji_mat"]));
+	//		gameObjs[i + 4]->GetTransform()->SetScale(2);
+	//		gameObjs[i + 4]->GetTransform()->SetPosition(pos);
+	//	}
+	//}
 
 	Renderer::SetShadowVS(shadowVS);
-	for (int i = 0; i < gameObjsSize; i++)
+	for (int i = 0; i < gameObjs.size(); i++)
 	{
 		Renderer::AddObjectToRender(gameObjs[i]);
 	}
@@ -338,6 +346,8 @@ void Game::OnResize()
 	if (cam != nullptr) {
 		cam->UpdateProjectionMatrix(Window::AspectRatio());
 	}
+
+	PostProcessManager::OnResize();
 }
 
 
@@ -346,7 +356,34 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
-	gameObjs[4]->GetTransform()->Rotate(0, .1f, 0, DEGREES);
+	//gameObjs[4]->GetTransform()->Rotate(0, .1f, 0, DEGREES);
+
+	XMFLOAT3 directionToCam;
+	XMFLOAT3 camPos = Renderer::GetCamera()->GetTransform()->GetPosition();
+	XMFLOAT3 objPos = gameObjs[0]->GetTransform()->GetPosition();
+	XMStoreFloat3(&directionToCam, XMVector3Normalize(XMLoadFloat3(&camPos) - XMLoadFloat3(&objPos)) * deltaTime);
+
+	
+	entity->Arrival(targetPosition, 50);
+	entity->Update(deltaTime);
+
+	//cameras[0]->GetTransform()->Rotate({ 0,1,0 }, deltaTime * 50, DEGREES, gameObjs[0]->GetTransform()->GetPosition());
+	cameras[0]->GetTransform()->LookAt(gameObjs[0]->GetTransform()->GetPosition());
+
+	//lights[7]->GetTransform()->Rotate({ 0,1,0 }, deltaTime * 50, DEGREES, gameObjs[0]->GetTransform()->GetPosition());
+
+	//gameObjs[0]->GetTransform()->Rotate({ 0, 50.0f * deltaTime, 0 }, DEGREES);
+	
+	if ((int)round(totalTime * 100.0f) % 500 == 0) {
+
+		float distance = 25;
+
+		float x = GlobalVar::Random::Get(-distance, distance);
+		float z = GlobalVar::Random::Get(-distance, distance);
+
+		targetPosition = { x, 0.0f, z };
+		gameObjs[3]->GetTransform()->SetPosition(targetPosition);
+	}
 
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::KeyDown(VK_ESCAPE))
@@ -511,7 +548,7 @@ void Game::BuildUI(float deltaTime) {
 	// Game Object Data
 	{
 		if (ImGui::CollapsingHeader("All Current GameObject Details")) {
-			for (int i = 0; i < gameObjsSize; i++)
+			for (int i = 0; i < gameObjs.size(); i++)
 			{
 				gameObjs[i].get()->DrawImGui(materials, materialKeys);
 			}
@@ -521,15 +558,17 @@ void Game::BuildUI(float deltaTime) {
 	// Mesh Data and Toggles
 	{
 		if (ImGui::CollapsingHeader("All Current Mesh Details")) {
-			for (int i = 0; i < meshesSize; i++)
+			for (int i = 0; i < drawables.size(); i++)
 			{
-				if (ImGui::TreeNode(meshes[i]->GetName())) {
-					ImGui::Text("Triangles: %d", meshes[i]->GetIndexCount() / 3);
-					ImGui::Text("Vertices: %d", meshes[i]->GetVertexCount());
-					ImGui::Text("Indices: %d", meshes[i]->GetIndexCount());
+				Mesh* drawable = dynamic_cast<Mesh*>(drawables[i].get());;
+
+				if (ImGui::TreeNode(drawable->GetName()) && drawable != nullptr) {
+					ImGui::Text("Triangles: %d", drawable->GetIndexCount() / 3);
+					ImGui::Text("Vertices: %d", drawable->GetVertexCount());
+					ImGui::Text("Indices: %d", drawable->GetIndexCount());
 
 					// Adding unique identifiers to each checkbox because ImGUI yelled at me
-					meshes[i]->DrawImGui(i);
+					drawable->DrawImGui(i);
 					ImGui::TreePop();
 				}
 			}
@@ -557,9 +596,8 @@ void Game::BuildUI(float deltaTime) {
 			delete[] items;
 		}
 	}
-	if (ImGui::CollapsingHeader("Renderer Details")) {
-		ImGui::Text("ShadowMap Depth Texture");
-		Renderer::DrawImGui();
-	}
+
+	Renderer::DrawImGui();
+
 	ImGui::End();
 }

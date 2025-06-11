@@ -58,6 +58,18 @@
     <Filter Include="Shaders\Headers">
       <UniqueIdentifier>{aac9d92e-a6e1-454a-a551-24fefeb8ba71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\Post Processes">
+      <UniqueIdentifier>{dfcee163-9ede-4489-817d-6a49b1ed0ede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components\PostProcesses">
+      <UniqueIdentifier>{693fed42-dbf9-436d-a06b-fb8ffa125dc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\Entities">
+      <UniqueIdentifier>{28de26b5-8095-4c25-8b60-3e860f9b8552}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components\Entities">
+      <UniqueIdentifier>{b847e666-d246-46c6-a6fc-4f0619b4ca0e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui_demo.cpp">
@@ -149,6 +161,24 @@
     </ClCompile>
     <ClCompile Include="Components\Sky.cpp">
       <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\PostProcessManager.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\PostProcesses\BlurPostProcess.cpp">
+      <Filter>Source Files\Components\Post Processes</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\BillBoard.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\BillBoard360.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Agent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Entities\Entity.cpp">
+      <Filter>Source Files\Components\Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +308,33 @@
     <ClInclude Include="Components\Sky.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Interfaces\IPostProcessEffect.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\PostProcessManager.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\PostProcesses\BlurPostProcess.h">
+      <Filter>Header Files\Components\PostProcesses</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\IDrawable.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\BillBoard.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Structures\BillBoardVertex.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\BillBoard360.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Agent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Entities\Entity.h">
+      <Filter>Header Files\Components\Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Changelog.txt">
@@ -328,6 +385,15 @@
       <Filter>Shaders\Pixel</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\Vertex\ShadowVS.hlsl">
+      <Filter>Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Vertex\PostProcessVS.hlsl">
+      <Filter>Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Vertex\PPBlurPS.hlsl">
+      <Filter>Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Vertex\BillBoardVS.hlsl">
       <Filter>Shaders\Vertex</Filter>
     </FxCompile>
   </ItemGroup>

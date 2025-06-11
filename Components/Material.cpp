@@ -18,6 +18,8 @@ void Material::SetDefaultShaderParam(ExternalData data, Transform* transform, Tr
 	ps->SetFloat3("iPosition", transform->GetPosition());
 	ps->SetFloat3("iAmbientColor", ambientTint);
 
+	vs->SetFloat3("iEyeDirection", camTransform->GetForward());
+	ps->SetFloat3("iEyePosition", camTransform->GetPosition());
 	vs->SetFloat3("iPosition", transform->GetPosition());
 	vs->SetFloat("iTime", GlobalVar::Time::getElapsedTime());
 
@@ -50,6 +52,7 @@ void Material::SetAmbientTint(DirectX::XMFLOAT3 ambient) { this->ambientTint = a
 void Material::SetTint(DirectX::XMFLOAT4 tint) { this->colorTint = tint; }
 void Material::SetIndex() { materialIndex = GlobalVar::Material::getIndexThenTick(); }
 void Material::SetUVScale(DirectX::XMFLOAT2 scale) { this->scale = scale; }
+void Material::SetUVOffset(DirectX::XMFLOAT2 offset) { this->offset = offset; }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Material::RemoveTextureSRV(const char* name)
 {

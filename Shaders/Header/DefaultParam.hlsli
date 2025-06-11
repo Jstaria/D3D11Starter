@@ -7,15 +7,18 @@
 #define TAU 6.283185307179586476925286766559
 #define HALF_PI 1.5707963267948966192313216916398
 
-uniform float4 iTint;
-uniform float2 uvScale;
-uniform float2 uvOffset;
-uniform float iTime;
-uniform float3 iAmbientColor;
-uniform float3 iEyePosition;
-uniform float3 iEyeDirection;
-uniform float3 iPosition;
-uniform float2 iResolution;
+cbuffer GenericData : register(b1)
+{
+    float4 iTint;
+    float2 uvScale;
+    float2 uvOffset;
+    float iTime;
+    float3 iAmbientColor;
+    float3 iEyePosition;
+    float3 iEyeDirection;
+    float3 iPosition;
+    float2 iResolution;
+};
 
 Texture2D SurfaceColorTexture : register(t1);
 Texture2D SurfaceNormalMap : register(t2);

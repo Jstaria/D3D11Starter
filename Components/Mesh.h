@@ -11,8 +11,9 @@
 #include "../Structures/Vertex.h"
 #include "../Structures/MeshData.h"
 #include "../ImGui/imgui.h"
+#include "../Interfaces/IDrawable.h"
 
-class Mesh
+class Mesh : public IDrawable
 {
 private:
 	// --- Mesh Buffers ---
@@ -22,7 +23,6 @@ private:
 	MeshData meshData;
 
 	// --- General ---
-	const char* name;
 	bool meshToggle;
 	bool wireFrameToggle;
 	Vertex center;
@@ -47,7 +47,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer();
 	int GetVertexCount();
 	int GetIndexCount();
-	const char* GetName();
+	const char* GetName() override;
 
 	Vertex GetCenter();
 
@@ -56,6 +56,6 @@ public:
 
 	// --- General ---
 	void DrawImGui(int i);
-	void Draw();
+	void Draw() override;
 };
 

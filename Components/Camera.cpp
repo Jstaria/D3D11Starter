@@ -65,7 +65,7 @@ void Camera::UIDraw()
 	{
 		XMFLOAT3 rot = transform->GetPitchYawRoll();
 		ImGui::DragFloat3(("Rotation##" + std::string(name)).c_str(), &rot.x, .01f);
-		transform->SetRotation(rot, Angle::PI);
+		transform->SetRotation(rot, Angle::RADIANS);
 	}
 
 	{

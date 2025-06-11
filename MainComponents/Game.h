@@ -8,8 +8,12 @@
 #include <DirectXMath.h>
 #include "Renderer.h"
 #include "WICTextureLoader.h"
+#include <random>
 
 #include "../Components/Mesh.h"
+#include "../Components/BillBoard.h"
+#include "../Components/BillBoard360.h"
+#include "../Components/Entities/Entity.h"
 #include "../Components/Camera.h"
 #include "../Components/FPSCamera.h"
 #include "../Components/Material.h"
@@ -21,6 +25,7 @@
 #include "../Helper/LoadHelper.h"
 
 #include "../Structures/BufType.h"
+#include "../Components/PostProcessManager.h"
 
 class Game
 {
@@ -71,12 +76,10 @@ private:
 	float curDT = 0;
 
 	// Arrays
-	int meshesSize;
-	int gameObjsSize;
 	int camerasSize;
 
-	std::shared_ptr<Mesh>* meshes;
-	std::shared_ptr<GameObject>* gameObjs;
+	std::vector<std::shared_ptr<IDrawable>> drawables;
+	std::vector<std::shared_ptr<GameObject>> gameObjs;
 	std::shared_ptr<Camera>* cameras;
 	std::vector<std::shared_ptr<Light>> lights;
 	std::map<const char*, std::shared_ptr<Material>> materials;
@@ -85,5 +88,11 @@ private:
 	std::vector<std::shared_ptr<Sky>> skies;
 
 	int currentCam;
+
+	// temp variabls for final assignment
+	bool lightOn = false;
+
+	std::shared_ptr<Entity> entity;
+	DirectX::XMFLOAT3 targetPosition;
 };
 

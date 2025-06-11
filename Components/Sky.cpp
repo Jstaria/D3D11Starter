@@ -26,7 +26,7 @@ void Sky::CreateStates()
 	}
 }
 
-Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, const wchar_t* path, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<Mesh> mesh)
+Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, const wchar_t* path, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<IDrawable> mesh)
 	: sampler(samplerState), mesh(mesh), vs(vs), ps(ps)
 {
 	cubeMapSRV = LoadHelper::CreateCubemap(path);
@@ -34,7 +34,7 @@ Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, const wchar_t* path, std::shar
 	CreateStates();
 }
 
-Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, ComPtr<ID3D11ShaderResourceView> cubeMap, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<Mesh> mesh)
+Sky::Sky(ComPtr<ID3D11SamplerState> samplerState, ComPtr<ID3D11ShaderResourceView> cubeMap, std::shared_ptr<SimpleVertexShader> vs, std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<IDrawable> mesh)
 	: sampler(samplerState), cubeMapSRV(cubeMap), mesh(mesh), vs(vs), ps(ps)
 {
 	CreateStates();

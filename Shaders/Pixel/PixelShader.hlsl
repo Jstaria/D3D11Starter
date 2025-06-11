@@ -2,8 +2,6 @@
 #include "../Header/DefaultParam.hlsli"
 
 
-float4 tint;
-
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
 // 
@@ -15,7 +13,10 @@ float4 tint;
 // --------------------------------------------------------
 float4 main(VertexToPixel input) : SV_TARGET
 {
-    float4 color = iTint;
+    float4 color = SurfaceColorTexture.Sample(BasicSampler, input.uv);
 	
-	return color;
+	if (color.a == 0)
+        discard;
+	
+	return color * iTint;
 }

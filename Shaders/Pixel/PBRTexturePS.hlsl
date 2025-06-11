@@ -20,9 +20,13 @@ float4 main(VertexToPixel input) : SV_TARGET
     float roughness = RoughnessMap.Sample(BasicSampler, input.uv).r;
     float metalness = MetalnessMap.Sample(BasicSampler, input.uv).r;
     
-    float3 color = pow(Albedo.Sample(BasicSampler, input.uv).xyz, 2.2f) * iTint.xyz;
+    float4 sampleColor = Albedo.Sample(BasicSampler, input.uv);
+    float3 color = pow(sampleColor.xyz, 2.2f) * iTint.xyz;
 	
-    float3 normal = normalize(NormalMap.Sample(BasicSampler, input.uv).rgb * 2 - 1);
+    if (sampleColor.a == 0)
+        discard;
+    
+        float3 normal = normalize(NormalMap.Sample(BasicSampler, input.uv).rgb * 2 - 1);
     
     // calc matrix
     float3 N = input.normal;

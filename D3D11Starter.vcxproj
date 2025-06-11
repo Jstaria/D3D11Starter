@@ -155,13 +155,19 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Components\Agent.cpp" />
+    <ClCompile Include="Components\BillBoard.cpp" />
+    <ClCompile Include="Components\BillBoard360.cpp" />
     <ClCompile Include="Components\Camera.cpp" />
+    <ClCompile Include="Components\Entities\Entity.cpp" />
     <ClCompile Include="Components\FPSCamera.cpp" />
     <ClCompile Include="Components\GameObject.cpp" />
     <ClCompile Include="Components\Light.cpp" />
     <ClCompile Include="Components\Material.cpp" />
     <ClCompile Include="Components\Mesh.cpp" />
     <ClCompile Include="Components\ParticleSystem.cpp" />
+    <ClCompile Include="Components\PostProcesses\BlurPostProcess.cpp" />
+    <ClCompile Include="Components\PostProcessManager.cpp" />
     <ClCompile Include="Components\Sky.cpp" />
     <ClCompile Include="Components\Transform.cpp" />
     <ClCompile Include="Helper\Debug.cpp" />
@@ -187,13 +193,19 @@
     <ClCompile Include="MainComponents\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Components\Agent.h" />
+    <ClInclude Include="Components\BillBoard.h" />
+    <ClInclude Include="Components\BillBoard360.h" />
     <ClInclude Include="Components\Camera.h" />
+    <ClInclude Include="Components\Entities\Entity.h" />
     <ClInclude Include="Components\FPSCamera.h" />
     <ClInclude Include="Components\GameObject.h" />
     <ClInclude Include="Components\Light.h" />
     <ClInclude Include="Components\Material.h" />
     <ClInclude Include="Components\Mesh.h" />
     <ClInclude Include="Components\ParticleSystem.h" />
+    <ClInclude Include="Components\PostProcesses\BlurPostProcess.h" />
+    <ClInclude Include="Components\PostProcessManager.h" />
     <ClInclude Include="Components\Sky.h" />
     <ClInclude Include="Components\Transform.h" />
     <ClInclude Include="Helper\Debug.h" />
@@ -214,6 +226,8 @@
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="Interfaces\IComponent.h" />
     <ClInclude Include="Interfaces\ICompute.h" />
+    <ClInclude Include="Interfaces\IDrawable.h" />
+    <ClInclude Include="Interfaces\IPostProcessEffect.h" />
     <ClInclude Include="Interfaces\IRenderable.h" />
     <ClInclude Include="Interfaces\IUpdatable.h" />
     <ClInclude Include="Interfaces\IWriteable.h" />
@@ -223,6 +237,7 @@
     <ClInclude Include="MainComponents\Renderer.h" />
     <ClInclude Include="MainComponents\Window.h" />
     <ClInclude Include="Shaders\Header\Rainbow.hlsli" />
+    <ClInclude Include="Structures\BillBoardVertex.h" />
     <ClInclude Include="Structures\BufType.h" />
     <ClInclude Include="Structures\ExternalData.h" />
     <ClInclude Include="Structures\LightStruct.h" />
@@ -285,11 +300,29 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="Shaders\Vertex\BillBoardVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shaders\Vertex\MorphVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shaders\Vertex\PostProcessVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shaders\Vertex\PPBlurPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shaders\Vertex\ShadowVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

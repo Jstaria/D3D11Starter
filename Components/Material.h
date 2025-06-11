@@ -53,6 +53,7 @@ public:
 	void SetTint(DirectX::XMFLOAT4 tint);
 	void SetIndex();
 	void SetUVScale(DirectX::XMFLOAT2 scale);
+	void SetUVOffset(DirectX::XMFLOAT2 offset);
 
 	// -=| Removers |=-
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RemoveTextureSRV(const char* name);

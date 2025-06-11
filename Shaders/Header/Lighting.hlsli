@@ -289,12 +289,12 @@ float3 SpotLightPBR(VertexToPixel input, Light light, float3 albedo, float rough
 
 float ShadowAmount(VertexToPixel input)
 {
-        // Perform the perspective divide (divide by W) ourselves
+    // Perform the perspective divide (divide by W) ourselves
     input.shadowMapPos /= input.shadowMapPos.w;
-// Convert the normalized device coordinates to UVs for sampling
+    // Convert the normalized device coordinates to UVs for sampling
     float2 shadowUV = input.shadowMapPos.xy * 0.5f + 0.5f;
     shadowUV.y = 1 - shadowUV.y; // Flip the Y
-// Grab the distances we need: light-to-pixel and closest-surface
+    // Grab the distances we need: light-to-pixel and closest-surface
     float distToLight = input.shadowMapPos.z;
     float shadowAmount = ShadowMap.SampleCmpLevelZero(
         ShadowSampler,

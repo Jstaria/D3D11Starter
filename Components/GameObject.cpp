@@ -3,18 +3,18 @@
 using namespace std;
 using namespace DirectX;
 
-GameObject::GameObject(const char* name, std::shared_ptr<Mesh> mesh, std::shared_ptr<GameObject> parentObj, std::shared_ptr<Material> material)
+GameObject::GameObject(const char* name, std::shared_ptr<IDrawable> drawable, std::shared_ptr<GameObject> parentObj, std::shared_ptr<Material> material)
 	: name(name), parentObj(parentObj)
 {
-	this->mesh = mesh;
+	this->drawable = drawable;
 	this->material = material;
 
 	this->transform = make_shared<Transform>();
 
-	this->transform.get()->SetParentTransform(parentObj != nullptr ? parentObj.get()->GetTransform() : nullptr);
+	this->transform->SetParentTransform(parentObj != nullptr ? parentObj->GetTransform() : nullptr);
 
 	if (parentObj != nullptr) {
-		parentObj.get()->SetObjAsChild(this);
+		parentObj->SetObjAsChild(this);
 	}
 
 	tint = XMFLOAT4(1, 1, 1, 1);
@@ -25,8 +25,8 @@ GameObject::~GameObject()
 }
 
 std::shared_ptr<Transform> GameObject::GetTransform() { return transform; }
-std::shared_ptr<Transform> GameObject::GetParentTransform() { return transform.get()->GetParentTransform(); }
-std::shared_ptr<Mesh> GameObject::GetMesh() { return mesh; }
+std::shared_ptr<Transform> GameObject::GetParentTransform() { return transform->GetParentTransform(); }
+std::shared_ptr<IDrawable> GameObject::GetDrawable() { return drawable; }
 std::shared_ptr<Material> GameObject::GetMaterial() { return material; }
 const char* GameObject::GetName() { return name; }
 DirectX::XMFLOAT4 GameObject::GetTint() { return tint; }
@@ -34,7 +34,7 @@ DirectX::XMFLOAT4 GameObject::GetTint() { return tint; }
 void GameObject::SetObjAsChild(GameObject* child) { childObjs.push_back(child); }
 void GameObject::SetTint(XMFLOAT4 tintColor) { tint = tintColor; }
 void GameObject::SetMaterial(std::shared_ptr<Material> material) { this->material = material; }
-void GameObject::SetMesh(std::shared_ptr<Mesh> mesh) { this->mesh = mesh; }
+void GameObject::SetDrawable(std::shared_ptr<IDrawable> drawable) { this->drawable = drawable; }
 
 void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> materials, std::vector<const char*> materialKeys)
 {
@@ -43,7 +43,7 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 		if (parentObj != nullptr)
 			ImGui::Text("Parent GameObject: %s", parentObj->GetName());
 
-		ImGui::Text("Mesh: %s", mesh->GetName());
+		ImGui::Text("Mesh: %s", drawable->GetName());
 		ImGui::Text("Material : %s", material->GetName());
 
 		int index = material->GetMatIndex();
@@ -66,7 +66,7 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 		{
 			XMFLOAT3 rot = transform->GetPitchYawRoll();
 			ImGui::DragFloat3(("Rotation##" + std::string(name)).c_str(), &rot.x, .01f);
-			transform->SetRotation(rot, Angle::PI);
+			transform->SetRotation(rot, Angle::RADIANS);
 		}
 
 		{
@@ -85,7 +85,11 @@ void GameObject::DrawImGui(std::map<const char*, std::shared_ptr<Material>> mate
 
 void GameObject::Draw()
 {
-	mesh->Draw();
+	drawable->Draw();
+}
+
+void GameObject::Update(float deltaTime)
+{
 }
 
 //void GameObject::AddComponent(std::shared_ptr<Component>)

@@ -12,6 +12,8 @@
 #include "../Components/Camera.h"
 #include "../Components/Light.h"
 #include "../Components/Sky.h"
+#include "../Components/PostProcessManager.h"
+#include "../Components/BillBoard.h"
 
 namespace Renderer
 {

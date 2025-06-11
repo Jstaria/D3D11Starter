@@ -66,21 +66,22 @@ namespace Renderer {
 			if (light != nullptr)
 				light->UpdateLightColor();
 
-			//Sky* sky = dynamic_cast<Sky*>(gameObj);
-			//if (sky != nullptr)
-			//	sky->();
-
-
-			// ==============================================
-
 			mat->GetVS()->SetShader();
 			mat->GetPS()->SetShader();
 
 			if (light == nullptr)
 			{
+				int offset = 0;
+
 				LightStruct lightStructs[MAX_LIGHTS];
 				for (int i = 0; i < min(lights.size(), MAX_LIGHTS); i++)
-					lightStructs[i] = lights[i]->GetStruct();
+				{
+					if (lights[i]->GetActive())
+					{
+						lightStructs[i - offset] = lights[i]->GetStruct();
+					}
+					else offset++;
+				}
 
 				mat->GetPS()->SetData("lights", &lightStructs[0], sizeof(LightStruct) * MAX_LIGHTS);
 			}
@@ -151,7 +152,7 @@ namespace Renderer {
 				vsShadow->CopyAllBufferData();
 				// Draw the mesh directly to avoid the entity's material
 				// Note: Your code may differ significantly here!
-				e->GetMesh()->Draw();
+				e->GetDrawable()->Draw();
 			}
 
 			viewport.Width = (float)Window::Width();
@@ -161,7 +162,7 @@ namespace Renderer {
 				1,
 				Graphics::BackBufferRTV.GetAddressOf(),
 				Graphics::DepthBufferDSV.Get());
-		
+
 			Graphics::Context->RSSetState(0);
 		}
 #pragma endregion
@@ -217,7 +218,7 @@ void Renderer::Init()
 	shadowRastDesc.SlopeScaledDepthBias = 1.0f; // Bias more based on slope
 	Graphics::Device->CreateRasterizerState(&shadowRastDesc, &shadowRasterizer);
 
-D3D11_SAMPLER_DESC shadowSampDesc = {};
+	D3D11_SAMPLER_DESC shadowSampDesc = {};
 	shadowSampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 	shadowSampDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
 	shadowSampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
@@ -228,6 +229,8 @@ D3D11_SAMPLER_DESC shadowSampDesc = {};
 	shadowSampDesc.BorderColor[2] = 1.0f;
 	shadowSampDesc.BorderColor[3] = 1.0f;
 	Graphics::Device->CreateSamplerState(&shadowSampDesc, &shadowSampler);
+
+	PostProcessManager::Init();
 }
 
 void Renderer::AddObjectToRender(std::shared_ptr<IRenderable> gameObj)
@@ -243,22 +246,24 @@ void Renderer::SetLights(std::vector<std::shared_ptr<Light>> lightList) {
 	for (auto& light : lightList) sortedRenderables.push_back(light);
 	lights = lightList;
 }
-void Renderer::SetShadowVS(std::shared_ptr<SimpleVertexShader> shadowVS) { vsShadow = shadowVS;}
+void Renderer::SetShadowVS(std::shared_ptr<SimpleVertexShader> shadowVS) { vsShadow = shadowVS; }
 
 void Renderer::DrawRenderables()
 {
 	BindAndDrawShadowMap();
 
+	PostProcessManager::SetInitialTarget();
+
 	for (int i = 0; i < sortedRenderables.size(); i++)
 	{
 		IRenderable* gameObj = sortedRenderables[i].get();
 
-		if (gameObj->GetMesh()->GetToggleMesh())
-			if (Debug::ShowMesh)
-				Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
-		if (gameObj->GetMesh()->GetToggleWireFrame())
-			if (Debug::ShowWireFrame)
-				Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
+		//if ((gameObj->GetDrawable() is Mesh)->GetToggleMesh())
+		//	if (Debug::ShowMesh)
+		//		Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
+		//if (gameObj->GetDrawable()->GetToggleWireFrame())
+		//	if (Debug::ShowWireFrame)
+		//		Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
 
 		BindDataToDraw(gameObj);
 		gameObj->Draw();
@@ -266,13 +271,17 @@ void Renderer::DrawRenderables()
 
 	BindAndDrawSkyData();
 
+	PostProcessManager::DrawFinal();
+
 	ID3D11ShaderResourceView* nullSRVs[128] = {};
 	Graphics::Context->PSSetShaderResources(0, 128, nullSRVs);
 }
 
 void Renderer::DrawImGui()
 {
-	ImGui::Image((ImTextureID)shadowSRV.Get(), ImVec2(128, 128));
+	if (ImGui::CollapsingHeader("Renderer Details")) {
+		PostProcessManager::DrawImGui();
+	}
 }
 
 void Renderer::UpdateRenderableList()

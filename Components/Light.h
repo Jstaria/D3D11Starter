@@ -16,6 +16,7 @@ public:
 	Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, float range, float intensity, float innerAngle, float outerAngle);
 
 	void SetLightColor(DirectX::XMFLOAT3 color);
+	void SetRange(float range);
 	void UpdateLightColor();
 	void SetActive(bool active);
 	bool GetActive();

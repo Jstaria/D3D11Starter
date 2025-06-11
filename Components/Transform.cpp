@@ -102,6 +102,7 @@ XMFLOAT4X4 Transform::GetWorldMatrix()
 		XMMATRIX parentMatrix = XMMatrixIdentity();
 
 		if (parentTransform != nullptr) {
+			parentTransform->NotifyOfCleanliness(true);
 			XMFLOAT4X4 parent = parentTransform.get()->GetWorldMatrix();
 			parentMatrix = XMLoadFloat4x4(&parent);
 		}
@@ -170,6 +171,51 @@ void Transform::Rotate(float p, float y, float r, Angle angle)
 void Transform::Rotate(DirectX::XMFLOAT3 rotation, Angle angle)
 {
 	Rotate(rotation.x, rotation.y, rotation.z, angle);
+}
+
+void Transform::Rotate(DirectX::XMFLOAT3 rotationAxis,float rotation, Angle angle, DirectX::XMFLOAT3 point)
+{
+	if (angle == Angle::DEGREES)
+		rotation *= Pi;
+	
+	DirectX::XMMATRIX transformMat =
+	DirectX::XMMatrixMultiply(
+		DirectX::XMMatrixTranslation(-point.x, -point.y, -point.z), 
+		XMMatrixMultiply(
+			DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&rotationAxis), rotation), 
+			DirectX::XMMatrixTranslation(point.x, point.y, point.z)));
+
+	XMVECTOR pos = XMLoadFloat3(&position);
+
+	pos = XMVector3Transform(pos, transformMat);
+
+	DirectX::XMStoreFloat3(&position, pos);
+	NotifyOfCleanliness(true);
+}
+
+void Transform::LookAt(DirectX::XMFLOAT3 point)
+{
+	XMFLOAT3 position = GetPosition();
+	XMVECTOR posVec = XMLoadFloat3(&position);
+	XMVECTOR targetVec = XMLoadFloat3(&point);
+
+	XMVECTOR toTarget = XMVector3Normalize(targetVec - posVec);
+
+	float yaw = atan2f(XMVectorGetX(toTarget), XMVectorGetZ(toTarget));
+
+	float pitch = asinf(-XMVectorGetY(toTarget));
+
+	SetRotation(pitch, yaw, 0.0f, Angle::RADIANS);
+}
+
+void Transform::LookAtRelative(DirectX::XMFLOAT3 direction)
+{
+	XMFLOAT3 lookat = position;
+	lookat.x -= direction.x;
+	lookat.y -= direction.y;
+	lookat.z -= direction.z;
+
+	LookAt(lookat);
 }
 
 void Transform::Scale(float x, float y, float z)
