@@ -22,6 +22,10 @@ void Camera::Update(float dt)
 	UpdateViewMatrix();
 }
 
+void Camera::FixedUpdate(float dt)
+{
+}
+
 void Camera::UpdateViewMatrix()
 {
 	XMFLOAT3 pos = transform->GetPosition();

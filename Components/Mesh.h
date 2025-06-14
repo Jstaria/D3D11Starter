@@ -48,7 +48,7 @@ public:
 	int GetVertexCount();
 	int GetIndexCount();
 	const char* GetName() override;
-
+	MeshData GetMeshData();
 	Vertex GetCenter();
 
 	bool GetToggleMesh();

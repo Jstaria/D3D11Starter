@@ -155,11 +155,13 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Components\Agent.cpp" />
     <ClCompile Include="Components\BillBoard.cpp" />
     <ClCompile Include="Components\BillBoard360.cpp" />
     <ClCompile Include="Components\Camera.cpp" />
+    <ClCompile Include="Components\Entities\Agent.cpp" />
     <ClCompile Include="Components\Entities\Entity.cpp" />
+    <ClCompile Include="Components\Entities\NavMesh.cpp" />
+    <ClCompile Include="Components\Entities\PhysicsObject.cpp" />
     <ClCompile Include="Components\FPSCamera.cpp" />
     <ClCompile Include="Components\GameObject.cpp" />
     <ClCompile Include="Components\Light.cpp" />
@@ -193,11 +195,13 @@
     <ClCompile Include="MainComponents\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Components\Agent.h" />
     <ClInclude Include="Components\BillBoard.h" />
     <ClInclude Include="Components\BillBoard360.h" />
     <ClInclude Include="Components\Camera.h" />
+    <ClInclude Include="Components\Entities\Agent.h" />
     <ClInclude Include="Components\Entities\Entity.h" />
+    <ClInclude Include="Components\Entities\NavMesh.h" />
+    <ClInclude Include="Components\Entities\PhysicsObject.h" />
     <ClInclude Include="Components\FPSCamera.h" />
     <ClInclude Include="Components\GameObject.h" />
     <ClInclude Include="Components\Light.h" />
@@ -239,10 +243,14 @@
     <ClInclude Include="Shaders\Header\Rainbow.hlsli" />
     <ClInclude Include="Structures\BillBoardVertex.h" />
     <ClInclude Include="Structures\BufType.h" />
+    <ClInclude Include="Structures\Edge.h" />
     <ClInclude Include="Structures\ExternalData.h" />
     <ClInclude Include="Structures\LightStruct.h" />
     <ClInclude Include="Structures\MeshData.h" />
+    <ClInclude Include="Structures\NavTile.h" />
     <ClInclude Include="Structures\Particle.h" />
+    <ClInclude Include="Structures\PhysicsData.h" />
+    <ClInclude Include="Structures\Triangle.h" />
     <ClInclude Include="Structures\Vertex.h" />
   </ItemGroup>
   <ItemGroup>

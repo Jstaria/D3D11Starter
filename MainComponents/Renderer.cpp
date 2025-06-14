@@ -118,7 +118,7 @@ namespace Renderer {
 				XMVectorSet(0, 1, 0, 0)); // Up: World up vector (Y axis)
 			XMStoreFloat4x4(&lightViewMatrix, lightView);
 
-			float lightProjectionSize = 20.0f; // Tweak for your scene!
+			float lightProjectionSize = Debug::ShadowMapSize; // Tweak for your scene!
 			XMMATRIX lightProjection = XMMatrixOrthographicLH(
 				lightProjectionSize, lightProjectionSize, 1.0f, 100.0f);
 			XMStoreFloat4x4(&lightProjectionMatrix, lightProjection);
@@ -258,12 +258,20 @@ void Renderer::DrawRenderables()
 	{
 		IRenderable* gameObj = sortedRenderables[i].get();
 
-		//if ((gameObj->GetDrawable() is Mesh)->GetToggleMesh())
-		//	if (Debug::ShowMesh)
-		//		Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
-		//if (gameObj->GetDrawable()->GetToggleWireFrame())
-		//	if (Debug::ShowWireFrame)
-		//		Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
+		// Get the drawable object
+		std::shared_ptr<IDrawable> drawable = gameObj->GetDrawable();
+
+		// Check if it's a mesh (using proper C++ RTTI)
+		Mesh* mesh = dynamic_cast<Mesh*>(drawable.get());
+		if (mesh) {
+			// Determine which rasterizer state to use
+			if (mesh->GetToggleWireFrame() && Debug::ShowWireFrame) {
+				Graphics::Context->RSSetState(Debug::RasterizerWFState.Get());
+			}
+			else if (mesh->GetToggleMesh() && Debug::ShowMesh) {
+				Graphics::Context->RSSetState(Debug::RasterizerFillState.Get());
+			}
+		}
 
 		BindDataToDraw(gameObj);
 		gameObj->Draw();

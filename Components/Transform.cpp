@@ -84,6 +84,17 @@ void Transform::SetDirty(bool value)
 }
 
 DirectX::XMFLOAT3 Transform::GetPosition() { return position; }
+DirectX::XMFLOAT3 Transform::GetWorldPosition() {
+	
+	XMFLOAT4X4 world = GetWorldMatrix();
+	
+	XMVECTOR pos = XMLoadFloat3(&position);
+	XMMATRIX worldMat = XMLoadFloat4x4(&world);
+	pos = XMVector3Transform(pos, worldMat);
+
+	XMFLOAT3 positionVec;  XMStoreFloat3(&positionVec, pos);
+	return positionVec;
+}
 XMFLOAT3 Transform::GetPitchYawRoll() { return rotation; }
 XMFLOAT3 Transform::GetScale() { return scale; }
 

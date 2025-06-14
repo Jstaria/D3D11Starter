@@ -174,10 +174,16 @@
     <ClCompile Include="Components\BillBoard360.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Components\Agent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Components\Entities\Entity.cpp">
+      <Filter>Source Files\Components\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Entities\PhysicsObject.cpp">
+      <Filter>Source Files\Components\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Entities\Agent.cpp">
+      <Filter>Source Files\Components\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Entities\NavMesh.cpp">
       <Filter>Source Files\Components\Entities</Filter>
     </ClCompile>
   </ItemGroup>
@@ -329,11 +335,29 @@
     <ClInclude Include="Components\BillBoard360.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Components\Agent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Components\Entities\Entity.h">
       <Filter>Header Files\Components\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Entities\PhysicsObject.h">
+      <Filter>Header Files\Components\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Entities\Agent.h">
+      <Filter>Header Files\Components\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Structures\PhysicsData.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Entities\NavMesh.h">
+      <Filter>Header Files\Components\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Structures\Edge.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Structures\Triangle.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Structures\NavTile.h">
+      <Filter>Header Files\Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

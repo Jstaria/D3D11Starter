@@ -1,6 +1,6 @@
 #pragma once
 #include "../GameObject.h"
-#include "../Agent.h"
+#include "../Entities/Agent.h"
 
 class Entity : public Agent
 {

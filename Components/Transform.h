@@ -60,6 +60,7 @@ public:
 	void SetDirty(bool value);
 
 	DirectX::XMFLOAT3 GetPosition();
+	DirectX::XMFLOAT3 GetWorldPosition();
 	DirectX::XMFLOAT3 GetPitchYawRoll(); // XMFLOAT4 GetRotation() for quaternion
 	DirectX::XMFLOAT3 GetScale();
 	DirectX::XMFLOAT4X4 GetWorldMatrix();

@@ -4,9 +4,11 @@ void Debug::Initialize()
 {
 	CreateRasterizerStates();
 
-	ShowLightsMesh = true;
+	ShowLightsMesh = false;
 
-	ShadowMapResolution = 2048;
+	ShadowMapResolution = 4096;
+	ShadowMapSize = 160.0f;
+	ShowNavMesh = true;
 }
 
 void Debug::CreateRasterizerStates()
@@ -24,5 +26,21 @@ void Debug::CreateRasterizerStates()
 		wfRasterizer.FillMode = D3D11_FILL_WIREFRAME;
 
 		Graphics::Device->CreateRasterizerState(&wfRasterizer, RasterizerWFState.GetAddressOf());
+	}
+}
+
+void Debug::DrawImGui()
+{
+	if (ImGui::CollapsingHeader("Debug Information")) {
+		ImGui::SetWindowFontScale(0.9f);
+		ImGui::Text("(Note: Meshes override this debug toggle)");
+		ImGui::SetWindowFontScale(1.0f);
+		ImGui::Checkbox("Show Wireframes", &ShowWireFrame);
+		ImGui::Checkbox("Show Meshes", &ShowMesh);
+		ImGui::Checkbox("Show Light Meshes", &ShowLightsMesh);
+		ImGui::Checkbox("Show Nav Meshes", &ShowNavMesh);
+		if (ImGui::Button("Change Window Size: 720x720")) {
+			Window::AdjustWindowSize(720, 720);
+		}
 	}
 }

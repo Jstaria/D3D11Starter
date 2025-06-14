@@ -14,7 +14,7 @@ using namespace Microsoft::WRL;
 /// <param name="indexSize"></param>
 Mesh::Mesh(const char* name, std::vector<Vertex> vertices, std::vector<unsigned int> indices)
 {
-	MeshData meshData = {};
+	meshData = {};
 	meshData.indices = indices;
 	meshData.name = name;
 	meshData.vertices = vertices;
@@ -29,7 +29,7 @@ Mesh::Mesh(MeshData meshData)
 
 Mesh::Mesh(const char* name, const char* filePath)
 {
-	MeshData meshData = OBJLoader::LoadOBJ(filePath);
+	meshData = OBJLoader::LoadOBJ(filePath);
 	meshData.name = name;
 
 	InitializeMesh(meshData);
@@ -209,7 +209,9 @@ void Mesh::CalculateTangents(MeshData& meshData)
 		float t2 = v3->UV.y - v1->UV.y;
 
 		// Create vectors for tangent calculation
-		float r = 1.0f / (s1 * t2 - s2 * t1);
+		float denominator = s1 * t2 - s2 * t1;
+		if (fabs(denominator) < 1e-6f) continue; // Skip degenerate UVs
+		float r = 1.0f / denominator;
 
 		float tx = (t2 * x1 - t1 * x2) * r;
 		float ty = (t2 * y1 - t1 * y2) * r;
@@ -251,6 +253,7 @@ ComPtr<ID3D11Buffer> Mesh::GetIndexBuffer() { return indexBuffer; }
 int Mesh::GetVertexCount() { return (int)meshData.vertices.size(); }
 int Mesh::GetIndexCount() { return (int)meshData.indices.size(); }
 const char* Mesh::GetName() { return name; }
+MeshData Mesh::GetMeshData() { return meshData; }
 Vertex Mesh::GetCenter() { return center; }
 bool Mesh::GetToggleMesh() { return meshToggle; }
 bool Mesh::GetToggleWireFrame() { return wireFrameToggle; }

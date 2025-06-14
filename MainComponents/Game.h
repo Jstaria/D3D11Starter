@@ -14,6 +14,7 @@
 #include "../Components/BillBoard.h"
 #include "../Components/BillBoard360.h"
 #include "../Components/Entities/Entity.h"
+#include "../Components/Entities/NavMesh.h"
 #include "../Components/Camera.h"
 #include "../Components/FPSCamera.h"
 #include "../Components/Material.h"
@@ -39,6 +40,7 @@ public:
 	// Primary functions
 	void Initialize();
 	void Update(float deltaTime, float totalTime);
+	void FixedUpdate(float deltaTime, float totalTime);
 	void Draw(float deltaTime, float totalTime);
 	void BuildUI(float deltaTime);
 	void OnResize();
@@ -62,6 +64,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
+
+	float acummulator;
 
 	// UI Data
 	bool isImGuiDemoOpen;
@@ -94,5 +98,6 @@ private:
 
 	std::shared_ptr<Entity> entity;
 	DirectX::XMFLOAT3 targetPosition;
+	std::shared_ptr<NavMesh> navMesh;
 };
 

@@ -4,6 +4,8 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include "../MainComponents/Graphics.h"
+#include "../MainComponents/Window.h"
+#include "../ImGui/imgui.h"
 
 #include "../Structures/Vertex.h"
 
@@ -17,6 +19,8 @@ namespace Debug {
 	inline bool ShowMesh;
 	inline bool ShowLightsMesh;
 	inline int ShadowMapResolution;
+	inline float ShadowMapSize;
+	inline bool ShowNavMesh;
 
 	inline ComPtr<ID3D11RasterizerState> RasterizerFillState;
 	inline ComPtr<ID3D11RasterizerState> RasterizerWFState;
@@ -25,5 +29,6 @@ namespace Debug {
 
 	void Initialize();
 	void CreateRasterizerStates();
+	void DrawImGui();
 }
 

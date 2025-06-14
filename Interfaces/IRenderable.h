@@ -22,6 +22,5 @@ public:
 
 	virtual void SetMaterial(std::shared_ptr<Material> material) = 0;
 	virtual void SetDrawable(std::shared_ptr<IDrawable> drawable) = 0;
-
 	virtual void Draw() = 0;
 };

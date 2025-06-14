@@ -82,22 +82,22 @@ void Game::Initialize()
 	cameras[2]->GetTransform()->SetRotation(0, 45, 0, Angle::DEGREES);
 	Renderer::SetCurrentCamera(cameras[0]);
 
-	lights.push_back(make_shared<Light>("Sun", XMFLOAT3(1, 1, .8f), XMFLOAT3(1, -.5f, -.5f), 1.0f)); // 1
-	lights.push_back(make_shared<Light>("Red", XMFLOAT3(0, -2.0f, 6.0f), XMFLOAT3(1, 0, 0), XMFLOAT3(0, .5, 1), 30, 3.0f, 1.4f, 1.41f)); // 2
-	lights.push_back(make_shared<Light>("Green", XMFLOAT3(2, 0.0f, 8.0f), XMFLOAT3(0, 1, 0), XMFLOAT3(0, 0, -1), 30, 3.0f, 1.4f, 1.41f));  // 3
-	lights.push_back(make_shared<Light>("Blue", XMFLOAT3(0, 2, -7), XMFLOAT3(0, 0, 1), 4.0f, 10)); // 4
-	lights.push_back(make_shared<Light>("White1", XMFLOAT3(0, 2, -5), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
-	lights.push_back(make_shared<Light>("White2", XMFLOAT3(0, 2, 5), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
-	lights.push_back(make_shared<Light>("White3", XMFLOAT3(-5, 2, 0), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
-	lights.push_back(make_shared<Light>("White4", XMFLOAT3(5, 2, 0), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
-	lights.push_back(make_shared<Light>("red", XMFLOAT3(2, 1, 0), XMFLOAT3(1, 0, 0), 2.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("Sun", false, true, XMFLOAT3(1, 1, .8f), XMFLOAT3(0, -1, 0), 1.0f)); // 1
+	lights.push_back(make_shared<Light>("Red", false, false, XMFLOAT3(0, -2.0f, 6.0f), XMFLOAT3(1, 0, 0), XMFLOAT3(0, .5, 1), 30, 3.0f, 1.4f, 1.41f)); // 2
+	lights.push_back(make_shared<Light>("Green", false, false, XMFLOAT3(2, 0.0f, 8.0f), XMFLOAT3(0, 1, 0), XMFLOAT3(0, 0, -1), 30, 3.0f, 1.4f, 1.41f));  // 3
+	lights.push_back(make_shared<Light>("Blue", false, false, XMFLOAT3(0, 2, -7), XMFLOAT3(0, 0, 1), 4.0f, 10)); // 4
+	lights.push_back(make_shared<Light>("White1", false, false, XMFLOAT3(0, 2, -5), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("White2", false, false, XMFLOAT3(0, 2, 5), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("White3", false, false, XMFLOAT3(-5, 2, 0), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("White4", false, false, XMFLOAT3(5, 2, 0), XMFLOAT3(1, 1, 1), 4.0f, 10)); // 5
+	lights.push_back(make_shared<Light>("red", true, true, XMFLOAT3(0, 2, 0), XMFLOAT3(1, 0, 0), 5.0f, 10)); // 5
+	lights[8]->GetTransform()->SetParentTransform(gameObjs[0]->GetTransform());
 
-	for (auto& light : lights) 
-	{ 
-		light->SetDrawable(drawables[2]); 
-		light->SetMaterial(materials["light_mat"]); 
-		light->GetTransform()->SetScale(.25f); 
-		light->SetActive(true);
+	for (auto& light : lights)
+	{
+		light->SetDrawable(drawables[2]);
+		light->SetMaterial(materials["light_mat"]);
+		light->GetTransform()->SetScale(.25f);
 	}
 
 	Renderer::SetLights(lights);
@@ -166,8 +166,8 @@ void Game::CreateObjects()
 		bbLayout.GetAddressOf());
 
 	shared_ptr<SimpleVertexShader> vs = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"VertexShader.cso").c_str());
-	//shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
-	//shared_ptr<SimplePixelShader> RainbowFlowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowNoisePS.cso").c_str());
+	shared_ptr<SimpleVertexShader> MorphVS = make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"MorphVS.cso").c_str());
+	shared_ptr<SimplePixelShader> RainbowFlowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowNoisePS.cso").c_str());
 	shared_ptr<SimplePixelShader> ps = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"PixelShader.cso").c_str());
 	//shared_ptr<SimplePixelShader> RainbowPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"RainbowPS.cso").c_str());
 	//shared_ptr<SimplePixelShader> NormalPS = make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"NormalPS.cso").c_str());
@@ -183,13 +183,12 @@ void Game::CreateObjects()
 	string assetsPath = "../../Assets/Models/";
 
 	drawables.push_back(make_shared<Mesh>("Plane", FixPath(assetsPath + "quad.obj").c_str()));
-	
-	//drawables.push_back(make_shared<Mesh>("Helix", FixPath(assetsPath + "helix.obj").c_str()));
-	//drawables.push_back(make_shared<Mesh>("Wonder Fizz Machines", FixPath(assetsPath + "wonder_fizz/source/wonder_fizz.obj").c_str()));
+
 	drawables.push_back(make_shared<Mesh>("Cube", FixPath(assetsPath + "cube.obj").c_str()));
-	//drawables.push_back(make_shared<Mesh>("Socrates", FixPath(assetsPath + "socrates/source/Socrates.obj").c_str()));
 	drawables.push_back(make_shared<BillBoard>("Billboard", bbLayout));
 	drawables.push_back(make_shared<Mesh>("Sphere", FixPath(assetsPath + "sphere.obj").c_str()));
+	shared_ptr<Mesh> mazeMesh = make_shared<Mesh>("Maze", FixPath(assetsPath + "maze2.obj").c_str());
+	drawables.push_back(mazeMesh);
 
 	ComPtr<ID3D11SamplerState> baseSampler;
 
@@ -218,13 +217,19 @@ void Game::CreateObjects()
 	ComPtr<ID3D11ShaderResourceView> cobblestoneNormalSRV = LoadHelper::LoadTexture(path + "cobblestone_normals.png");
 	ComPtr<ID3D11ShaderResourceView> cobblestoneRoughnessSRV = LoadHelper::LoadTexture(path + "cobblestone_roughness.png");
 	ComPtr<ID3D11ShaderResourceView> cobblestoneMetalnessSRV = LoadHelper::LoadTexture(path + "cobblestone_metal.png");
+	ComPtr<ID3D11ShaderResourceView> roughAlbedoSRV = LoadHelper::LoadTexture(path + "rough_albedo.png");
+	ComPtr<ID3D11ShaderResourceView> roughNormalSRV = LoadHelper::LoadTexture(path + "rough_normals.png");
+	ComPtr<ID3D11ShaderResourceView> roughRoughnessSRV = LoadHelper::LoadTexture(path + "rough_roughness.png");
+	ComPtr<ID3D11ShaderResourceView> roughMetalnessSRV = LoadHelper::LoadTexture(path + "rough_metal.png");
 	ComPtr<ID3D11ShaderResourceView> lightAlbedoSRV = LoadHelper::LoadTexture("../../Assets/Images/light.png");
 	ComPtr<ID3D11ShaderResourceView> emojiAlbedoSRV = LoadHelper::LoadTexture(path + "emoji_albedo.png");
+	ComPtr<ID3D11ShaderResourceView> mazeAlbedoSRV = LoadHelper::LoadTexture("../../Assets/Images/maze.png");
 	ComPtr<ID3D11ShaderResourceView> skullAlbedoSRV = LoadHelper::LoadTexture("../../Assets/Images/skull-sheet.png");
 	ComPtr<ID3D11ShaderResourceView> skullNormalSRV = LoadHelper::LoadTexture("../../Assets/Images/skull-normals-sheet.png");
 	ComPtr<ID3D11ShaderResourceView> skullRoughSRV = LoadHelper::LoadTexture("../../Assets/Images/skull-rough-sheet.png");
 	ComPtr<ID3D11ShaderResourceView> blankSRV = LoadHelper::LoadTexture(path + "cobblestone_metal.png");
 	ComPtr<ID3D11ShaderResourceView> roughSRV = LoadHelper::LoadTexture(path + "bronze_metal.png");
+	ComPtr<ID3D11ShaderResourceView> testSRV = LoadHelper::LoadTexture("../../Assets/Images/3d.jpg");
 
 	materials.emplace("light_mat", make_shared<Material>("light_mat", billboardVS, ps, white));
 	materials["light_mat"]->AddTextureSRV("SurfaceColorTexture", lightAlbedoSRV);
@@ -244,12 +249,19 @@ void Game::CreateObjects()
 	materials["emoji_mat"]->AddTextureSRV("MetalnessMap", blankSRV);
 	materials["emoji_mat"]->AddSampler("BasicSampler", baseSampler);
 
-	materials.emplace("coin_mat", make_shared<Material>("coin_mat", billboardVS, PBRTexturePS, white));
-	materials["coin_mat"]->AddTextureSRV("Albedo", skullAlbedoSRV);
-	materials["coin_mat"]->AddTextureSRV("NormalMap", skullNormalSRV);
-	materials["coin_mat"]->AddTextureSRV("RoughnessMap", skullRoughSRV);
-	materials["coin_mat"]->AddTextureSRV("MetalnessMap", blankSRV);
-	materials["coin_mat"]->AddSampler("BasicSampler", pixelSampler);
+	materials.emplace("maze_mat", make_shared<Material>("maze_mat", vs, PBRTexturePS, white));
+	materials["maze_mat"]->AddTextureSRV("Albedo", roughAlbedoSRV);
+	materials["maze_mat"]->AddTextureSRV("NormalMap", roughNormalSRV);
+	materials["maze_mat"]->AddTextureSRV("RoughnessMap", roughRoughnessSRV);
+	materials["maze_mat"]->AddTextureSRV("MetalnessMap", roughMetalnessSRV);
+	materials["maze_mat"]->AddSampler("BasicSampler", baseSampler);
+
+	materials.emplace("skull_mat", make_shared<Material>("skull_mat", billboardVS, PBRTexturePS, white));
+	materials["skull_mat"]->AddTextureSRV("Albedo", skullAlbedoSRV);
+	materials["skull_mat"]->AddTextureSRV("NormalMap", skullNormalSRV);
+	materials["skull_mat"]->AddTextureSRV("RoughnessMap", skullRoughSRV);
+	materials["skull_mat"]->AddTextureSRV("MetalnessMap", blankSRV);
+	materials["skull_mat"]->AddSampler("BasicSampler", pixelSampler);
 
 	materials.emplace("lamp_mat", make_shared<Material>("lamp_mat", vs, PBRTexturePS, white));
 	materials["lamp_mat"]->AddTextureSRV("Albedo", emojiAlbedoSRV);
@@ -262,6 +274,8 @@ void Game::CreateObjects()
 	materials["tint_mat"]->AddTextureSRV("SurfaceColorTexture", roughSRV);
 	materials["tint_mat"]->AddSampler("BasicSampler", baseSampler);
 
+	materials.emplace("nav_mat", make_shared<Material>("nav_mat", vs, ps, white));
+
 	for (auto& material : materials) {
 		material.second->SetIndex();
 		materialKeys.push_back(material.first);
@@ -273,7 +287,7 @@ void Game::CreateObjects()
 	// Pass in path to create srvs
 	//ComPtr<ID3D11ShaderResourceView> cm_PinkCloudsSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Clouds Pink/");
 	//ComPtr<ID3D11ShaderResourceView> cm_PlanetSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Planet/");
-	ComPtr<ID3D11ShaderResourceView> cm_DarkSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Dark/");
+	ComPtr<ID3D11ShaderResourceView> cm_DarkSRV = LoadHelper::CreateCubemap(L"../../Assets/Images/Skyboxes/Planet/");
 
 	// Add the (for now) one sky to a vector
 	skies.push_back(make_shared<Sky>(baseSampler, cm_DarkSRV, skyVS, skyPS, drawables[1]));
@@ -284,55 +298,52 @@ void Game::CreateObjects()
 	float scale = 1;
 
 	gameObjs.push_back(make_shared<BillBoard360>
-		("Billboard360", drawables[2], nullptr, materials["coin_mat"], 250, 250, 1));
+		("Billboard360", drawables[2], nullptr, materials["skull_mat"], 250, 250, 1));
 	gameObjs[0]->GetTransform()->SetScale(2);
 
-	Agent agent(1.0f, 0.5f, 0.2f, gameObjs[0]->GetTransform());
+
+	//gameObjs[1]->GetTransform()->SetScale(2);
+
+	PhysicsData data{};
+	data.frictionCoeff = .5f;
+	data.mass = 1.0f;
+	data.maxSpeed = .2f;
+	data.radius = 1.0f;
+	data.transform = gameObjs[0]->GetTransform();
+	data.useGravity = false;
+	data.useFriction = false;
+
+	Agent agent(0.5f, data);
 	entity = make_shared<Entity>(gameObjs[0], agent);
 
-	gameObjs.push_back(make_shared<GameObject>("Floor", drawables[0], nullptr, materials["cobblestone_mat"]));
-	gameObjs[1]->GetTransform()->SetPosition(0, -3.0f, 0);
-	gameObjs[1]->GetTransform()->SetScale(40, 1, 40);
-	gameObjs[1]->GetMaterial()->SetUVScale({ 10,10 });
+	//gameObjs.push_back(make_shared<GameObject>("Floor", drawables[0], nullptr, materials["cobblestone_mat"]));
+	//gameObjs[1]->GetTransform()->SetPosition(0, -3.0f, 0);
+	//gameObjs[1]->GetTransform()->SetScale(40, 1, 40);
+	//
+
+	gameObjs.push_back(make_shared<GameObject>("Maze", drawables[4], nullptr, materials["maze_mat"]));
+	gameObjs[1]->GetTransform()->SetPosition(0, -1, 0);
+	gameObjs[1]->GetMaterial()->SetUVScale({ 20,20 });
 
 	gameObjs.push_back(make_shared<GameObject>("Indicator", drawables[3], gameObjs[0], materials["tint_mat"]));
 	gameObjs[2]->GetTransform()->SetScale(.01f, .01f, .1f);
 	gameObjs[2]->GetTransform()->SetPosition({ 0,0, -1 });
 
+
 	gameObjs.push_back(make_shared<GameObject>("Position", drawables[3], nullptr, materials["tint_mat"]));
 	gameObjs[3]->GetTransform()->SetScale(.1f, .1f, .1f);
 	gameObjs[3]->GetTransform()->SetPosition({ 0,0, -1 });
 
-	//{
-	//	std::random_device rd;
-	//	std::mt19937 gen(rd());
-	//	std::uniform_real_distribution<float> angleDist(0, DirectX::XM_2PI);
-	//	std::uniform_real_distribution<float> radiusDist(15, 40);
-
-	//	DirectX::XMFLOAT3 center{ 0, 0, -5 };
-
-	//	for (int i = 0; i < 50; ++i)
-	//	{
-	//		float angle = angleDist(gen);
-	//		float r = radiusDist(gen);
-
-	//		DirectX::XMFLOAT3 pos{
-	//			center.x + r * cosf(angle),
-	//			center.y,
-	//			center.z + r * sinf(angle)
-	//		};
-
-	//		gameObjs.push_back(make_shared<GameObject>("Billboard", drawables[2], nullptr, materials["emoji_mat"]));
-	//		gameObjs[i + 4]->GetTransform()->SetScale(2);
-	//		gameObjs[i + 4]->GetTransform()->SetPosition(pos);
-	//	}
-	//}
+	navMesh = make_shared<NavMesh>(mazeMesh->GetMeshData(), 
+		materials["nav_mat"], gameObjs[1]->GetTransform(), 30);
+	//gameObjs[1]->GetTransform()->SetScale(.02f);
 
 	Renderer::SetShadowVS(shadowVS);
 	for (int i = 0; i < gameObjs.size(); i++)
 	{
 		Renderer::AddObjectToRender(gameObjs[i]);
 	}
+	Renderer::AddObjectToRender(navMesh);
 }
 
 
@@ -358,30 +369,49 @@ void Game::Update(float deltaTime, float totalTime)
 {
 	//gameObjs[4]->GetTransform()->Rotate(0, .1f, 0, DEGREES);
 
+	const float fixedDeltaTime = 1.0f / 60.0f;
+
+	acummulator += deltaTime;
+
+	while (acummulator >= fixedDeltaTime) {
+		FixedUpdate(deltaTime, totalTime);
+		acummulator -= fixedDeltaTime;
+	}
+
 	XMFLOAT3 directionToCam;
 	XMFLOAT3 camPos = Renderer::GetCamera()->GetTransform()->GetPosition();
 	XMFLOAT3 objPos = gameObjs[0]->GetTransform()->GetPosition();
 	XMStoreFloat3(&directionToCam, XMVector3Normalize(XMLoadFloat3(&camPos) - XMLoadFloat3(&objPos)) * deltaTime);
 
-	
-	entity->Arrival(targetPosition, 50);
+
+	entity->Seek(targetPosition);
 	entity->Update(deltaTime);
 
 	//cameras[0]->GetTransform()->Rotate({ 0,1,0 }, deltaTime * 50, DEGREES, gameObjs[0]->GetTransform()->GetPosition());
-	cameras[0]->GetTransform()->LookAt(gameObjs[0]->GetTransform()->GetPosition());
+	//cameras[0]->GetTransform()->LookAt(gameObjs[0]->GetTransform()->GetPosition());
 
 	//lights[7]->GetTransform()->Rotate({ 0,1,0 }, deltaTime * 50, DEGREES, gameObjs[0]->GetTransform()->GetPosition());
 
 	//gameObjs[0]->GetTransform()->Rotate({ 0, 50.0f * deltaTime, 0 }, DEGREES);
-	
-	if ((int)round(totalTime * 100.0f) % 500 == 0) {
 
-		float distance = 25;
+	if ((int)round(totalTime * 100.0f) % 200 == 0) {
 
-		float x = GlobalVar::Random::Get(-distance, distance);
-		float z = GlobalVar::Random::Get(-distance, distance);
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> angleDist(0, DirectX::XM_2PI);
+		std::uniform_real_distribution<float> radiusDist(5, 40);
 
-		targetPosition = { x, 0.0f, z };
+		DirectX::XMFLOAT3 center{ 0, 0, 0 };
+
+		float angle = angleDist(gen);
+		float r = radiusDist(gen);
+
+		DirectX::XMFLOAT3 pos{
+			center.x + r * cosf(angle),
+			center.y,
+			center.z + r * sinf(angle)
+		};
+		targetPosition = pos;
 		gameObjs[3]->GetTransform()->SetPosition(targetPosition);
 	}
 
@@ -408,6 +438,14 @@ void Game::Update(float deltaTime, float totalTime)
 	Renderer::GetCamera()->Update(deltaTime);
 	GlobalVar::Time::setDeltaTime(deltaTime);
 	GlobalVar::Time::setElapsedTime(totalTime);
+}
+
+void Game::FixedUpdate(float deltaTime, float totalTime)
+{
+	entity->FixedUpdate(deltaTime);
+
+	for (auto& light : lights)
+		light->FixedUpdate(deltaTime);
 }
 
 
@@ -524,18 +562,7 @@ void Game::BuildUI(float deltaTime) {
 	}
 	// Toggle Debug UI
 	{
-		if (ImGui::CollapsingHeader("Debug Information")) {
-			ImGui::SetWindowFontScale(0.9f);
-			ImGui::Text("(Note: Meshes override this debug toggle)");
-			ImGui::SetWindowFontScale(1.0f);
-			ImGui::Checkbox("Show Wireframes", &Debug::ShowWireFrame);
-			ImGui::Checkbox("Show Meshes", &Debug::ShowMesh);
-			ImGui::Checkbox("Show Light Meshes", &Debug::ShowLightsMesh);
-
-			if (ImGui::Button("Change Window Size: 720x720")) {
-				Window::AdjustWindowSize(720, 720);
-			}
-		}
+		Debug::DrawImGui();
 	}
 
 	// Light Obj Data
@@ -562,7 +589,7 @@ void Game::BuildUI(float deltaTime) {
 			{
 				Mesh* drawable = dynamic_cast<Mesh*>(drawables[i].get());;
 
-				if (ImGui::TreeNode(drawable->GetName()) && drawable != nullptr) {
+				if (drawable != nullptr && ImGui::TreeNode(drawable->GetName())) {
 					ImGui::Text("Triangles: %d", drawable->GetIndexCount() / 3);
 					ImGui::Text("Vertices: %d", drawable->GetVertexCount());
 					ImGui::Text("Indices: %d", drawable->GetIndexCount());
@@ -596,6 +623,8 @@ void Game::BuildUI(float deltaTime) {
 			delete[] items;
 		}
 	}
+
+	entity->DrawImGui();
 
 	Renderer::DrawImGui();
 

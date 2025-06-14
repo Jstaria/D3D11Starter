@@ -1,7 +1,7 @@
 #include "Light.h"
 
-Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, float intensity, float range)
-	: GameObject(name, nullptr, nullptr, nullptr), isActive(true)
+Light::Light(const char* name, bool canUpdate, bool isActive, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, float intensity, float range)
+	: GameObject(name, nullptr, nullptr, nullptr), isActive(isActive), canUpdate(canUpdate)
 {
 	lightStruct = {};
 	lightStruct.Type = LIGHT_TYPE_POINT;
@@ -14,8 +14,8 @@ Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 col
 	transform->SetScale(0.1f);
 }
 
-Light::Light(const char* name, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, float intensity)
-	: GameObject(name, nullptr, nullptr, nullptr), isActive(true)
+Light::Light(const char* name, bool canUpdate, bool isActive, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, float intensity)
+	: GameObject(name, nullptr, nullptr, nullptr), isActive(isActive), canUpdate(canUpdate)
 {
 	lightStruct = {};
 	lightStruct.Type = LIGHT_TYPE_DIRECTIONAL;
@@ -24,8 +24,8 @@ Light::Light(const char* name, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direct
 	lightStruct.Direction = direction;
 }
 
-Light::Light(const char* name, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, float range, float intensity, float innerAngle, float outerAngle)
-	: GameObject(name, nullptr, nullptr, nullptr), isActive(true)
+Light::Light(const char* name, bool canUpdate, bool isActive, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, float range, float intensity, float innerAngle, float outerAngle)
+	: GameObject(name, nullptr, nullptr, nullptr), isActive(isActive), canUpdate(canUpdate)
 {
 	lightStruct = {};
 	lightStruct.Type = LIGHT_TYPE_SPOT;
@@ -77,7 +77,7 @@ void Light::DrawImGui()
 		if (lightStruct.Type != LIGHT_TYPE_DIRECTIONAL) {
 			DirectX::XMFLOAT3 pos = transform->GetPosition();
 			ImGui::DragFloat3(("Position##" + std::string(name)).c_str(), &pos.x, .01f);
-			lightStruct.Position = pos;
+			lightStruct.Position = !canUpdate ? pos : lightStruct.Position;
 			transform->SetPosition(pos);
 
 			ImGui::DragFloat(("Light Range##" + std::string(name)).c_str(), &lightStruct.Range, 0.01f, 100.0f);
@@ -100,6 +100,15 @@ void Light::DrawImGui()
 
 		ImGui::TreePop();
 	}
+}
+
+void Light::FixedUpdate(float deltaTime)
+{
+	if (!canUpdate || !isActive) return;
+
+	transform->SetDirty(true);
+
+	lightStruct.Position = transform->GetWorldPosition();
 }
 
 LightStruct Light::GetStruct() { return lightStruct; }

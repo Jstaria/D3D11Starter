@@ -92,6 +92,10 @@ void GameObject::Update(float deltaTime)
 {
 }
 
+void GameObject::FixedUpdate(float deltaTime)
+{
+}
+
 //void GameObject::AddComponent(std::shared_ptr<Component>)
 //{
 //}

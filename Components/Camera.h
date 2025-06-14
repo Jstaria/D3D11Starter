@@ -37,7 +37,8 @@ public:
 
 	// -=| Updates |=-
 
-	virtual void Update(float dt) override;
+	void Update(float dt) override;
+	void FixedUpdate(float dt) override;
 	void UpdateViewMatrix();
 	void UpdateProjectionMatrix(float aspectRatio);
 

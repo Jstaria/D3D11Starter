@@ -47,5 +47,6 @@ public:
 	// Inherited via IRenderable
 	void Draw() override;
 	void Update(float deltaTime) override;
+	void FixedUpdate(float deltaTime) override;
 };
 
